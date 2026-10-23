@@ -1,0 +1,35 @@
+---
+title: "try() around a function does not protect its calls"
+ref: FUN-12
+categories: [Functions]
+impact: cryptique
+attendu: "a result for each element, with the error caught for `\"a\"`"
+versions: "All"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege}
+```{r}
+values <- list(1, "a", 3)
+lapply(values, try(log))
+```
+:::
+
+## Why
+
+`try()` evaluates the expression you give it, and only that one. Here, that expression is `log`, the name of the function: evaluating it merely returns the function, with no error. `lapply()` therefore receives a bare `log`, and the call `log("a")` fails with no protection at all.
+
+The loop stops at the first faulty element, while the `try()` seems to promise the opposite.
+
+## The fix
+
+Put `try()` inside an anonymous function, around the call itself.
+
+::: {.piege}
+```{r}
+results <- lapply(values, function(p) {
+  try(log(p), silent = TRUE)
+})
+vapply(results, FUN = inherits, FUN.VALUE = logical(1), what = "try-error")
+```
+:::

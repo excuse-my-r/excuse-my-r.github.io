@@ -1,0 +1,45 @@
+---
+title: "testthat snapshots change with the way the tests are run"
+ref: PKG-02
+categories: [Packages]
+impact: silencieux
+attendu: "an identical snapshot, whichever button is used"
+versions: "All versions of {testthat} 3"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+# In RStudio, the file's "Run Tests" button
+testthat::test_file("tests/testthat/test-display.R")
+
+# Then from the console
+devtools::test()
+```
+
+```text
+── Failure ('test-display.R:3:3'): summary display ──
+Snapshot of code has changed:
+```
+:::
+
+This pitfall depends on the IDE and the test runner, so it cannot be replayed in the browser.
+
+## Why
+
+`expect_snapshot()` records the text output exactly as it is produced. That output depends on settings that differ from one runner to the next: console width, {cli} colours and Unicode characters, language, whether the package is loaded with `load_all()` or not.
+
+A snapshot created with one runner can therefore fail with the other, or worse, be silently rewritten by whoever accepts the changes without reading them.
+
+## The fix
+
+Always create and validate snapshots the same way, with `devtools::test()` or `devtools::check()`, and pin inside the test the settings that change the display.
+
+::: {.piege .piege-statique}
+```r
+test_that("summary display", {
+  local_reproducible_output(width = 80, unicode = FALSE, crayon = FALSE)
+  expect_snapshot(print(summarise_results(data)))
+})
+```
+:::

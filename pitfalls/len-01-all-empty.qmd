@@ -1,0 +1,37 @@
+---
+title: "all() of an empty vector is TRUE"
+ref: LEN-01
+categories: [Empty and NA]
+impact: silencieux
+extrait: 'all(logical(0))'
+reponse: 'TRUE'
+attendu: "`FALSE`, since no grade is above 20"
+versions: "All"
+source: "Slack ThinkR (2023), safer-r"
+---
+
+::: {.piege}
+```{r}
+all(logical(0))
+
+grades <- c(12, 15, 9)
+all(grades[grades > 20] >= 10)
+```
+:::
+
+## Why
+
+It is the mathematical convention: a property holds for every element of an empty set, since no element contradicts it. `any()` follows the opposite convention and returns `FALSE`.
+
+The danger comes from the filter upstream. When `grades[grades > 20]` keeps nothing, the `all(...)` test passes, and the `if` that depends on it runs as if everything were fine. Same thing with `all(c(NA, NA), na.rm = TRUE)`, which is `TRUE`.
+
+## The fix
+
+Check the length before drawing a conclusion.
+
+::: {.piege}
+```{r}
+selection <- grades[grades > 20]
+length(selection) > 0 && all(selection >= 10)
+```
+:::

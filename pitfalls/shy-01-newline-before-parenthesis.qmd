@@ -1,0 +1,44 @@
+---
+title: "A line break before the parenthesis splits the call in two"
+ref: SHY-01
+categories: [Shiny]
+impact: silencieux
+attendu: "`rendered` holds the result of the call"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+compute <- function(expr) {
+  paste("result:", expr)
+}
+
+rendered <- compute
+({
+  1 + 1
+})
+
+class(rendered)
+```
+:::
+
+## Why
+
+R reads one line and stops as soon as the expression is complete. `rendered <- compute` is complete: R assigns the function itself to `rendered`. The next line, `({ 1 + 1 })`, becomes a separate statement, evaluated and then printed.
+
+In Shiny, the mistake looks like `output$chart <- renderPlot` followed on the next line by `({ ... })`. The output receives the `renderPlot` function instead of a render, and the code inside the braces runs once, outside any reactivity. The chart never shows up, and no error points to that line break.
+
+## The fix
+
+Keep the opening parenthesis on the same line as the function name.
+
+::: {.piege}
+```{r}
+rendered <- compute({
+  1 + 1
+})
+
+rendered
+```
+:::

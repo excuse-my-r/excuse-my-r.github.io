@@ -1,0 +1,39 @@
+---
+title: "if_else() always computes both branches, ifelse() does not"
+ref: FLW-03
+categories: [Control flow]
+impact: incoherent
+attendu: "no warning, since the `false` branch is not used"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+x <- c(0, 0)
+if_else(all(x == 0), true = NA_real_, false = max(x[x != 0]))
+ifelse(all(x == 0), yes = NA_real_, no = max(x[x != 0]))
+```
+:::
+
+## Why
+
+`if_else()` is an ordinary function: it receives its `true` and `false` arguments, evaluates them in full, then picks element by element. Here, `max()` of an empty vector is computed even though the condition is true, and its "returning -Inf" warning shows up for a value that will never be used.
+
+Base R's `ifelse()` behaves differently: it only evaluates `no` if the test contains at least one `FALSE`. Both functions give the same result, but not the same warnings or the same errors. If the unused branch calls `stop()`, `if_else()` stops and `ifelse()` does not.
+
+## The fix
+
+For a single condition, `if` evaluates only the chosen branch.
+
+::: {.piege}
+```{r}
+if (all(x == 0)) {
+  NA_real_
+} else {
+  max(x[x != 0])
+}
+```
+:::

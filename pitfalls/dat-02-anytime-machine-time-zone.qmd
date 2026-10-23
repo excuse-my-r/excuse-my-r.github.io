@@ -1,0 +1,42 @@
+---
+title: "anytime() gives a different time depending on the machine"
+ref: DAT-02
+categories: [Dates]
+impact: silencieux
+attendu: "midnight in Paris, on every machine"
+versions: "All versions of {anytime}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(anytime)
+anytime("2022-11-01", tz = "Europe/Paris")
+```
+
+```text
+# workstation set to Europe/Paris
+[1] "2022-11-01 CET"
+
+# server or container set to UTC
+[1] "2022-11-01 01:00:00 CET"
+```
+:::
+
+This pitfall depends on the machine's time zone, so it cannot be replayed in the browser.
+
+## Why
+
+`anytime()` reads the text as a local time, in the system time zone (the `TZ` variable or the OS setting). The `tz` argument only comes into play afterwards, for display. On a workstation set to Paris, the string is read as midnight in Paris. On a Linux server or a Docker container, almost always set to UTC, it is read as midnight UTC, that is 1 a.m. in Paris.
+
+The same script therefore gives different times locally and in production, with no error or warning. The gap looks like a Windows versus Linux difference, but what matters is the system time zone.
+
+## The fix
+
+State the time zone at read time, with a function that uses it to interpret the text.
+
+::: {.piege}
+```{r}
+as.POSIXct("2022-11-01", tz = "Europe/Paris")
+```
+:::

@@ -1,0 +1,43 @@
+---
+title: "Windows line endings make a check fail on Linux"
+ref: ENV-04
+categories: [OS and CI]
+impact: cryptique
+attendu: "the same check as on Windows"
+versions: "All"
+source: "Slack ThinkR (2019, 2021)"
+---
+
+::: {.piege .piege-statique}
+```bash
+git config core.autocrlf false  # on the Windows machine: CRLF files are committed as is
+git push
+# then, in the Linux CI
+Rscript -e 'rcmdcheck::rcmdcheck()'
+```
+
+```text
+input string 1 is invalid in this locale
+```
+:::
+
+This pitfall depends on git, two operating systems and a CI, so it cannot be replayed in the browser.
+
+## Why
+
+Windows ends lines with two characters, carriage return then line feed (`\r\n`), Linux and macOS with a single one (`\n`). Depending on the git configuration, files can reach the repository or the CI with extra `\r` characters.
+
+These invisible characters end up in `DESCRIPTION`, in data files or in the code, and make tools that read the text fail. The original incident ended with an error along the lines of "input string 1 is invalid in this locale", which hints at encoding rather than line endings.
+
+## The fix
+
+Set the line endings in the repository itself, through a `.gitattributes` file, rather than in each machine's configuration.
+
+::: {.piege .piege-statique}
+```text
+# .gitattributes
+* text=auto eol=lf
+*.R text eol=lf
+DESCRIPTION text eol=lf
+```
+:::

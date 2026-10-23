@@ -1,0 +1,43 @@
+---
+title: "A single renv project can pile up several libraries depending on R and the platform"
+ref: RNV-07
+categories: [renv and installation]
+impact: cryptique
+attendu: "a single library, the project's"
+versions: "All versions of {renv}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv/library/
+├── R-4.0/
+│   └── x86_64-w64-mingw32/
+└── R-4.1/
+    └── x86_64-pc-linux-gnu/
+```
+:::
+
+This pitfall depends on several R installations and a Docker container, so it cannot be replayed in the browser.
+
+## Why
+
+{renv} stores the project library in a subfolder specific to the minor R version and the platform. This is by design: a package compiled for R 4.0 on Windows does not work on Linux.
+
+When the same folder is used locally and then in a Docker container mounted as a volume, or after an R upgrade, each environment finds or creates its own library. One has the packages, the other does not, and `library()` fails on one side only, although the lockfile is the same.
+
+## The fix
+
+Exclude `renv/library` from volumes and images, and restore from the lockfile in each environment.
+
+::: {.piege .piege-statique}
+```text
+# .dockerignore
+renv/library
+renv/staging
+```
+
+```bash
+R -e 'renv::restore()'
+```
+:::

@@ -1,0 +1,41 @@
+---
+title: "all() on removed NAs is TRUE"
+ref: LEN-02
+categories: [Empty and NA]
+impact: silencieux
+extrait: 'all(c(NA, NA), na.rm = TRUE)'
+reponse: 'TRUE'
+attendu: "`NA`, since no value is known"
+versions: "All"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+check <- c(NA, NA, NA)
+all(check, na.rm = TRUE)
+any(check, na.rm = TRUE)
+sum(check, na.rm = TRUE)
+mean(check, na.rm = TRUE)
+```
+:::
+
+## Why
+
+`na.rm = TRUE` removes the `NA`s before computing. When there are only `NA`s, nothing is left, and each function returns its value for an empty vector: `TRUE` for `all()`, `FALSE` for `any()`, 0 for `sum()`, `NaN` for `mean()`.
+
+A check that ran on no known data at all thus turns into "everything is compliant". Nothing signals that the column was entirely missing.
+
+## The fix
+
+Handle separately the case where every value is missing.
+
+::: {.piege}
+```{r}
+if (all(is.na(check))) {
+  NA
+} else {
+  all(check, na.rm = TRUE)
+}
+```
+:::

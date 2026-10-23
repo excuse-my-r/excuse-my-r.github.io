@@ -1,0 +1,38 @@
+---
+title: "select(-missing) fails, select(-matches(\"missing\")) stays quiet"
+ref: TDY-05
+categories: [tidyverse]
+impact: incoherent
+attendu: "the same behaviour for a column that does not exist"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+flowers <- head(iris, n = 2)
+select(flowers, -Sepal.Lenght)
+names(select(flowers, -matches("Sepal.Lenght")))
+```
+:::
+
+## Why
+
+A bare name must refer to an existing column: `select()` stops if it cannot find it. Helpers such as `matches()`, `starts_with()` or `contains()` return the set of matching columns, and an empty set is not an error. Removing "nothing" removes nothing.
+
+A typo in a `matches()` thus goes unnoticed: the column you thought you had removed is still there.
+
+## The fix
+
+Say what you mean: `all_of()` when the columns must exist, `any_of()` when they are optional.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+select(flowers, -all_of("Sepal.Lenght"))
+names(select(flowers, -any_of(c("Sepal.Length", "optional_column"))))
+```
+:::

@@ -1,0 +1,39 @@
+---
+title: "unnest() drops the rows whose list is empty"
+ref: TDY-09
+categories: [tidyverse]
+impact: silencieux
+attendu: "customers b and c kept, with NA"
+versions: "All versions of {tidyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+orders <- tibble(
+  customer = c("a", "b", "c"),
+  items = list(1:2, NULL, integer())
+)
+unnest(orders, cols = items)
+```
+:::
+
+## Why
+
+`unnest()` creates one row per element of each list. A `NULL` or zero-length list contains no element: it produces no row, and the customer vanishes from the result. Nothing flags the loss.
+
+Any counts made afterwards (number of customers, share of customers without an order) are then wrong, since the customers without items no longer exist.
+
+## The fix
+
+`keep_empty = TRUE` keeps a row with `NA` for each empty list.
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+unnest(orders, cols = items, keep_empty = TRUE)
+```
+:::

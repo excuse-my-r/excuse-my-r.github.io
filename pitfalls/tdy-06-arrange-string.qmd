@@ -1,0 +1,39 @@
+---
+title: "arrange() with a column name as text sorts nothing"
+ref: TDY-06
+categories: [tidyverse]
+impact: silencieux
+attendu: "the students sorted by grade"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+grades <- data.frame(student = c("Hugo", "Nina", "Paul"), grade = c(12, 8, 15))
+sort_col <- "grade"
+arrange(grades, sort_col)
+arrange(grades, "grade")
+```
+:::
+
+## Why
+
+`arrange()` sorts by the value of the expressions it is given. `sort_col` is not a column: it is a variable holding the string `"grade"`, the same for every row. Sorting by a constant changes nothing, and no error flags it.
+
+The typical case is Shiny: `arrange(data, input$column)` receives the name picked by the user as text, and the displayed table is never sorted.
+
+## The fix
+
+Turn the text into a column with `.data[[ ]]`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+arrange(grades, .data[[sort_col]])
+arrange(grades, desc(.data[[sort_col]]))
+```
+:::

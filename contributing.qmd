@@ -1,0 +1,63 @@
+---
+title: "How to contribute"
+pagetitle: "How to contribute"
+---
+
+A pitfall belongs here when R does something that surprises an experienced user: a plausible but wrong answer, an error that points elsewhere, or two functions that disagree. There are two ways to add one. Both end up as a page in the catalogue, reviewed by the maintainers.
+
+## Report a pitfall in an issue
+
+The quickest way. [Open an issue with the "Propose a pitfall" form](https://github.com/excuse-my-r/excuse-my-r.github.io/issues/new?template=pitfall.yml) and fill in:
+
+- the smallest code that shows the problem, ready to copy and paste into a fresh R session;
+- what R returns, and what you expected instead;
+- the R version, and the package versions if a package is involved;
+- where you met it (a project, a forum thread, a book), if you can say.
+
+A maintainer turns it into a page, in English and in French, and links your issue in the pull request. You can write the issue in English or in French.
+
+## Write the page in a pull request
+
+If you are comfortable with Git and Quarto, you can write the page yourself.
+
+1. Fork [the repository](https://github.com/excuse-my-r/excuse-my-r.github.io) and create a branch.
+2. Copy an existing page of the same kind from `pitfalls/` (English) and rename it `<ref>-<short-slug>.qmd`, with the next free reference in its category (`NUM-14`, `TDY-17`...). A French version in `fr/pieges/` is welcome but not required: the maintainers translate the missing language.
+3. Fill in the front matter and the body, as described below.
+4. Preview the site with `quarto preview` and run every block in the browser, on the oldest and the newest R version of the menu.
+5. Open the pull request. The site is built automatically: a page whose code breaks the build cannot be merged.
+
+### The front matter
+
+```yaml
+title: "What the pitfall does, in one sentence"
+ref: NUM-14
+categories: [Numbers]
+impact: silencieux          # silencieux (silently wrong), cryptique (obscure error) or incoherent (inconsistency)
+extrait: 'round(2.5)'       # one line shown in the catalogue
+reponse: '2'                # what R prints after [1] for that line
+attendu: "`3`"              # what you would expect
+versions: "All"             # or "Since R 4.3.0", "All versions of {dplyr}"...
+source: "Your name or where you found it"
+```
+
+### The body
+
+The page starts with the pitfall block, then a `## Why` section that explains the mechanism, then a `## The fix` section with a second block that shows the right way.
+
+````markdown
+::: {.piege}
+```{{r}}
+round(2.5)
+```
+:::
+````
+
+A block that needs a package declares it, so that the browser installs it: `::: {.piege packages="dplyr"}`. A pitfall that cannot run in a browser (Shiny, renv, CI, operating system) uses `::: {.piege .piege-statique}` with plain fenced code, shown without a console.
+
+## What gets a pitfall accepted
+
+- **It is reproducible.** The code runs in a fresh session, without files, network or randomness that is not seeded, and gives the same output on every machine.
+- **It surprises.** A documented behaviour can be a pitfall, as long as a careful user would get it wrong.
+- **Each block runs on its own.** In the browser, a block replays the blocks above it on the page, never the ones below.
+- **The prose matches the output.** The site runs the code at build time and in the browser: if R answers something else, the page is wrong.
+- **The code follows the house style.** Braces around every `if`, `for` and function body, and named arguments after the first, except where breaking the rule is the pitfall itself.

@@ -1,0 +1,38 @@
+---
+title: "sub() silently turns its input into text"
+ref: FCT-06
+categories: [Factors]
+impact: incoherent
+extrait: 'sub("T", "", T)'
+reponse: '"RUE"'
+attendu: "an error, `T` is not text"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+sub("T", "", T)
+sub("0", "", 100000)
+sub("_.*", "", factor(c("a_1", "b_2")))
+```
+:::
+
+## Why
+
+`sub()` and `gsub()` first apply `as.character()` to whatever they are given, without warning. `TRUE` becomes `"TRUE"`, and the replacement works on that text.
+
+For a number, the spelling R picks is what counts: `100000` is written `"1e+05"`, so removing the first zero gives `"1e+5"`. A factor, for its part, comes out as a character vector.
+
+## The fix
+
+Convert to text yourself, in the format you want, before doing a replacement.
+
+::: {.piege}
+```{r}
+sub("0", "", format(100000, scientific = FALSE))
+x <- factor(c("a_1", "b_2"))
+levels(x) <- sub("_.*", "", levels(x))
+x
+```
+:::

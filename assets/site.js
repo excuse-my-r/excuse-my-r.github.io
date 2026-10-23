@@ -14,6 +14,73 @@ const VERSIONS_R = [
 const CLE_VERSION = "batard-de-r.version";
 const offset = document.querySelector('meta[name="quarto:offset"]')?.content ?? "./";
 
+// Le site existe en anglais (racine) et en français (fr/) ; la langue vient de <html lang>
+const LANGUE = (document.documentElement.lang || "en").startsWith("fr") ? "fr" : "en";
+const RACINE_LANGUE = LANGUE === "fr" ? offset + "fr/" : offset;
+const TEXTES = {
+  en: {
+    verifier: "Run the code",
+    executer: "Run",
+    modifier: "Edit the code",
+    retablir: "Reset",
+    raccourci: "Ctrl + Enter to run",
+    versionR: "R version",
+    codeModifiable: "Editable R code",
+    execution: "Running...",
+    demarrage: v => `Starting R ${v}. The first time, allow a few seconds.`,
+    sansPaquet: (paquets, v) => `This block needs {${paquets.join("}, {")}}, which is no longer available for R ${v} in the browser. Pick R 4.3.0 or a more recent version.`,
+    installation: p => `Installing package {${p}}...`,
+    duree: s => `Ran in ${s.toFixed(1)} s.`,
+    echec: m => `R could not start in this browser (${m}).`,
+    prochaine: v => `R ${v} will load on the next run.`,
+    voisines: "Neighbouring pages",
+    suivant: "Next pitfall",
+    toutCatalogue: "The whole catalogue",
+    impacts: { silencieux: "Silently wrong", cryptique: "Obscure error", incoherent: "Inconsistency" },
+    rechercher: "Search a pitfall",
+    exemple: "ifelse, NA, factor...",
+    categorie: "Category",
+    toutes: "All",
+    gravite: "Severity",
+    effacer: "Clear filters",
+    aucun: "No pitfall matches these filters.",
+    compte: (n, total) => n === total ? `${n} pitfalls` : `${n} ${n > 1 ? "pitfalls" : "pitfall"} out of ${total}`,
+    autreLangue: "Français",
+    autreLangueTitre: "Lire en français"
+  },
+  fr: {
+    verifier: "Exécuter le code",
+    executer: "Exécuter",
+    modifier: "Modifier le code",
+    retablir: "Rétablir",
+    raccourci: "Ctrl + Entrée pour exécuter",
+    versionR: "Version de R",
+    codeModifiable: "Code R modifiable",
+    execution: "Exécution...",
+    demarrage: v => `Démarrage de R ${v}. La première fois, comptez quelques secondes.`,
+    sansPaquet: (paquets, v) => `Ce bloc a besoin de {${paquets.join("}, {")}}, qui n'existe plus pour R ${v} dans le navigateur. Choisissez R 4.3.0 ou une version plus récente.`,
+    installation: p => `Installation du paquet {${p}}...`,
+    duree: s => `Exécuté en ${s.toFixed(1).replace(".", ",")} s.`,
+    echec: m => `R n'a pas pu démarrer dans ce navigateur (${m}).`,
+    prochaine: v => `R ${v} sera chargé à la prochaine exécution.`,
+    voisines: "Fiches voisines",
+    suivant: "Piège suivant",
+    toutCatalogue: "Tout le catalogue",
+    impacts: { silencieux: "Faux en silence", cryptique: "Erreur obscure", incoherent: "Incohérence" },
+    rechercher: "Rechercher un piège",
+    exemple: "ifelse, NA, facteur...",
+    categorie: "Catégorie",
+    toutes: "Toutes",
+    gravite: "Gravité",
+    effacer: "Effacer les filtres",
+    aucun: "Aucun piège ne correspond à ces filtres.",
+    compte: (n, total) => n === total ? `${n} pièges` : `${n} ${n > 1 ? "pièges" : "piège"} sur ${total}`,
+    autreLangue: "English",
+    autreLangueTitre: "Read in English"
+  }
+};
+const T = TEXTES[LANGUE];
+
 // Reproduit la console R : le code est lu ligne par ligne comme au clavier,
 // chaque expression complète est recopiée avec ses invites (lignes marquées
 // par \001), puis évaluée à part, une erreur, même de syntaxe, n'arrêtant pas
@@ -59,18 +126,25 @@ const RUNNER = `
   paste0("Error: ", position[4], " in \\"", extrait, "\\"")
 }
 
+# À la console, dt[, x := ...] ne s'affiche pas ; {data.table} le détecte par la
+# profondeur de pile, que ce runner fausse
+.batard_affectation_dt <- function(e) {
+  is.call(e) && identical(e[[1]], as.name("[")) &&
+    grepl(":=", paste(deparse(e), collapse = " "), fixed = TRUE)
+}
+
 .batard_run <- function(code, prelude = "") {
   options_avant <- options()
   # Avant R 4.2, ces options absentes de options() gardent leur effet si on les remet à NULL
   drapeaux <- c("warnPartialMatchDollar", "warnPartialMatchArgs", "warnPartialMatchAttr")
   drapeaux_avant <- lapply(drapeaux, getOption, default = FALSE)
   on.exit({
-    nouvelles <- setdiff(names(options()), names(options_avant))
-    options(stats::setNames(vector("list", length(nouvelles)), nouvelles))
     options(options_avant)
     options(stats::setNames(drapeaux_avant, drapeaux))
   }, add = TRUE)
-  env <- new.env(parent = globalenv())
+  # Chaque exécution repart d'un environnement global vide, comme au build
+  env <- globalenv()
+  rm(list = grep("^\\\\.batard_", ls(env, all.names = TRUE), value = TRUE, invert = TRUE), envir = env)
   invisible(utils::capture.output({
     for (morceau in .batard_decouper(prelude)) {
       if (!inherits(morceau$exprs, "error")) {
@@ -80,50 +154,85 @@ const RUNNER = `
       }
     }
   }))
+  # L'appel fautif tel que la console l'affiche : rien pour une erreur au niveau
+  # supérieur, le seul nom de fonction pour une erreur {rlang}
+  decrire_appel <- function(condition) {
+    appel <- conditionCall(condition)
+    if (!is.call(appel) || identical(appel, quote(eval(e, envir = env)))) {
+      return(NULL)
+    }
+    if (inherits(condition, "rlang_error") && is.name(appel[[1]])) {
+      return(paste0(as.character(appel[[1]]), "()"))
+    }
+    deparse(appel, nlines = 1L)
+  }
   afficher_erreur <- function(err) {
-    appel <- conditionCall(err)
+    appel <- decrire_appel(err)
     if (is.null(appel)) {
-      cat("Error: ", conditionMessage(err), "\\n", sep = "")
+      cat("Error: ", conditionMessage(err), "\\n", sep = "", file = stderr())
     } else {
-      cat("Error in ", deparse(appel, nlines = 1L), " : ", conditionMessage(err), "\\n", sep = "")
+      cat("Error in ", appel, " : ", conditionMessage(err), "\\n", sep = "", file = stderr())
     }
   }
-  sortie <- utils::capture.output({
+  # Sortie et messages vont dans la même transcription, mais les messages
+  # restent sur leur propre flux : capture.output() ne les voit pas, comme dans R
+  transcription <- character()
+  connexion <- textConnection("transcription", open = "w", local = TRUE)
+  sink(connexion)
+  sink(connexion, type = "message")
+  on.exit({
+    sink(type = "message")
+    sink()
+    close(connexion)
+  }, add = TRUE, after = FALSE)
+  local({
     for (morceau in .batard_decouper(code)) {
       lignes <- morceau$lignes
       invites <- c("> ", rep("+ ", length(lignes) - 1L))
       cat(paste0("\\001", invites, lignes, "\\n"), sep = "")
       if (inherits(morceau$exprs, "error")) {
-        cat(.batard_erreur_syntaxe(morceau$exprs, lignes = lignes), "\\n", sep = "")
+        cat(.batard_erreur_syntaxe(morceau$exprs, lignes = lignes), "\\n", sep = "", file = stderr())
         next
       }
       for (e in morceau$exprs) {
         withCallingHandlers(
           tryCatch({
             v <- withVisible(eval(e, envir = env))
-            if (v$visible) {
+            if (v$visible && !.batard_affectation_dt(e)) {
               print(v$value)
             }
           }, error = afficher_erreur),
           warning = function(w) {
-            appel <- conditionCall(w)
+            appel <- decrire_appel(w)
             if (is.null(appel)) {
-              cat("Warning message:\\n", conditionMessage(w), "\\n", sep = "")
+              cat("Warning message:\\n", conditionMessage(w), "\\n", sep = "", file = stderr())
             } else {
-              cat("Warning message:\\nIn ", deparse(appel, nlines = 1L), " : ", conditionMessage(w), "\\n", sep = "")
+              cat("Warning message:\\nIn ", appel, " : ", conditionMessage(w), "\\n", sep = "", file = stderr())
             }
             invokeRestart("muffleWarning")
           },
+          # webR intercepte les messages avant le flux d'erreur : on les écrit
+          # nous-mêmes dans la transcription, hors de portée de capture.output()
           message = function(m) {
-            cat(conditionMessage(m), sep = "")
+            cat(conditionMessage(m), sep = "", file = connexion)
             invokeRestart("muffleMessage")
           }
         )
       }
     }
-  }, type = "output")
-  paste(sortie, collapse = "\\n")
+  })
+  sink(type = "message")
+  sink()
+  close(connexion)
+  on.exit({
+    options(options_avant)
+    options(stats::setNames(drapeaux_avant, drapeaux))
+  })
+  paste(transcription, collapse = "\\n")
 }
+
+# Guillemets droits, comme dans la sortie du build
+options(useFancyQuotes = FALSE)
 `;
 
 function lireVersion() {
@@ -202,12 +311,12 @@ function el(tag, attrs = {}, texte) {
 function avecInvites(code) {
   let profondeur = 0;
   let ouvert = false;
+  let chaine = null;
   return code.split("\n").flatMap(ligne => {
     if (!ouvert && ligne.trim() === "") {
       return [];
     }
     const invite = ouvert ? "+ " : "> ";
-    let chaine = null;
     let finCode = ligne.length;
     for (let i = 0; i < ligne.length; i++) {
       const c = ligne[i];
@@ -244,11 +353,13 @@ function transcriptBuild(cell) {
       // knitr écrit les erreurs en style moderne ; la console R les affiche « Error in appel : message »
       const texte = enfant.textContent
         .replace(/^\n+|\n+$/g, "")
-        .replace(/^Error in `([\s\S]*?)`:\n! /gm, "Error in $1 : ")
+        .replace(/^Error in `([^`\n]*)`:\n(! )?/gm, "Error in $1 : ")
         .replace(/^Error:\n! /gm, "Error: ")
         .replace(/^Warning in (.*?): /gm, "Warning message:\nIn $1 : ")
         .replace(/^Warning: /gm, "Warning message:\n");
-      segments.push({ type: "sortie", texte });
+      if (texte.trim() !== "") {
+        segments.push({ type: "sortie", texte });
+      }
     }
   }
   return segments;
@@ -351,10 +462,10 @@ function preparerBloc(bloc, index) {
   afficher(segmentsBuild);
 
   const barre = el("div", { class: "piege-barre" });
-  const executer = el("button", { type: "button", class: "bouton" }, hero ? "Vérifier dans votre navigateur" : "Exécuter");
-  const modifier = el("button", { type: "button", class: "bouton bouton-discret" }, "Modifier le code");
-  const retablir = el("button", { type: "button", class: "bouton bouton-discret", hidden: "" }, "Rétablir");
-  const version = el("select", { class: "choix-version", "aria-label": "Version de R" });
+  const executer = el("button", { type: "button", class: "bouton" }, hero ? T.verifier : T.executer);
+  const modifier = el("button", { type: "button", class: "bouton bouton-discret" }, T.modifier);
+  const retablir = el("button", { type: "button", class: "bouton bouton-discret", hidden: "" }, T.retablir);
+  const version = el("select", { class: "choix-version", "aria-label": T.versionR });
   for (const x of VERSIONS_R) {
     version.append(el("option", { value: x.r }, `R ${x.r}`));
   }
@@ -363,7 +474,7 @@ function preparerBloc(bloc, index) {
   const etat = el("span", { class: "piege-etat", role: "status" });
   barre.append(executer, version, modifier, retablir, etat);
   if (!hero) {
-    barre.append(el("span", { class: "piege-raccourci" }, "Ctrl + Entrée pour exécuter"));
+    barre.append(el("span", { class: "piege-raccourci" }, T.raccourci));
   }
 
   let editeur = null;
@@ -386,7 +497,7 @@ function preparerBloc(bloc, index) {
         spellcheck: "false",
         autocapitalize: "off",
         autocomplete: "off",
-        "aria-label": "Code R modifiable",
+        "aria-label": T.codeModifiable,
         id: `piege-editeur-${index}`
       });
       editeur.value = original;
@@ -425,12 +536,12 @@ function preparerBloc(bloc, index) {
     const t0 = performance.now();
     try {
       etat.textContent = moteur && moteur.r === versionChoisie
-        ? "Exécution..."
-        : `Démarrage de R ${versionChoisie}. La première fois, comptez quelques secondes.`;
+        ? T.execution
+        : T.demarrage(versionChoisie);
       const cible = VERSIONS_R.find(x => x.r === versionChoisie);
       const requis = [...new Set([...precedents.flatMap(b => b.paquets), ...paquets])];
       if (requis.length && !cible.paquets) {
-        afficher([{ type: "sortie", texte: `Ce bloc a besoin de {${requis.join("}, {")}}, qui n'existe plus pour R ${cible.r} dans le navigateur. Choisissez R 4.3.0 ou une version plus récente.` }]);
+        afficher([{ type: "sortie", texte: T.sansPaquet(requis, cible.r) }]);
         titrer(`R ${cible.r}`);
         sortie.classList.add("est-navigateur");
         retablir.hidden = false;
@@ -440,12 +551,12 @@ function preparerBloc(bloc, index) {
       const r = await demarrerR();
       for (const p of requis) {
         if (!r.paquets.has(p)) {
-          etat.textContent = `Installation du paquet {${p}}...`;
+          etat.textContent = T.installation(p);
           await r.webR.installPackages([p], { quiet: true });
           r.paquets.add(p);
         }
       }
-      etat.textContent = "Exécution...";
+      etat.textContent = T.execution;
       await r.webR.objs.globalEnv.bind(".batard_code", code());
       await r.webR.objs.globalEnv.bind(".batard_prelude", precedents.map(b => b.code()).join("\n"));
       const texte = await r.webR.evalRString(".batard_run(.batard_code, prelude = .batard_prelude)");
@@ -453,9 +564,9 @@ function preparerBloc(bloc, index) {
       titrer(`R ${r.version}`);
       sortie.classList.add("est-navigateur");
       retablir.hidden = false;
-      etat.textContent = `Exécuté en ${((performance.now() - t0) / 1000).toFixed(1).replace(".", ",")} s.`;
+      etat.textContent = T.duree((performance.now() - t0) / 1000);
     } catch (e) {
-      etat.textContent = `R n'a pas pu démarrer dans ce navigateur (${e.message}).`;
+      etat.textContent = T.echec(e.message);
     } finally {
       executer.disabled = false;
       selecteurs.forEach(s => { s.disabled = false; });
@@ -468,7 +579,7 @@ function preparerBloc(bloc, index) {
     if (sortie.classList.contains("est-navigateur")) {
       lancer();
     } else {
-      etat.textContent = `R ${versionChoisie} sera chargé à la prochaine exécution.`;
+      etat.textContent = T.prochaine(versionChoisie);
     }
   });
   executer.addEventListener("pointerenter", () => { demarrerR(); }, { once: true });
@@ -496,24 +607,25 @@ if (enteteFiche) {
 async function ajouterSuite() {
   try {
     // L'ordre de lecture est celui du catalogue de l'accueil
-    const html = await fetch(offset + "index.html").then(r => r.text());
+    const adresseAccueil = new URL(RACINE_LANGUE + "index.html", location.href);
+    const html = await fetch(adresseAccueil).then(r => r.text());
     const accueil = new DOMParser().parseFromString(html, "text/html");
     const fiches = [...accueil.querySelectorAll(".catalogue-lien")].map(a => ({
-      chemin: a.getAttribute("href").replace(/^\.\//, ""),
+      adresse: new URL(a.getAttribute("href"), adresseAccueil).href,
       titre: a.querySelector(".catalogue-titre")?.textContent ?? ""
     }));
     // Certains hébergeurs servent les pages sans l'extension .html
-    const sansExtension = chemin => chemin.replace(/\.html$/, "");
-    const ici = sansExtension(location.pathname.split("/").slice(-2).join("/"));
-    const position = fiches.findIndex(f => sansExtension(f.chemin) === ici);
+    const sansExtension = adresse => new URL(adresse).pathname.replace(/\.html$/, "");
+    const ici = sansExtension(location.href);
+    const position = fiches.findIndex(f => sansExtension(f.adresse) === ici);
     if (position === -1) {
       return;
     }
     const suivant = fiches[(position + 1) % fiches.length];
-    const nav = el("nav", { class: "suite", "aria-label": "Fiches voisines" });
-    const lien = el("a", { class: "suite-lien", href: offset + suivant.chemin });
-    lien.append(el("span", { class: "suite-label" }, "Piège suivant"), el("span", { class: "suite-titre" }, suivant.titre));
-    const retour = el("a", { class: "suite-retour", href: offset + "index.html#catalogue" }, "Tout le catalogue");
+    const nav = el("nav", { class: "suite", "aria-label": T.voisines });
+    const lien = el("a", { class: "suite-lien", href: suivant.adresse });
+    lien.append(el("span", { class: "suite-label" }, T.suivant), el("span", { class: "suite-titre" }, suivant.titre));
+    const retour = el("a", { class: "suite-retour", href: RACINE_LANGUE + "index.html#catalogue" }, T.toutCatalogue);
     nav.append(lien, retour);
     document.getElementById("quarto-content").append(nav);
   } catch {
@@ -525,11 +637,7 @@ async function ajouterSuite() {
 // Filtres du catalogue
 // ------------------------------------------------------------------
 
-const IMPACTS = [
-  ["silencieux", "Faux en silence"],
-  ["cryptique", "Erreur obscure"],
-  ["incoherent", "Incohérence"]
-];
+const IMPACTS = Object.entries(T.impacts);
 
 function normaliser(s) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -544,8 +652,8 @@ if (liste && zoneFiltres) {
   const etatFiltre = { texte: "", categorie: null, impacts: new Set() };
 
   const recherche = el("div", { class: "recherche" });
-  const champ = el("input", { type: "search", id: "recherche-piege", placeholder: "ifelse, NA, facteur...", autocomplete: "off" });
-  recherche.append(el("label", { for: "recherche-piege" }, "Rechercher un piège"), champ);
+  const champ = el("input", { type: "search", id: "recherche-piege", placeholder: T.exemple, autocomplete: "off" });
+  recherche.append(el("label", { for: "recherche-piege" }, T.rechercher), champ);
 
   function groupe(titre) {
     const g = el("div", { class: "puces", role: "group", "aria-label": titre });
@@ -553,8 +661,8 @@ if (liste && zoneFiltres) {
     return g;
   }
 
-  const groupeCat = groupe("Catégorie");
-  const toutes = el("button", { type: "button", class: "puce", "aria-pressed": "true" }, "Toutes");
+  const groupeCat = groupe(T.categorie);
+  const toutes = el("button", { type: "button", class: "puce", "aria-pressed": "true" }, T.toutes);
   groupeCat.append(toutes);
   const boutonsCat = categories.map(c => {
     const b = el("button", { type: "button", class: "puce", "aria-pressed": "false" }, c);
@@ -563,7 +671,7 @@ if (liste && zoneFiltres) {
     return b;
   });
 
-  const groupeImpact = groupe("Gravité");
+  const groupeImpact = groupe(T.gravite);
   const boutonsImpact = IMPACTS
     .filter(([cle]) => lignes.some(l => l.dataset.impact === cle))
     .map(([cle, libelle]) => {
@@ -575,8 +683,8 @@ if (liste && zoneFiltres) {
 
   const compteur = el("p", { class: "compteur", role: "status" });
   const vide = el("div", { class: "catalogue-vide", hidden: "" });
-  const effacer = el("button", { type: "button", class: "bouton bouton-discret" }, "Effacer les filtres");
-  vide.append(el("p", {}, "Aucun piège ne correspond à ces filtres."), effacer);
+  const effacer = el("button", { type: "button", class: "bouton bouton-discret" }, T.effacer);
+  vide.append(el("p", {}, T.aucun), effacer);
 
   zoneFiltres.append(recherche, groupeCat);
   if (boutonsImpact.length > 1) {
@@ -601,9 +709,7 @@ if (liste && zoneFiltres) {
     liste.querySelectorAll(".catalogue-groupe").forEach(g => {
       g.hidden = !g.querySelector(".catalogue-ligne:not([hidden])");
     });
-    compteur.textContent = n === lignes.length
-      ? `${n} pièges`
-      : `${n} ${n > 1 ? "pièges" : "piège"} sur ${lignes.length}`;
+    compteur.textContent = T.compte(n, lignes.length);
     compteur.hidden = n === 0;
     vide.hidden = n !== 0;
     toutes.setAttribute("aria-pressed", String(!etatFiltre.categorie));
@@ -636,4 +742,61 @@ if (liste && zoneFiltres) {
   });
 
   appliquer();
+}
+
+// ------------------------------------------------------------------
+// Choix de la langue
+// ------------------------------------------------------------------
+
+// Le logo ramène à l'accueil de la langue courante
+document.querySelectorAll(".navbar-brand").forEach(a => { a.href = RACINE_LANGUE + "index.html"; });
+
+// L'onglet « Comment contribuer » existe dans chaque langue
+if (LANGUE === "fr") {
+  document.querySelectorAll('.navbar a.nav-link[href$="contributing.html"]').forEach(a => {
+    a.href = RACINE_LANGUE + "contribuer.html";
+    const texte = a.querySelector(".menu-text") ?? a;
+    texte.textContent = "Comment contribuer";
+    if (location.pathname.endsWith("/contribuer.html") || location.pathname.endsWith("/contribuer")) {
+      a.classList.add("active");
+      a.setAttribute("aria-current", "page");
+    }
+  });
+}
+
+ajouterChoixLangue();
+
+async function ajouterChoixLangue() {
+  const autre = LANGUE === "fr" ? offset : offset + "fr/";
+  const lien = el("a", { class: "choix-langue", href: autre + "index.html", lang: LANGUE === "fr" ? "en" : "fr", hreflang: LANGUE === "fr" ? "en" : "fr", title: T.autreLangueTitre }, T.autreLangue);
+  const zone = document.querySelector(".navbar .quarto-navbar-tools") ?? document.querySelector(".navbar-nav.ms-auto") ?? document.querySelector(".navbar .container-fluid");
+  if (!zone) {
+    return;
+  }
+  zone.prepend(lien);
+  try {
+    localStorage.setItem("excuse-my-r.langue", LANGUE);
+  } catch {
+    // Sans stockage, le choix n'est simplement pas retenu
+  }
+  // Sur une fiche, viser la même fiche dans l'autre langue, retrouvée par sa référence
+  if (/\/(contributing|contribuer)(\.html)?$/.test(location.pathname)) {
+    lien.href = autre + (LANGUE === "fr" ? "contributing.html" : "contribuer.html");
+    return;
+  }
+  const ref = document.querySelector(".fiche-entete")?.dataset.ref;
+  if (!ref) {
+    return;
+  }
+  try {
+    const adresseAutre = new URL(autre + "index.html", location.href);
+    const html = await fetch(adresseAutre).then(r => r.text());
+    const accueil = new DOMParser().parseFromString(html, "text/html");
+    const ligne = accueil.querySelector(`.catalogue-ligne[data-ref="${CSS.escape(ref)}"] .catalogue-lien`);
+    if (ligne) {
+      lien.href = new URL(ligne.getAttribute("href"), adresseAutre).href;
+    }
+  } catch {
+    // Le lien vers l'accueil de l'autre langue reste valable
+  }
 }

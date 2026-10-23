@@ -1,0 +1,39 @@
+---
+title: "sample() on a single value draws from 1:value"
+ref: LEN-11
+categories: [Empty and NA]
+impact: silencieux
+extrait: 'length(sample(c(12)))'
+reponse: '12'
+attendu: "`1`, there is only one value to shuffle"
+versions: "All"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c(3, 8, 12)
+set.seed(42)
+sample(x[x > 5])
+set.seed(42)
+sample(x[x > 10])
+```
+:::
+
+## Why
+
+`sample()` has two behaviours. Given a vector of several elements, it shuffles those elements. Given a single number `n`, it takes it as a size and draws from `1:n`.
+
+As long as the filter keeps several values, all is well. The day it keeps only one, here 12, `sample()` returns a permutation of the integers from 1 to 12, which have nothing to do with the data.
+
+## The fix
+
+Draw positions with `sample.int()`, then index the vector.
+
+::: {.piege}
+```{r}
+selection <- x[x > 10]
+set.seed(42)
+selection[sample.int(length(selection))]
+```
+:::

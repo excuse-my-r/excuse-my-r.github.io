@@ -1,0 +1,37 @@
+---
+title: "Numbers stored as text compare like words"
+ref: FCT-04
+categories: [Factors]
+impact: silencieux
+extrait: 'max(c("10", "9"))'
+reponse: '"9"'
+attendu: "`\"10\"`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+max(c("10", "9"))
+sort(c("10", "9", "100"))
+"10" < "9"
+```
+:::
+
+## Why
+
+On text, `max()`, `sort()` and `<` follow alphabetical order, character by character. `"10"` starts with `"1"`, which comes before `"9"`: so it is "smaller". The length of the string only matters in case of a tie.
+
+Such text often comes from reading a file where a single non-numeric cell turned the whole column into characters.
+
+## The fix
+
+Convert to numbers before comparing or sorting, and check for `NA`s produced by the conversion.
+
+::: {.piege}
+```{r}
+values <- as.numeric(c("10", "9", "100"))
+max(values)
+sort(values)
+```
+:::

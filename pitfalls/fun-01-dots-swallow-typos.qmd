@@ -1,0 +1,34 @@
+---
+title: "... swallows typos"
+ref: FUN-01
+categories: [Functions]
+impact: silencieux
+extrait: 'sum(1, 2, na.rn = TRUE)'
+reponse: '4'
+attendu: "`3`, or an error about the misspelled argument"
+versions: "All"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+sum(1, 2, na.rm = TRUE)
+sum(1, 2, na.rn = TRUE)
+paste(c("a", "b"), colapse = "+")
+```
+:::
+
+## Why
+
+`sum()` and `paste()` accept any number of values through `...`. An argument whose name is not recognised is not rejected: it joins the data. `na.rn = TRUE` becomes the value `TRUE`, that is 1, added to the sum. `colapse = "+"` becomes one more string to paste.
+
+## The fix
+
+Double-check argument names, and in your own functions, reject anything unexpected in `...`, for instance with `rlang::check_dots_empty()`.
+
+::: {.piege}
+```{r}
+sum(c(1, 2, NA), na.rm = TRUE)
+paste(c("a", "b"), collapse = "+")
+```
+:::

@@ -1,0 +1,38 @@
+---
+title: "plot() draws but returns NULL"
+ref: SHY-02
+categories: [Shiny]
+impact: incoherent
+extrait: 'is.null(plot(1:3))'
+reponse: 'TRUE'
+attendu: "a plot object to store and display again, as with {ggplot2}"
+versions: "All"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+chart <- plot(1:10)
+chart
+```
+:::
+
+## Why
+
+Base graphics are a side effect: `plot()` draws on the open graphics device and invisibly returns `NULL`. There is nothing to store.
+
+With {ggplot2}, `p <- ggplot(...)` creates an object you print later. The habit does not carry over: in Shiny, a `reactive()` that "holds" a `plot()` holds nothing but `NULL`, and a `renderPlot()` that returns that object displays nothing.
+
+## The fix
+
+Store the recipe for the plot in a function, and call it where the plot must be drawn, for instance inside `renderPlot()`.
+
+::: {.piege}
+```{r}
+draw <- function() {
+  plot(1:10)
+}
+
+draw()
+```
+:::

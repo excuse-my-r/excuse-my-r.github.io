@@ -1,0 +1,37 @@
+---
+title: "With duplicated names, only the first element is affected"
+ref: IDX-03
+categories: [Indexing]
+impact: silencieux
+extrait: 'c(a = 1, a = 2)[["a"]]'
+reponse: '1'
+attendu: "both elements named a, or an error about the ambiguous name"
+versions: "All"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+foo <- c("a" = 1, "a" = 1)
+foo["a"] <- 2
+foo
+```
+:::
+
+## Why
+
+R does not forbid two elements with the same name. When you index by name, it looks for the first match and stops there. Reading returns the first element, assignment modifies only the first one, without warning.
+
+Such duplicates arise easily: `c()` of two named vectors, `unlist()` of a list, or a join done by hand.
+
+## The fix
+
+Compare the names to target every element, and spot duplicates early.
+
+::: {.piege}
+```{r}
+foo[names(foo) == "a"] <- 3
+foo
+anyDuplicated(names(foo))
+```
+:::

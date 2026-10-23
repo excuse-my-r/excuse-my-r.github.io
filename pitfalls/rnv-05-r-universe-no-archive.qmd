@@ -1,0 +1,44 @@
+---
+title: "An r-universe package in the lockfile can vanish without an archive"
+ref: RNV-05
+categories: [renv and installation]
+impact: silencieux
+attendu: "the recorded version, reinstallable at any time"
+versions: "All"
+source: "Slack ThinkR (2022, 2023)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv.lock:
+  "mypackage": {
+    "Package": "mypackage",
+    "Version": "0.3.1",
+    "Source": "Repository",
+    "Repository": "https://myorg.r-universe.dev"
+  }
+```
+
+```r
+renv::restore()
+```
+:::
+
+This pitfall depends on a remote repository that changes over time, so it cannot be replayed in the browser.
+
+## Why
+
+An r-universe repository is rebuilt from the default branch of the git repositories. It only serves the latest version of each package, with no archive folder like CRAN's. As soon as `0.3.2` is published, `0.3.1` can no longer be downloaded from r-universe.
+
+Yet the lockfile still points to that version. `restore()` cannot find it any more, although nothing has changed in the project.
+
+## The fix
+
+Record non-CRAN packages by their git source and commit, which {renv} knows how to retrieve, rather than by an r-universe repository.
+
+::: {.piege .piege-statique}
+```r
+renv::install("myorg/mypackage@v0.3.1")
+renv::snapshot()
+```
+:::

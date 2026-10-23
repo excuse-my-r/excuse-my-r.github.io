@@ -1,0 +1,43 @@
+---
+title: "here::set_here() does not change here() in the current session"
+ref: PKG-05
+categories: [Packages]
+impact: incoherent
+attendu: "`here()` points straight away to the marked folder"
+versions: "All versions of {here}"
+source: "Slack ThinkR (2022, 2023)"
+---
+
+::: {.piege packages="here"}
+```{r}
+project <- file.path(tempfile(), "project")
+dir.create(file.path(project, "analyses"), recursive = TRUE)
+writeLines("1 + 1", con = file.path(project, "analyses", "script.R"))
+
+old <- setwd(file.path(project, "analyses"))
+suppressPackageStartupMessages(library(here))
+basename(here())
+
+suppressMessages(set_here(path = project))
+file.exists(file.path(project, ".here"))
+basename(here())
+setwd(old)
+```
+:::
+
+## Why
+
+{here} looks for the root only once, when the package is loaded, and keeps it in memory. `set_here()` does create the `.here` file, but does not rerun the search: its message actually asks you to start a new session. Until then, `here()` keeps returning the old root.
+
+## The fix
+
+Declare where the script lives with `here::i_am()`, which sets the root immediately and checks that the file really exists at that location.
+
+::: {.piege packages="here"}
+```{r}
+old <- setwd(file.path(project, "analyses"))
+suppressMessages(here::i_am("analyses/script.R"))
+basename(here::here())
+setwd(old)
+```
+:::

@@ -96,8 +96,8 @@ code {
 h1.accueil-titre {
   font-size: clamp(var(--t-3), 4.2vw, var(--t-5));
   font-weight: 750;
-  max-width: 18ch;
-  margin: 2.25rem 0 1rem;
+  max-width: 22ch;
+  margin: 1.5rem 0 1rem;
   letter-spacing: -0.025em;
 }
 
@@ -105,7 +105,7 @@ h1.accueil-titre {
   font-size: var(--t-2);
   line-height: 1.5;
   color: var(--encre-douce);
-  max-width: 46ch;
+  max-width: 62ch;
   margin: 0;
 }
 
@@ -304,13 +304,16 @@ h1.accueil-titre {
 }
 .impact-silencieux { color: var(--framboise); }
 .impact-silencieux::before { background: var(--framboise); border-radius: 50%; }
-.impact-silencieux::after { content: "Faux en silence"; }
+.impact-silencieux::after { content: "Silently wrong"; }
+:lang(fr) .impact-silencieux::after { content: "Faux en silence"; }
 .impact-cryptique { color: var(--ambre); }
 .impact-cryptique::before { background: var(--ambre); transform: rotate(45deg) scale(0.85); }
-.impact-cryptique::after { content: "Erreur obscure"; }
+.impact-cryptique::after { content: "Obscure error"; }
+:lang(fr) .impact-cryptique::after { content: "Erreur obscure"; }
 .impact-incoherent { color: var(--ardoise); }
 .impact-incoherent::before { border: 2px solid var(--ardoise); border-radius: 50%; }
-.impact-incoherent::after { content: "Incohérence"; }
+.impact-incoherent::after { content: "Inconsistency"; }
+:lang(fr) .impact-incoherent::after { content: "Incohérence"; }
 
 /* ---------------------------------------------------------------- */
 /* Fiche                                                             */
@@ -703,3 +706,18 @@ h1.accueil-titre {
   border: 1px solid var(--trait);
   border-radius: 10px;
 }
+
+/* Textes globaux (pied de page) écrits dans les deux langues */
+:lang(fr) .seulement-en,
+:lang(en) .seulement-fr { display: none; }
+
+/* Choix de la langue dans la barre de navigation */
+.choix-langue {
+  font: 600 0.85rem/1 var(--sans);
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--trait);
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+.choix-langue:hover { border-color: currentColor; }

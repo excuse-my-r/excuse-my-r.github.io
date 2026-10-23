@@ -1,0 +1,35 @@
+---
+title: "as.numeric() on a factor returns the codes"
+ref: FCT-01
+categories: [Factors]
+impact: silencieux
+extrait: 'as.numeric(factor("2024"))'
+reponse: '1'
+attendu: "`2024 2026 2024`"
+versions: "All, more common before R 4.0 when read.csv() created factors"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+year <- factor(c("2024", "2026", "2024"))
+as.numeric(year)
+```
+:::
+
+## Why
+
+A factor is an integer vector paired with a table of levels. `as.numeric()` reads the integers, that is the position of each value among the sorted levels, not the text you see printed.
+
+Before R 4.0, `read.csv()` turned text columns into factors by default. A badly read column of years would then yield "years" 1, 2 and 1, plausible enough inside a model.
+
+## The fix
+
+Go back through the text, or index the levels.
+
+::: {.piege}
+```{r}
+as.numeric(as.character(year))
+as.numeric(levels(year))[year]
+```
+:::

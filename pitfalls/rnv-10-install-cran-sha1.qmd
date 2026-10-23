@@ -1,0 +1,40 @@
+---
+title: "remotes::install_cran(lib = ) can skip the requested installation"
+ref: RNV-10
+categories: [renv and installation]
+impact: silencieux
+attendu: "the package installed in the library given by `lib`"
+versions: "All versions of {remotes}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+remotes::install_cran("glue", lib = "ci/lib")
+```
+
+```text
+Skipping install of 'glue' from a cran remote, the SHA1 (1.8.0) has not changed since last install.
+  Use `force = TRUE` to force installation
+```
+:::
+
+This pitfall depends on several libraries and the network, so it cannot be replayed in the browser.
+
+## Why
+
+Before installing, {remotes} compares the available version (for CRAN, the "SHA1" is the version number) with the one already installed. But it looks for the installed package in every library of `.libPaths()`, not only in `lib`.
+
+If `glue` is already present elsewhere, for instance in the system library, the installation is skipped. The `ci/lib` folder stays empty, and the script that expected to find the package there fails further on, or uses another version.
+
+## The fix
+
+Force the installation when the target library matters, or restrict `.libPaths()` to that library for the duration of the installation.
+
+::: {.piege .piege-statique}
+```r
+remotes::install_cran("glue", lib = "ci/lib", force = TRUE)
+
+withr::with_libpaths(new = "ci/lib", code = remotes::install_cran("glue"))
+```
+:::

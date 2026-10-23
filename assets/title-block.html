@@ -1,14 +1,14 @@
 $if(ref)$
-<header id="title-block-header" class="fiche-entete">
-  <p class="fil"><a href="../index.html#catalogue">Catalogue</a><span aria-hidden="true"> / </span>$for(categories)$$categories$$sep$, $endfor$</p>
+<header id="title-block-header" class="fiche-entete" data-ref="$ref$">
+  <p class="fil"><a href="../index.html#catalogue">$libelles.catalogue$</a><span aria-hidden="true"> / </span>$for(categories)$$categories$$sep$, $endfor$</p>
   <h1 class="title">$title$</h1>
   <dl class="fiche-meta">
-    <div><dt>Gravité</dt><dd><span class="impact impact-$impact$"></span></dd></div>
-    <div><dt>Référence</dt><dd>$ref$</dd></div>
-    $if(versions)$<div><dt>Versions concernées</dt><dd>$versions$</dd></div>$endif$
-    $if(source)$<div><dt>Repéré par</dt><dd>$source$</dd></div>$endif$
+    <div><dt>$libelles.gravite$</dt><dd><span class="impact impact-$impact$"></span></dd></div>
+    <div><dt>$libelles.reference$</dt><dd>$ref$</dd></div>
+    $if(versions)$<div><dt>$libelles.versions$</dt><dd>$versions$</dd></div>$endif$
+    $if(source)$<div><dt>$libelles.source$</dt><dd>$source$</dd></div>$endif$
   </dl>
-  $if(attendu)$<p class="attendu"><span class="attendu-label">On s'attend à</span> $attendu$</p>$endif$
+  $if(attendu)$<p class="attendu"><span class="attendu-label">$libelles.attendu$</span> $attendu$</p>$endif$
 </header>
 $elseif(accueil)$
 $else$

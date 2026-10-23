@@ -1,0 +1,39 @@
+---
+title: "NA contaminates calculations, except when it does not"
+ref: LEN-07
+categories: [Empty and NA]
+impact: incoherent
+extrait: 'NA^0'
+reponse: '1'
+attendu: "`NA`, like any calculation that touches an `NA`"
+versions: "All"
+source: "The R Inferno, General R knowledge"
+---
+
+::: {.piege}
+```{r}
+NA == NA
+NA * 0
+NA^0
+NA || TRUE
+NA & FALSE
+```
+:::
+
+## Why
+
+`NA` means "unknown value". R returns `NA` when the result depends on that value, and a real result when it does not. Whatever the unknown number, its power 0 is 1, `unknown OR true` is true, and `unknown AND false` is false.
+
+Conversely, `NA * 0` stays `NA`, because the unknown could be `Inf`, and `Inf * 0` is not 0. And `NA == NA` is `NA`: two unknowns are not necessarily equal. The rule is logical, but it means an `NA` can vanish from a calculation without leaving a trace.
+
+## The fix
+
+Test for missing values explicitly with `is.na()`, rather than relying on their propagation.
+
+::: {.piege}
+```{r}
+x <- c(3, NA, 5)
+x == NA
+is.na(x)
+```
+:::

@@ -1,0 +1,38 @@
+---
+title: "x[NA] returns as many NAs as x has elements"
+ref: LEN-08
+categories: [Empty and NA]
+impact: silencieux
+extrait: '(1:5)[NA]'
+reponse: 'NA NA NA NA NA'
+attendu: "a single `NA`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- 1:5
+x[NA]
+x[NA_integer_]
+
+grades <- c(5, 3, NA, 8)
+grades[grades > 4]
+```
+:::
+
+## Why
+
+A bare `NA` is a logical. A logical index is recycled over the whole length of the vector: `x[NA]` amounts to `x[c(NA, NA, NA, NA, NA)]`, and each unknown position yields an `NA`. `NA_integer_`, on the other hand, is a numeric index: a single position, unknown, hence a single `NA`.
+
+The same mechanism is at work in every logical filter. When the condition is `NA` for a row, R does not know whether to keep it and returns an `NA` in its place. The result then contains a ghost value that does not exist in the data.
+
+## The fix
+
+Go through `which()`, which only keeps the positions where the condition is true.
+
+::: {.piege}
+```{r}
+grades[which(grades > 4)]
+```
+:::

@@ -1,0 +1,34 @@
+---
+title: "merge() sorts the rows and renames duplicated columns"
+ref: DF-03
+categories: [Data frames and lists]
+impact: incoherent
+attendu: "the orders in their original order, 3, 1, 2"
+versions: "All"
+source: "Slack ThinkR (2020), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+orders <- data.frame(id = c(3, 1, 2), status = c("delivered", "cancelled", "in progress"))
+customers <- data.frame(id = c(2, 3, 1), status = c("business", "individual", "business"))
+merge(orders, y = customers, by = "id")
+```
+:::
+
+## Why
+
+By default, `merge()` sorts the result by the key (`sort = TRUE`). The original row order is lost, which breaks any code that assumes row 1 of the result matches row 1 of `orders`.
+
+Columns present on both sides that are not used as the key are both kept, with the suffixes `.x` and `.y`. Code that used `status` no longer finds the column. Even with `sort = FALSE`, the help page states that the row order is not guaranteed.
+
+## The fix
+
+Pick meaningful suffixes, and restore the order you want explicitly.
+
+::: {.piege}
+```{r}
+res <- merge(orders, y = customers, by = "id", suffixes = c("_order", "_customer"))
+res[order(match(res$id, table = orders$id)), ]
+```
+:::

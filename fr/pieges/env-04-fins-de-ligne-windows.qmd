@@ -10,7 +10,7 @@ source: "Slack ThinkR (2019, 2021)"
 
 ::: {.piege .piege-statique}
 ```bash
-git config core.autocrlf true   # sur le poste Windows
+git config core.autocrlf false  # sur le poste Windows : les fichiers CRLF partent tels quels
 git push
 # puis, dans la CI Linux
 Rscript -e 'rcmdcheck::rcmdcheck()'

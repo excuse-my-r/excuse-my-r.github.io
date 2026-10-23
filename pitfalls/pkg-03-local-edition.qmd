@@ -1,0 +1,42 @@
+---
+title: "local_edition() long accepted any number at all"
+ref: PKG-03
+categories: [Packages]
+impact: incoherent
+attendu: "an error, since only editions 2 and 3 exist"
+versions: "Accepted up to {testthat} 3.2.3, an error since {testthat} 3.3.0"
+source: "Slack ThinkR (2022), {testthat} 3.3.0 NEWS"
+---
+
+::: {.piege packages="testthat"}
+```{r}
+suppressPackageStartupMessages(library(testthat))
+
+packageVersion("testthat")
+local_edition(2.7)
+edition_get()
+```
+:::
+
+With {testthat} 3.3.0 or later, `local_edition(2.7)` is rejected. With an older version, the call goes through and `edition_get()` returns 2.7.
+
+## Why
+
+Up to {testthat} 3.2.3, `local_edition()` only checked that its argument was a single number. `local_edition(rnorm(1))` or `local_edition(2.7)` went through without an error, and `edition_get()` returned that number. Internal functions then compare the edition with `>= 3`: 2.7 behaved like edition 2, 42 like edition 3, without any signal.
+
+{testthat} 3.3.0 now requires a whole number between 2 and 3.
+
+## The fix
+
+Set the edition in the package's `DESCRIPTION` file, and only use `local_edition()` with 2 or 3, inside a specific test.
+
+::: {.piege packages="testthat"}
+```{r}
+suppressPackageStartupMessages(library(testthat))
+
+local_edition(3)
+edition_get()
+```
+:::
+
+In `DESCRIPTION`: `Config/testthat/edition: 3`.

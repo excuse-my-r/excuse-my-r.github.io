@@ -1,0 +1,42 @@
+---
+title: "Reading and rewriting a file in a pipe empties it"
+ref: PIP-05
+categories: [Pipes]
+impact: silencieux
+extrait: 'readLines(f) |> gsub(...) |> write(file = f)'
+reponse: '""'
+attendu: "`\"something\"`"
+versions: "All"
+source: "Slack ThinkR (2025)"
+---
+
+::: {.piege}
+```{r}
+f <- tempfile()
+write("temp", file = f)
+
+readLines(f) |>
+  gsub(pattern = "temp", replacement = "something", x = _) |>
+  write(file = f)
+
+readLines(f)
+```
+:::
+
+## Why
+
+The pipe does not read the file before writing it: it builds the call `write(gsub(..., readLines(f)), file = f)`. Because of lazy evaluation, `write()` starts by opening its destination file, which empties it, and only evaluates its first argument when it is time to write. `readLines()` then reads a file that is already empty.
+
+## The fix
+
+Force the read before the write, by going through a variable.
+
+::: {.piege}
+```{r}
+write("temp", file = f)
+content <- readLines(f)
+content <- gsub(pattern = "temp", replacement = "something", x = content)
+write(content, file = f)
+readLines(f)
+```
+:::

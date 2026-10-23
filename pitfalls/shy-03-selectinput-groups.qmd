@@ -1,0 +1,54 @@
+---
+title: "selectInput() flattens a group with a single choice"
+ref: SHY-03
+categories: [Shiny]
+impact: silencieux
+attendu: 'a "Vegetables" group that contains "leek"'
+versions: "All versions of {shiny}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+options_of <- function(input) {
+  html <- as.character(input)
+  regmatches(html, m = gregexpr("<(optgroup|option)[^>]*>[^<\n]*", text = html))[[1]]
+}
+
+options_of(selectInput(
+  "choice", label = "Choice",
+  choices = list(Fruits = c("apple", "pear"), Vegetables = c("leek"))
+))
+
+options_of(selectInput(
+  "choice", label = "Choice",
+  choices = list(Fruits = c(Apple = "apple"), Vegetables = c(Apple = "apple"))
+))
+```
+:::
+
+## Why
+
+In `choices`, a named element of length 1 whose value carries no name of its own is read as a plain choice, its name serving as the label. So `Vegetables = c("leek")` does not create a group: it creates an option displayed as "Vegetables" whose value is `"leek"`. The group only appears with two elements or more, or when the element is a list or a named vector.
+
+A second pitfall: two options from different groups can carry the same value. `input$choice` is then `"apple"` in both cases, and the server cannot tell which one was picked.
+
+## The fix
+
+Write each group as a list, and give every option a unique value.
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+options_of(selectInput(
+  "choice", label = "Choice",
+  choices = list(
+    Fruits = list(Apple = "fruit_apple", Pear = "fruit_pear"),
+    Vegetables = list(Leek = "vegetable_leek")
+  )
+))
+```
+:::

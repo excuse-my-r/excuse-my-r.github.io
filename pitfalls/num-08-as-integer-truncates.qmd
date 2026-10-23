@@ -1,0 +1,35 @@
+---
+title: "as.integer() truncates instead of rounding"
+ref: NUM-08
+categories: [Numbers]
+impact: silencieux
+extrait: 'as.integer(0.29 * 100)'
+reponse: '28'
+attendu: "`29`"
+versions: "All"
+source: "General R knowledge, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+as.integer(2.9999)
+as.integer(-2.9)
+as.integer(0.29 * 100)
+```
+:::
+
+## Why
+
+`as.integer()` drops the decimal part, towards zero: 2.9999 becomes 2 and -2.9 becomes -2. That is not rounding.
+
+Combined with binary representation, the result becomes plainly wrong. `0.29 * 100` prints as `29`, but is actually 28.999999999999996: truncation gives 28. A percentage converted to an integer thus loses one unit without a word.
+
+## The fix
+
+Round first, convert second.
+
+::: {.piege}
+```{r}
+as.integer(round(0.29 * 100))
+```
+:::

@@ -13,5 +13,6 @@
 .env*
 !.env.example
 /.wrangler/
-pieges/*_cache/
-pieges/*.html
+**/*_cache/
+fr/pieges/*.html
+pitfalls/*.html

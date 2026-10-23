@@ -1,0 +1,33 @@
+---
+title: "shinyapps.io rejects an app name that contains a dot"
+ref: SHY-07
+categories: [Shiny]
+impact: cryptique
+attendu: "an app published under the name `my.app`"
+versions: "All versions of {rsconnect}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+rsconnect::deployApp(appDir = ".", appName = "my.app")
+```
+:::
+
+This pitfall depends on a shinyapps.io account and the network, so it cannot be replayed in the browser.
+
+## Why
+
+A shinyapps.io app name may only contain letters, digits, hyphens and underscores. The dot, common in R package and folder names, is not allowed.
+
+The rejection only comes at deployment time, once the app bundle has been prepared, with a message about the name rather than the code. The pitfall keeps coming back when the name is built automatically from the package or folder name.
+
+## The fix
+
+Give an explicit, compliant name, without a dot, independent of the folder name.
+
+::: {.piege .piege-statique}
+```r
+rsconnect::deployApp(appDir = ".", appName = "my-app")
+```
+:::

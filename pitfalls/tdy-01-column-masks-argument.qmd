@@ -1,0 +1,44 @@
+---
+title: "A column masks the argument of the same name"
+ref: TDY-01
+categories: [tidyverse]
+impact: silencieux
+extrait: 'nrow(filter(df, species == species))'
+reponse: '3'
+attendu: "a single row, the dog's"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2023, 2026)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+animals <- data.frame(species = c("cat", "dog", "cat"))
+keep <- function(df, species) {
+  filter(df, species == species)
+}
+keep(animals, species = "dog")
+```
+:::
+
+## Why
+
+In `filter()`, names are looked up first among the columns of the table, and only then in the function's environment. Both `species` therefore refer to the column, compared with itself: every row passes the filter.
+
+The trap often shows up after the fact, when someone adds to the table a column that has the same name as an argument.
+
+## The fix
+
+Say explicitly where each name comes from: `.data` for columns, `.env` for variables.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+keep <- function(df, species) {
+  filter(df, .data$species == .env$species)
+}
+keep(animals, species = "dog")
+```
+:::

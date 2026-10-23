@@ -1,0 +1,38 @@
+---
+title: "length() of a data frame counts the columns"
+ref: IDX-05
+categories: [Indexing]
+impact: incoherent
+extrait: 'length(iris)'
+reponse: '5'
+attendu: "`150`, the number of rows"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+length(iris)
+nrow(iris)
+nrow(1:10)
+NROW(1:10)
+```
+:::
+
+## Why
+
+A data frame is a list of columns. `length()` counts the elements of that list, hence the columns, not the rows.
+
+Conversely, `nrow()` only reads the dimension attribute. A vector has none, hence `NULL`. `NROW()` and `NCOL()`, in capitals, treat a vector as a single column.
+
+## The fix
+
+Say what you are counting: `nrow()` for rows, `ncol()` for columns, and `NROW()` when the object may be a vector or a table.
+
+::: {.piege}
+```{r}
+nrow(iris)
+ncol(iris)
+NROW(1:10)
+```
+:::

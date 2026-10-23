@@ -1,0 +1,39 @@
+---
+title: "select() applies its selections in order"
+ref: TDY-03
+categories: [tidyverse]
+impact: incoherent
+attendu: "the columns without Species, then Species alone"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2022, 2026)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+flowers <- head(iris, n = 2)
+names(select(flowers, -Species, everything()))
+names(select(flowers, !starts_with("Petal") | !starts_with("Sepal")))
+```
+:::
+
+## Why
+
+`select()` reads its arguments from left to right. When the first one is an exclusion, it starts from all the columns and removes `Species`, then `everything()` adds back whatever is missing, that is `Species`. The order of the arguments changes the result.
+
+The operators follow set logic: `|` is a union. "Everything but Petal" union "everything but Sepal" contains every column, since each one escapes at least one of the two exclusions. Along the way, the columns get reordered.
+
+## The fix
+
+Put the exclusion last, and write "neither one nor the other" with `&`, or by excluding a single set.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+names(select(flowers, everything(), -Species))
+names(select(flowers, !starts_with("Petal") & !starts_with("Sepal")))
+names(select(flowers, !c(starts_with("Petal"), starts_with("Sepal"))))
+```
+:::

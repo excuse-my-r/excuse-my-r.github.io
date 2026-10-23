@@ -1,0 +1,42 @@
+---
+title: "devtools::test() passes while the check fails"
+ref: PKG-01
+categories: [Packages]
+impact: cryptique
+attendu: "the same tests, the same result"
+versions: "All"
+source: "Slack ThinkR (2020, 2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+devtools::test()
+# [ FAIL 0 | WARN 0 | SKIP 0 | PASS 42 ]
+
+devtools::check()
+# checking tests ... ERROR
+```
+:::
+
+This pitfall depends on a complete package, its library and `R CMD check`, so it cannot be replayed in the browser.
+
+## Why
+
+`devtools::test()` loads the package from its sources with `load_all()`, inside your session: every internal function is visible, `system.file()` is redirected to `inst/`, your environment variables and options are there, and so are the packages you have installed.
+
+`check()` first builds the package, installs it into a temporary library, then runs the tests in a fresh R process. A `Suggests` package missing from the machine, a file excluded by `.Rbuildignore`, a file read from outside `inst/`, or a variable defined in your `.Renviron` is enough to make the tests fail there and only there.
+
+## The fix
+
+Make the tests independent of the session: skip cleanly whatever depends on an optional package or a secret, and only read files installed with the package.
+
+::: {.piege .piege-statique}
+```r
+test_that("Excel export works", {
+  skip_if_not_installed("openxlsx")
+  skip_if(Sys.getenv("API_TOKEN") == "", message = "no token")
+  path <- testthat::test_path("fixtures", "input.csv")
+  expect_true(file.exists(path))
+})
+```
+:::

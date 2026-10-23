@@ -1,0 +1,8 @@
+lang: fr
+libelles:
+  catalogue: "Catalogue"
+  gravite: "Gravité"
+  reference: "Référence"
+  versions: "Versions concernées"
+  source: "Repéré par"
+  attendu: "On s'attend à"

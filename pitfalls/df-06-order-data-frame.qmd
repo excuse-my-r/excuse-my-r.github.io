@@ -1,0 +1,36 @@
+---
+title: "order() refuses to sort a whole data.frame"
+ref: DF-06
+categories: [Data frames and lists]
+impact: cryptique
+extrait: 'order(data.frame(x = 2:1))'
+attendu: "the rows sorted by name, then by n"
+versions: "Error since R 4.3.0, a mere warning before"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege}
+```{r}
+tab <- data.frame(name = c("b", "a", "b"), n = c(2, 3, 1))
+tab[order(tab), ]
+```
+:::
+
+Pick **R 4.1.3** in the menu: you get a mere warning, and a result that makes no sense.
+
+## Why
+
+`order()` sorts vectors, passed to it one at a time: `order(x, y)` sorts by `x`, then breaks ties by `y`. A data.frame is not a vector. To rank it, `order()` calls `xtfrm()`, whose data.frame method stops with `cannot xtfrm data frames`. The message does not say what to do instead.
+
+Before R 4.3.0, the same method only emitted a warning and ranked all the values of the table laid end to end. You got more indices than rows, and `NA` rows in the result.
+
+## The fix
+
+Pass the columns to `order()` one by one, by hand or with `do.call()`. `unname()` prevents a column named like an argument of `order()` (`decreasing`, `method`) from being taken for it.
+
+::: {.piege}
+```{r}
+tab[order(tab$name, tab$n), ]
+tab[do.call(order, unname(tab)), ]
+```
+:::

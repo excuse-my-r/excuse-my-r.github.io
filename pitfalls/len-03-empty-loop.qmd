@@ -1,0 +1,37 @@
+---
+title: "for (i in 1:length(x)) runs even when x is empty"
+ref: LEN-03
+categories: [Empty and NA]
+impact: silencieux
+extrait: '1:length(c())'
+reponse: '1 0'
+attendu: "nothing, the loop should not run"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c()
+for (i in 1:length(x)) {
+  print(i)
+}
+```
+:::
+
+## Why
+
+`length(x)` is 0, and `1:0` is not an empty sequence: it is the vector `c(1, 0)`, counting down from 1 to 0. The loop therefore runs twice, with indices that do not exist in `x`.
+
+## The fix
+
+`seq_along()` and `seq_len()` return an empty sequence when they should.
+
+::: {.piege}
+```{r}
+for (i in seq_along(x)) {
+  print(i)
+}
+seq_len(0)
+```
+:::

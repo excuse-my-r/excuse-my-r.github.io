@@ -1,0 +1,36 @@
+---
+title: "A decimal comma gives NA"
+ref: NUM-11
+categories: [Numbers]
+impact: silencieux
+extrait: 'as.numeric("1,5")'
+reponse: 'NA'
+attendu: "`1.5`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+price <- c("1,5", "2", "3,25")
+as.numeric(price)
+mean(as.numeric(price), na.rm = TRUE)
+```
+:::
+
+## Why
+
+R only accepts the dot as decimal separator, whatever the system language. A string containing a comma is not a number to R: it becomes `NA`, with a mere warning.
+
+Whole values, on the other hand, go through. The result therefore looks plausible: here the "mean" is 2, computed on the only value without a comma.
+
+## The fix
+
+Replace the comma before converting, or read the file with `read.csv2()`, which expects the decimal comma used in France and much of Europe.
+
+::: {.piege}
+```{r}
+as.numeric(sub(",", ".", x = price, fixed = TRUE))
+read.csv2(text = "price\n1,5\n2\n3,25")
+```
+:::

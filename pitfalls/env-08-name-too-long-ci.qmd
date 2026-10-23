@@ -1,0 +1,34 @@
+---
+title: "In CI, a file name that is too long can produce an error about line endings"
+ref: ENV-08
+categories: [OS and CI]
+impact: cryptique
+attendu: "an error that names the file that is too long"
+versions: "All, especially on Windows"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```text
+tests/testthat/_snaps/function_that_builds_a_full_report_with_charts/full_report_for_facility_number_one.html
+```
+:::
+
+This pitfall depends on the file system and the CI tools, so it cannot be replayed in the browser.
+
+## Why
+
+Systems and tools put limits on the length of a path: 260 characters by default on Windows, 100 bytes for the classic tar format used by `R CMD build`, to which you must add the length of the CI working directory, often deep.
+
+When the limit is reached, the tool that fails writes the message, and it does not always give the real reason. In the original incident, the error mentioned line endings, which sent the search in the wrong direction.
+
+## The fix
+
+Keep the names of test, snapshot and data files short, and check path lengths before pushing.
+
+::: {.piege}
+```{r}
+path <- "tests/testthat/_snaps/function_that_builds_a_full_report_with_charts/full_report_for_facility_number_one.html"
+nchar(path, type = "bytes")
+```
+:::

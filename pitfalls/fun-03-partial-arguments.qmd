@@ -1,0 +1,45 @@
+---
+title: "An abbreviated argument works until the day it becomes ambiguous"
+ref: FUN-03
+categories: [Functions]
+impact: incoherent
+extrait: 'seq(1, 10, len = 3)'
+reponse: ' 1.0  5.5 10.0'
+attendu: "an error, `len` is not an argument of `seq()`"
+versions: "All"
+source: "The R Inferno, General R knowledge"
+---
+
+::: {.piege}
+```{r}
+seq(1, 10, len = 3)
+
+repeat_value <- function(x, number = 1) {
+  rep(x, times = number)
+}
+repeat_value("a", num = 3)
+
+repeat_value <- function(x, number = 1, numeric = FALSE) {
+  rep(x, times = number)
+}
+repeat_value("a", num = 3)
+```
+:::
+
+## Why
+
+When an argument name matches no argument exactly, R looks for an argument that starts with that name. `len` thus becomes `length.out`, and `num` becomes `number`, without any message.
+
+The day the function gains an argument with the same beginning, here `numeric`, the abbreviation points to two arguments at once and the call fails. The calling code, though, has not changed.
+
+## The fix
+
+Write argument names in full, and ask R to flag every abbreviation.
+
+::: {.piege}
+```{r}
+options(warnPartialMatchArgs = TRUE)
+seq(1, 10, len = 3)
+seq(1, 10, length.out = 3)
+```
+:::

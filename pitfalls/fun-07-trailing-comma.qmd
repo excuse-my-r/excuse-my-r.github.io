@@ -1,0 +1,35 @@
+---
+title: "An extra comma gives an incomprehensible error"
+ref: FUN-07
+categories: [Functions]
+impact: cryptique
+extrait: 'c(1, 2, )'
+attendu: "the trailing comma to be ignored, or an error that points to it"
+versions: "All"
+source: "Slack ThinkR (2022, 2024)"
+---
+
+::: {.piege}
+```{r}
+c(1, 2, )
+paste("a", "b", )
+which(1, TRUE, TRUE, )
+```
+:::
+
+## Why
+
+To R, a trailing comma is not a syntax error: it opens one more argument, left empty. Each function then reacts in its own way to that missing argument.
+
+`c()` reports that "argument 3 is empty", `paste()` that an argument is missing, with no default. `which()`, which has no `...`, receives one argument too many and answers `unused argument (alist())`. None of these messages mentions a comma.
+
+## The fix
+
+Remove the trailing comma, especially after deleting or commenting out the last line of a call written over several lines.
+
+::: {.piege}
+```{r}
+c(1, 2)
+paste("a", "b")
+```
+:::

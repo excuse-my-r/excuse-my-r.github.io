@@ -1,0 +1,40 @@
+---
+title: "max() of an empty vector is -Inf"
+ref: NUM-13
+categories: [Numbers]
+impact: cryptique
+extrait: 'max(numeric(0))'
+reponse: '-Inf'
+attendu: "`NA`, or an error"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+grades <- c(12, 15, 9)
+max(grades[grades > 20])
+min(grades[grades > 20])
+```
+:::
+
+## Why
+
+The maximum of an empty set does not exist. R chooses to return the identity element of the maximum, `-Inf`, and `Inf` for the minimum, with a warning.
+
+The case comes up after a filter that keeps nothing. `-Inf` is a valid number: it flows into the next calculations, shows up in a results table or blows up the scale of a chart, far from the cause.
+
+## The fix
+
+Check the length before computing, and decide yourself which value to return.
+
+::: {.piege}
+```{r}
+selection <- grades[grades > 20]
+if (length(selection) > 0) {
+  max(selection)
+} else {
+  NA_real_
+}
+```
+:::

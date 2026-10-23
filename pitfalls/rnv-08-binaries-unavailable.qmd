@@ -1,0 +1,39 @@
+---
+title: "Without a binary, the installation compiles and fails on a system library"
+ref: RNV-08
+categories: [renv and installation]
+impact: cryptique
+attendu: "the package installed, as on a colleague's machine"
+versions: "All, especially on Linux and with old package versions"
+source: "Slack ThinkR (2021, 2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+renv::restore()
+```
+:::
+
+This pitfall depends on the operating system, the installed system libraries and the network, so it cannot be replayed in the browser.
+
+## Why
+
+CRAN only provides binaries for Windows and macOS, and only for recent package versions. On Linux, or for an old version frozen in a lockfile, R downloads the sources and compiles. Some packages then need system libraries (`libxml2`, `libcurl`, `gdal`...) along with their development files.
+
+If they are missing, the compilation fails. The useful message, something like "configuration failed" or a header file that cannot be found, is buried in a long compilation log. The same lockfile works on a machine that already has those libraries.
+
+## The fix
+
+Use a repository that serves Linux binaries (Posit Package Manager), and list the system dependencies to install.
+
+::: {.piege .piege-statique}
+```r
+options(repos = c(CRAN = "https://p3m.dev/cran/__linux__/noble/latest"))
+renv::restore()
+```
+
+```bash
+# for a given package, the list of system dependencies
+Rscript -e 'pak::pkg_sysreqs("xml2")'
+```
+:::

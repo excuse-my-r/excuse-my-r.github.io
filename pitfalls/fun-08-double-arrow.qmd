@@ -1,0 +1,42 @@
+---
+title: "<<- creates a global variable when it finds nothing to modify"
+ref: FUN-08
+categories: [Functions]
+impact: silencieux
+attendu: "a variable local to the function, or an error"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+count_values <- function(x) {
+  n_values <<- length(x)
+  n_values
+}
+exists("n_values")
+count_values(1:3)
+exists("n_values")
+n_values
+```
+:::
+
+## Why
+
+`<<-` does not create the variable inside the function: it walks up the parent environments looking for a variable with that name, in order to modify it. If it finds none, it creates it in the global environment.
+
+The function then leaves a trace in the workspace. Worse, if a variable `n_values` already existed, it is overwritten without warning.
+
+## The fix
+
+Return the value and assign it at the call site. Keep `<<-` for closures, where the variable already exists in the enclosing function.
+
+::: {.piege}
+```{r}
+count_values <- function(x) {
+  length(x)
+}
+n <- count_values(1:3)
+n
+```
+:::

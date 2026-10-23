@@ -1,0 +1,36 @@
+---
+title: "Moving or renaming a renv project can break its library"
+ref: RNV-06
+categories: [renv and installation]
+impact: cryptique
+attendu: "the same project, with the same packages, in its new location"
+versions: "All versions of {renv}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```bash
+mv ~/projects/analysis ~/projects/analysis-2021
+cd ~/projects/analysis-2021
+Rscript -e 'library(dplyr)'
+```
+:::
+
+This pitfall depends on the file system and the {renv} cache, so it cannot be replayed in the browser.
+
+## Why
+
+The library of a {renv} project does not really contain the packages: they are links to the global {renv} cache. Depending on the system and on how the folder is moved (copy, archive, file sync, another drive), those links can be lost or point to nothing.
+
+When the library is stored outside the project (the `RENV_PATHS_LIBRARY_ROOT` variable), its location also depends on the project's name and path: after a rename, {renv} looks for another library, an empty one. Either way, the errors talk about packages that cannot be found, not about the move.
+
+## The fix
+
+Do not rely on the library after a move: rebuild it from the lockfile, which is all it takes to describe the project.
+
+::: {.piege .piege-statique}
+```r
+renv::restore()
+renv::status()
+```
+:::

@@ -1,0 +1,43 @@
+---
+title: "renv::snapshot() can downgrade the R version in the lockfile"
+ref: RNV-03
+categories: [renv and installation]
+impact: silencieux
+attendu: "the R version of the session, 4.5.1"
+versions: "Observed with {renv} 1.2.x"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```r
+R.version.string
+renv::snapshot()
+```
+
+```text
+[1] "R version 4.5.1 (2025-06-13)"
+
+The version of R recorded in the lockfile will be updated:
+- R             [4.5.1 -> 4.4.2]
+```
+:::
+
+This pitfall depends on the settings of a {renv} project, so it cannot be replayed in the browser.
+
+## Why
+
+{renv} lets you set, in the project settings, the R version to record in the lockfile (`renv::settings$r.version()`). When that setting exists, `snapshot()` writes it instead of the version actually in use. Here the session runs R 4.5.1, but the lockfile goes back to 4.4.2, the value forgotten in the settings.
+
+The message is shown, but in the middle of the list of updated packages, where nobody reads it.
+
+## The fix
+
+Check that setting, and clear it if it is not intended, before taking a snapshot.
+
+::: {.piege .piege-statique}
+```r
+renv::settings$r.version()
+renv::settings$r.version(NULL)
+renv::snapshot()
+```
+:::

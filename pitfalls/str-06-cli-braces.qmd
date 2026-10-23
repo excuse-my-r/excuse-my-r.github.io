@@ -1,0 +1,39 @@
+---
+title: "{cli} evaluates everything between braces"
+ref: STR-06
+categories: [Strings]
+impact: cryptique
+attendu: "the message `Please install {packacode}` as is"
+versions: "All versions of {cli}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="cli"}
+```{r}
+suppressPackageStartupMessages(library(cli))
+
+cli_alert_danger("Please install {packacode}")
+cli_text("Expected format: {\"a\": 1}")
+```
+:::
+
+## Why
+
+{cli} functions interpret their text the way {glue} does: whatever sits between braces is R code, evaluated when the message is displayed. `{packacode}` looks for a variable `packacode`, which does not exist. A JSON example between braces becomes the expression `"a": 1`, a sequence from `"a"` to `1`, which fails with "NA/NaN argument".
+
+The pitfall mostly strikes error messages: the code meant to report a problem fails itself, with an unrelated message.
+
+## The fix
+
+Double the braces to display them, or pass the text through a variable.
+
+::: {.piege packages="cli"}
+```{r}
+suppressPackageStartupMessages(library(cli))
+
+cli_alert_danger("Please install {{packacode}}")
+
+pkg <- "packacode"
+cli_alert_danger("Please install {.pkg {pkg}}")
+```
+:::

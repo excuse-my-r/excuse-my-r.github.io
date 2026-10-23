@@ -1,0 +1,38 @@
+---
+title: "A factor keeps its levels after filtering"
+ref: FCT-03
+categories: [Factors]
+impact: incoherent
+extrait: 'nlevels(factor(c("a", "b"))[1])'
+reponse: '2'
+attendu: "`1`, only the value a is left"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+f <- factor(c("a", "b"))[1]
+f
+levels(f)
+table(f)
+```
+:::
+
+## Why
+
+Extracting part of a factor leaves its table of levels untouched. Level `b` no longer has any value, but it is still declared.
+
+It then shows up wherever levels matter: a cell at 0 in `table()`, an empty bar in a plot, a category with no observation in a model, or an empty group in `split()`.
+
+## The fix
+
+Drop unused levels with `droplevels()` after filtering.
+
+::: {.piege}
+```{r}
+f <- droplevels(f)
+levels(f)
+table(f)
+```
+:::

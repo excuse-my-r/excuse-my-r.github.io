@@ -1,0 +1,36 @@
+---
+title: "ifelse() turns dates into numbers"
+ref: FLW-01
+categories: [Control flow]
+impact: silencieux
+extrait: 'ifelse(TRUE, as.Date("2026-10-22"), NA)'
+reponse: '20748'
+attendu: "the date `2026-10-22`"
+versions: "All"
+source: "Slack ThinkR (2022), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+ifelse(TRUE, as.Date("2026-10-22"), as.Date("2026-01-01"))
+```
+:::
+
+## Why
+
+`ifelse()` builds its result from the test, not from the values it returns. So it inherits the attributes of the test (none here) and loses those of the branches, including the `Date` class. What is left is the number of days since 1 January 1970. Factors suffer the same fate and become their integer codes.
+
+## The fix
+
+For a single condition, `if` is enough. For a vector, `dplyr::if_else()` and `data.table::fifelse()` keep the type and check that both branches are compatible.
+
+::: {.piege packages="dplyr"}
+```{r}
+if (TRUE) {
+  as.Date("2026-10-22")
+} else {
+  as.Date("2026-01-01")
+}
+dplyr::if_else(TRUE, true = as.Date("2026-10-22"), false = as.Date("2026-01-01"))
+```
+:::

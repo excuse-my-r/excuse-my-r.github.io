@@ -1,0 +1,41 @@
+---
+title: "all.equal() never returns FALSE"
+ref: NUM-05
+categories: [Numbers]
+impact: cryptique
+extrait: 'all.equal(1, 1.1)'
+reponse: '"Mean relative difference: 0.1"'
+attendu: "`FALSE`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+all.equal(1, 1.1)
+if (all.equal(1, 1.1)) {
+  "equal"
+}
+```
+:::
+
+## Why
+
+`all.equal()` is meant to describe differences, not to answer yes or no. When the objects are equal within tolerance, it returns `TRUE`. Otherwise, it returns a string that explains the gap.
+
+`if` does not know what to do with a character string and stops on an error that says nothing at all about comparison. The code therefore only crashes on the day the values differ, which is precisely when the test was supposed to do its job.
+
+## The fix
+
+Wrap the call in `isTRUE()`, which turns anything that is not exactly `TRUE` into `FALSE`.
+
+::: {.piege}
+```{r}
+isTRUE(all.equal(1, 1.1))
+if (isTRUE(all.equal(1, 1.1))) {
+  "equal"
+} else {
+  "different"
+}
+```
+:::

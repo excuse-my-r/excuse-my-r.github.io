@@ -1,0 +1,51 @@
+---
+title: "renv::install() ignores the repository written in the lockfile"
+ref: RNV-01
+categories: [renv and installation]
+impact: silencieux
+attendu: "packages taken from the dated repository of the lockfile"
+versions: "Observed with {renv} 1.2.4"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv.lock:
+  "R": {
+    "Version": "4.6.1",
+    "Repositories": [
+      { "Name": "CRAN", "URL": "https://p3m.dev/cran/2026-09-01" }
+    ]
+  }
+
+> getOption("repos")
+                       CRAN
+"https://cran.rstudio.com"
+```
+
+```r
+renv::install("xfun")
+renv::snapshot()
+```
+:::
+
+This pitfall depends on a {renv} project, remote repositories and the network, so it cannot be replayed in the browser.
+
+## Why
+
+The repository recorded in the lockfile is not the one `renv::install()` uses: it takes `getOption("repos")`. When the project loads, {renv} normally replaces that option with the lockfile repositories, unless it is redefined elsewhere, for instance in an `Rprofile.site`, a `.Rprofile` or an option set by hand.
+
+The package is then installed from current CRAN, not from the dated snapshot. At the next `snapshot()`, the lockfile records the active repository: the dated address disappears from the file, and with it the reproducibility it guaranteed.
+
+## The fix
+
+Check `getOption("repos")` before installing, and do not redefine the repositories in a {renv} project unless you mean to.
+
+::: {.piege .piege-statique}
+```r
+getOption("repos")
+options(repos = c(CRAN = "https://p3m.dev/cran/2026-09-01"))
+renv::install("xfun")
+renv::snapshot()
+```
+:::

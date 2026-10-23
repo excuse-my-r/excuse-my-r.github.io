@@ -1,0 +1,41 @@
+---
+title: ".data[[ ]] only works in facet_grid() when wrapped in vars()"
+ref: TDY-13
+categories: [tidyverse]
+impact: cryptique
+attendu: "one panel per number of cylinders"
+versions: "All versions of {ggplot2}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="ggplot2"}
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+
+variable <- "cyl"
+p <- ggplot(mtcars, mapping = aes(x = mpg, y = wt)) +
+  geom_point() +
+  facet_grid(rows = .data[[variable]])
+```
+:::
+
+## Why
+
+In `aes()`, `.data` is the pronoun that refers to the data table. But `facet_grid()` and `facet_wrap()` evaluate their arguments right away, when you write the plot, outside of any table: `.data` has nothing to refer to yet, hence the error. The message talks about a "data mask", a notion you should not need to know to write a plot.
+
+The formula form, `facet_grid(.data[[variable]] ~ .)`, does not fail, but the variable loses its name there: {ggplot2} stores it as `<unknown>`, which shows up for instance with `labeller = label_both`.
+
+## The fix
+
+`vars()` delays evaluation, like `aes()`, until the data is available. The variable then keeps its name.
+
+::: {.piege packages="ggplot2"}
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+
+p <- ggplot(mtcars, mapping = aes(x = mpg, y = wt)) +
+  geom_point() +
+  facet_grid(rows = vars(.data[[variable]]))
+ggplot_build(p)$layout$layout[, c("PANEL", "cyl")]
+```
+:::

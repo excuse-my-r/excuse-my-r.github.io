@@ -1,0 +1,41 @@
+---
+title: "is.null() does not detect empty vectors"
+ref: LEN-05
+categories: [Empty and NA]
+impact: incoherent
+extrait: 'is.null(integer(0))'
+reponse: 'FALSE'
+attendu: "`TRUE`, the result is empty"
+versions: "All"
+source: "Slack ThinkR (2021, 2022)"
+---
+
+::: {.piege}
+```{r}
+found <- which(c(FALSE, FALSE))
+found
+is.null(found)
+
+nothing <- unlist(list())
+nothing
+is.null(nothing)
+length(nothing)
+```
+:::
+
+## Why
+
+`NULL` is an object of its own: the absence of an object. `integer(0)`, `character(0)` or `list()` are real, typed vectors that happen to have zero elements. `is.null()` only recognises the former.
+
+Depending on the function, an empty result comes in one form or the other: `which()` returns `integer(0)`, `unlist(list())` and `c()` return `NULL`. An `is.null()` test therefore lets half of the empty cases through. The only thing they share: `length()` is 0 in both.
+
+## The fix
+
+Test the length, which covers `NULL` as well as empty vectors.
+
+::: {.piege}
+```{r}
+length(found) == 0
+length(nothing) == 0
+```
+:::

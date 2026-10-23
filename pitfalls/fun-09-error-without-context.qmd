@@ -1,0 +1,46 @@
+---
+title: "An error message does not say where the call came from"
+ref: FUN-09
+categories: [Functions]
+impact: cryptique
+attendu: "an error that mentions `fun2()` and the value received"
+versions: "All"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+fun1 <- function(x) {
+  if (x == 0) {
+    bob
+  } else {
+    x
+  }
+}
+fun2 <- function(x) {
+  fun1(x)
+}
+fun2(0)
+```
+:::
+
+## Why
+
+The error message only cites the call where the error happened, here `fun1()`. You know neither that `fun2()` was the caller, nor which value of `x` triggered the problem.
+
+In an interactive console, `traceback()` lets you recover the call stack. In a script run as a scheduled task, or in a loop over hundreds of items, that message is often all that is left.
+
+## The fix
+
+Add context where you know it, by catching the error and raising it again with a complete message.
+
+::: {.piege}
+```{r}
+fun2 <- function(x) {
+  tryCatch(fun1(x), error = function(e) {
+    stop("fun2() failed for x = ", x, ": ", conditionMessage(e), call. = FALSE)
+  })
+}
+fun2(0)
+```
+:::

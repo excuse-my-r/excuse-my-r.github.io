@@ -1,0 +1,38 @@
+---
+title: "Inside double quotes, the shell replaces the $ of an R call"
+ref: ENV-01
+categories: [OS and CI]
+impact: cryptique
+attendu: "the path of the {renv} cache"
+versions: "All, in bash, zsh and CI shells"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```bash
+Rscript -e "renv::paths$cache()"
+```
+
+```text
+Error: attempt to apply non-function
+Execution halted
+```
+:::
+
+This pitfall depends on the shell that launches R, so it cannot be replayed in the browser.
+
+## Why
+
+Inside double quotes, the shell replaces `$cache` with the value of the `cache` environment variable, usually empty. R therefore receives `renv::paths()`. But `renv::paths` is not a function, it is a list of functions: calling it fails, with a message that says nothing about the vanished `$`.
+
+The same pitfall hits `df$column`, `x$y` or a regular expression ending in `$` in a CI script.
+
+## The fix
+
+Put the R code inside single quotes, which the shell leaves alone, and keep double quotes for use inside the R code.
+
+::: {.piege .piege-statique}
+```bash
+Rscript -e 'renv::paths$cache()'
+```
+:::

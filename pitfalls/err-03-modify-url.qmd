@@ -1,0 +1,37 @@
+---
+title: "httr::modify_url() replaces the path instead of extending it"
+ref: ERR-03
+categories: [Errors and files]
+impact: incoherent
+extrait: 'modify_url("https://api.fr/v1/", path = "users")'
+reponse: '"https://api.fr/users"'
+attendu: "`\"https://api.fr/v1/users\"`"
+versions: "All versions of {httr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="httr"}
+```{r}
+suppressPackageStartupMessages(library(httr))
+
+base <- "https://api.example.com/v1/"
+modify_url(base, path = "users")
+```
+:::
+
+## Why
+
+`modify_url()` splits the address into pieces (scheme, host, path, query), replaces the ones you give it, then glues everything back together. So the `path` argument replaces the whole path, and the `v1/` of the base address disappears. The request goes to a different address, which may well exist and answer something else.
+
+## The fix
+
+Build the full path from the one in the base address. With {httr2}, `req_url_path_append()` does exactly that.
+
+::: {.piege packages="httr"}
+```{r}
+suppressPackageStartupMessages(library(httr))
+
+full_path <- paste0(parse_url(base)$path, "users")
+modify_url(base, path = full_path)
+```
+:::

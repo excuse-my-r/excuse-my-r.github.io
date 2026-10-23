@@ -1,0 +1,57 @@
+---
+title: "A {gt} table changes its identifier on every render"
+ref: ERR-04
+categories: [Errors and files]
+impact: incoherent
+attendu: "the same HTML for the same table"
+versions: "All versions of {gt}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(gt)
+tab <- data.frame(x = 1)
+html_1 <- as.character(as_raw_html(gt(tab), inline_css = FALSE))
+html_2 <- as.character(as_raw_html(gt(tab), inline_css = FALSE))
+identical(html_1, y = html_2)
+regmatches(html_1, m = regexpr('id="[^"]*"', text = html_1))
+regmatches(html_2, m = regexpr('id="[^"]*"', text = html_2))
+```
+
+```text
+[1] FALSE
+[1] "id=\"fsqsscaaxf\""
+[1] "id=\"eyncbpbvfg\""
+```
+:::
+
+This pitfall depends on the {gt} package, so it cannot be replayed in the browser.
+
+## Why
+
+To keep a table's styling from leaking onto the other tables of the page, {gt} wraps each table in a block carrying an identifier, and prefixes all its CSS rules with that identifier. When you do not supply one, it draws one at random, at render time.
+
+So two renders of the same table differ. A snapshot test fails on every run, and a report versioned in git changes on every build. On top of that, the draw advances the random number generator: the numbers drawn later in the script are no longer the same.
+
+## The fix
+
+Give a fixed identifier with the `id` argument. Failing that, `withr::with_seed()` freezes the draw without touching the generator of the rest of the script.
+
+::: {.piege .piege-statique}
+```r
+html_1 <- as.character(as_raw_html(gt(tab, id = "sales"), inline_css = FALSE))
+html_2 <- as.character(as_raw_html(gt(tab, id = "sales"), inline_css = FALSE))
+identical(html_1, y = html_2)
+
+render_table <- function() {
+  withr::with_seed(seed = 1, code = as.character(as_raw_html(gt(tab), inline_css = FALSE)))
+}
+identical(render_table(), y = render_table())
+```
+
+```text
+[1] TRUE
+[1] TRUE
+```
+:::

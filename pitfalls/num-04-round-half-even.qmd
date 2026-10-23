@@ -1,0 +1,41 @@
+---
+title: "round() does not round the way you learned at school"
+ref: NUM-04
+categories: [Numbers]
+impact: silencieux
+extrait: 'round(2.5)'
+reponse: '2'
+attendu: "`1`, `2`, `3`, then `0.2`"
+versions: "All, the algorithm changed in R 4.0.0"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+round(0.5)
+round(1.5)
+round(2.5)
+round(0.15, digits = 1)
+```
+:::
+
+## Why
+
+R follows the IEC 60559 standard: when a number falls exactly halfway, it is rounded to the even digit. This is "banker's rounding", which keeps sums from drifting upwards. Hence `round(0.5)` gives 0 and `round(2.5)` gives 2.
+
+For `0.15`, binary representation comes on top: the stored number is not exactly 0.15, and R rounds what it actually holds in memory.
+
+## The fix
+
+If the business rule requires commercial rounding (halfway goes up), write it explicitly, with a small margin to absorb the binary error.
+
+::: {.piege}
+```{r}
+round_half_up <- function(x, digits = 0) {
+  scale <- 10^digits
+  sign(x) * floor(abs(x) * scale + 0.5 + sqrt(.Machine$double.eps)) / scale
+}
+round_half_up(c(0.5, 1.5, 2.5))
+round_half_up(0.15, digits = 1)
+```
+:::

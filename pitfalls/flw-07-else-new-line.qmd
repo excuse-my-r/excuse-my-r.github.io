@@ -1,0 +1,45 @@
+---
+title: "An else at the start of a line is a syntax error"
+ref: FLW-07
+categories: [Control flow]
+impact: cryptique
+attendu: "`\"negative\"`, as in any other language"
+versions: "All"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+x <- -5
+if (x > 0) {
+  "positive"
+}
+else {
+  "negative"
+}
+```
+:::
+
+Run this block: R prints "Error: unexpected 'else' in "else"", then evaluates `"negative"` as a standalone statement and prints it, then complains about the final `}` with "unexpected '}'". The right result does appear, buried between two errors.
+
+## Why
+
+At the console, and in a script run line by line, R evaluates a statement as soon as it is complete. After the `}` on the fourth line, `if (x > 0) { "positive" }` is a complete statement, with no `else`. The next line starts with `else`, which cannot start a statement: syntax error.
+
+The same code runs fine inside a function or any other block between braces, because R only ends the statement at the block's closing brace. Code copied from a function to the console therefore breaks for no apparent reason.
+
+## The fix
+
+Always write `} else {` on the same line.
+
+::: {.piege}
+```{r}
+x <- -5
+if (x > 0) {
+  "positive"
+} else {
+  "negative"
+}
+```
+:::

@@ -1,0 +1,35 @@
+---
+title: "Round numbers turn into 1e+05 in text"
+ref: NUM-10
+categories: [Numbers]
+impact: silencieux
+extrait: 'paste0("id_", 100000)'
+reponse: '"id_1e+05"'
+attendu: "`\"id_100000\"`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+as.character(100000)
+paste0("id_", c(99999, 100000, 100001))
+```
+:::
+
+## Why
+
+To convert a double to text, R picks the shortest form. `100000` takes 6 characters, `1e+05` takes 5: scientific notation wins. `100001` has no shorter form and stays as is.
+
+Only "round" numbers are affected, which makes the pitfall rare and therefore hard to spot. Identifiers, codes or file names built with `paste0()` break a join for a handful of rows only.
+
+## The fix
+
+Format the number explicitly before pasting it.
+
+::: {.piege}
+```{r}
+paste0("id_", format(c(99999, 100000, 100001), scientific = FALSE, trim = TRUE))
+sprintf("id_%.0f", c(99999, 100000, 100001))
+```
+:::

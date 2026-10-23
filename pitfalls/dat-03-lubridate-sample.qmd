@@ -1,0 +1,41 @@
+---
+title: "{lubridate} picks the format from a sample of the data"
+ref: DAT-03
+categories: [Dates]
+impact: silencieux
+attendu: "3 April in both cases"
+versions: "Observed with {lubridate} 1.9.5"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+dates <- rep("03/04/2026", times = 99)
+dates[4] <- "13/04/2026"
+parse_date_time(dates, orders = c("mdy", "dmy"))[1]
+
+dates <- c(dates, "03/04/2026")
+parse_date_time(dates, orders = c("mdy", "dmy"))[1]
+```
+:::
+
+## Why
+
+When several formats are possible, `parse_date_time()` tries them on the data and keeps the one that parses the most. To save time, this trial only covers the whole vector if it has fewer than 100 elements. Beyond that, {lubridate} only tests the elements sitting at a prime-numbered position (2, 3, 5, 7, 11...).
+
+With 99 dates, the `"13/04/2026"` in fourth position is part of the trial: only the day/month format can read it, so it wins, and `03/04` becomes 3 April. With one more date, position 4 is no longer tested, both formats tie, the first one in the list wins, and the same 99 dates become 4 March. Adding one row changed the meaning of all the others, without a single warning.
+
+## The fix
+
+Do not let it guess: give the exact format when you know it, with the dedicated function.
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+dmy(dates)[1]
+parse_date_time(dates, orders = "dmy")[1]
+```
+:::

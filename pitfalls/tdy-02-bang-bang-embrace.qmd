@@ -1,0 +1,49 @@
+---
+title: "!! evaluates the argument where {{ }} passes it on as is"
+ref: TDY-02
+categories: [tidyverse]
+impact: silencieux
+attendu: "`2`, the mean of column x"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+mean_of <- function(df, col) {
+  summarise(df, m = mean(!!col))
+}
+x <- 100
+measures <- data.frame(x = 1:3)
+mean_of(measures, x)
+```
+:::
+
+## Why
+
+`!!col` injects the **value** of `col`. To get it, R evaluates the argument where the function was called, as for any argument. The `x` of the call then refers to the global variable `x`, which is 100, and not to the column. Without a variable `x` in the environment, you would get an `object 'x' not found` error, which is easier to spot.
+
+`{{ col }}` does something else: it captures the expression `x` without evaluating it, together with its environment, and passes it on to `summarise()`, which looks it up first among the columns. That is almost always what you want from a column argument.
+
+## The fix
+
+Use `{{ }}` to pass an argument on, and keep `!!` for expressions that are already captured, such as the result of `enquo()`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+mean_of <- function(df, col) {
+  summarise(df, m = mean({{ col }}))
+}
+mean_of(measures, x)
+
+mean_of_enquo <- function(df, col) {
+  col <- enquo(col)
+  summarise(df, m = mean(!!col))
+}
+mean_of_enquo(measures, x)
+```
+:::

@@ -1,0 +1,44 @@
+name: Propose a pitfall
+description: Report an R behaviour that surprises experienced users (English or French).
+title: "Pitfall: "
+labels: ["pitfall"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. You can write in English or in French (vous pouvez écrire en français).
+        A maintainer will turn it into a page of the catalogue.
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal code
+      description: The smallest code that shows the problem, ready to paste into a fresh R session.
+      render: r
+    validations:
+      required: true
+  - type: textarea
+    id: obtenu
+    attributes:
+      label: What R returns
+      description: Output, warning or error, copied from the console.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: attendu
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: R and package versions
+      placeholder: "R 4.5.1, dplyr 1.1.4"
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Where you met it
+      description: A project, a forum thread, a book... and how you would like to be credited.

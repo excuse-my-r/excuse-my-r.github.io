@@ -1,0 +1,36 @@
+---
+title: "1:n-1 does not go from 1 to n-1"
+ref: NUM-12
+categories: [Numbers]
+impact: silencieux
+extrait: '1:5-1'
+reponse: '0 1 2 3 4'
+attendu: "`1 2 3 4`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+n <- 5
+1:n-1
+-2^2
+```
+:::
+
+## Why
+
+The `:` operator takes precedence over addition and subtraction. `1:n-1` therefore reads as `(1:n) - 1`: R builds 1 to 5, then subtracts 1 from each element.
+
+Likewise, the power comes before the unary minus: `-2^2` reads as `-(2^2)` and gives -4. That is the mathematical convention, but it is surprising when you think "minus two, squared".
+
+## The fix
+
+Add parentheses as soon as `:` or `^` sits next to another operator.
+
+::: {.piege}
+```{r}
+1:(n - 1)
+(-2)^2
+```
+:::

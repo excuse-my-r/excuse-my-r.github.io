@@ -1,0 +1,40 @@
+---
+title: "On macOS and Windows, two files that differ only by case overwrite each other"
+ref: ENV-06
+categories: [OS and CI]
+impact: silencieux
+attendu: "two separate files, `Results.csv` and `results.csv`"
+versions: "All, on a case-insensitive file system"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```r
+write.csv(raw, file = "output/Results.csv")
+write.csv(clean, file = "output/results.csv")
+list.files("output")
+```
+
+```text
+[1] "Results.csv"
+```
+:::
+
+This pitfall depends on the machine's file system, so it cannot be replayed in the browser.
+
+## Why
+
+By default, macOS and Windows drives ignore case: `Results.csv` and `results.csv` refer to the same file. The second `write.csv()` therefore overwrites the first, without an error, and the file keeps the name it was first created with.
+
+On Linux, in CI or on a server, both files coexist. The same script produces a different result depending on the machine, and a git repository that contains both names can no longer be checked out cleanly on a Mac.
+
+## The fix
+
+Pick a naming convention (all lowercase, for example) and never have two names that differ only by case.
+
+::: {.piege .piege-statique}
+```r
+write.csv(raw, file = "output/results_raw.csv")
+write.csv(clean, file = "output/results_clean.csv")
+```
+:::

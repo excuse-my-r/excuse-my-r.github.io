@@ -1,0 +1,34 @@
+---
+title: "On Windows, install_github() can fail because of tar"
+ref: ENV-05
+categories: [OS and CI]
+impact: cryptique
+attendu: "the package installed from GitHub"
+versions: "Windows, depending on the tar found in the PATH"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege .piege-statique}
+```r
+remotes::install_github("ThinkR-open/golem")
+```
+:::
+
+This pitfall depends on the Windows system, the tools installed in the PATH and the network, so it cannot be replayed in the browser.
+
+## Why
+
+`install_github()` downloads a `.tar.gz` archive and unpacks it with `utils::untar()`. That function uses the program named by the `TAR` environment variable, or a `tar` found in the PATH. On Windows, several `tar` programs can live side by side (the one from Windows, from Git, from Rtools) and they do not all understand Windows paths the same way.
+
+The extraction then fails, with an unpacking or missing-folder error that mentions neither GitHub nor the package.
+
+## The fix
+
+Tell R to use its internal tar implementation, which does not depend on any external program.
+
+::: {.piege .piege-statique}
+```r
+Sys.setenv(TAR = "internal")
+remotes::install_github("ThinkR-open/golem")
+```
+:::

@@ -1,0 +1,41 @@
+---
+title: "The knitr cache only exists during a real knit"
+ref: ENV-09
+categories: [OS and CI]
+impact: incoherent
+attendu: "the chunk cached also when you run it in the IDE"
+versions: "All versions of {knitr}"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+````markdown
+```{r model, cache = TRUE}
+model <- fit_long_model(data)
+```
+````
+:::
+
+This pitfall depends on the IDE and on rendering a document, so it cannot be replayed in the browser.
+
+## Why
+
+The `cache = TRUE` option is read by {knitr}, while the document is rendered. When you run the chunk in RStudio or Positron (button or shortcut), the IDE sends the code to the console: {knitr} is not involved, no cache is created or read, and the long computation starts over every time.
+
+The other way round, the cache created at render time is not loaded into the IDE session. The objects are therefore not available in the console until you rerun the chunks.
+
+## The fix
+
+For a long computation that is also used outside rendering, handle saving the result yourself.
+
+::: {.piege .piege-statique}
+```r
+file <- "cache/model.rds"
+if (file.exists(file)) {
+  model <- readRDS(file)
+} else {
+  model <- fit_long_model(data)
+  saveRDS(model, file = file)
+}
+```
+:::

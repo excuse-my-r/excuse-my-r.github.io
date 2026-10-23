@@ -1,0 +1,48 @@
+---
+title: "if stops on an empty or NA condition"
+ref: FLW-08
+categories: [Control flow]
+impact: cryptique
+extrait: 'if (NA) "yes"'
+attendu: "the branch to be simply skipped"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+threshold <- NA
+if (5 > threshold) {
+  "above"
+}
+
+found <- grepl("z", x = character(0))
+found
+if (found) {
+  "found"
+}
+```
+:::
+
+## Why
+
+`if` demands exactly one value, `TRUE` or `FALSE`. A comparison with `NA` gives `NA`, and R refuses to choose: "missing value where TRUE/FALSE needed". An empty vector, such as the `logical(0)` that `grepl()` returns on an empty input, gives "argument is of length zero".
+
+Both cases happen with real data: a missing value in a file, a filter that keeps no rows. The code has run a hundred times, then stops the day a value is missing.
+
+## The fix
+
+`isTRUE()` and `isFALSE()` always return a single value, `FALSE` for `NA` or for an empty vector. When these cases deserve their own handling, test for them first.
+
+::: {.piege}
+```{r}
+isTRUE(5 > threshold)
+isTRUE(found)
+
+if (isTRUE(5 > threshold)) {
+  "above"
+} else {
+  "unknown or below"
+}
+```
+:::

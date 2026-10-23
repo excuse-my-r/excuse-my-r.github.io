@@ -1,0 +1,43 @@
+---
+title: "A path longer than 100 bytes is not portable in a package"
+ref: PKG-11
+categories: [Packages]
+impact: incoherent
+attendu: "an archive built without comment"
+versions: "All"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege}
+```{r}
+root <- tempfile()
+path <- file.path(
+  "mypackage", "inst", "extdata", "raw_data_collected_from_the_questionnaire",
+  "answers_from_the_participating_health_facilities_2024.csv"
+)
+nchar(path, type = "bytes")
+
+dir.create(file.path(root, dirname(path)), recursive = TRUE)
+writeLines("a,b", con = file.path(root, path))
+old <- setwd(root)
+utils::tar("mypackage.tar.gz", files = "mypackage", compression = "gzip", tar = "internal")
+setwd(old)
+```
+:::
+
+`R CMD build` goes through the same code and shows the same warning, then `R CMD check` adds a note about non-portable file names.
+
+## Why
+
+The original tar format sets aside 100 bytes for the path of each file. More recent formats can store longer paths, but not every tool that reads archives understands them. So R warns as soon as a path, counted from the package folder, exceeds 100 bytes. Bytes, not characters: an accented letter in UTF-8 counts for two.
+
+## The fix
+
+Shorten folder and file names, and check the lengths before building.
+
+::: {.piege}
+```{r}
+files <- file.path("mypackage", list.files(file.path(root, "mypackage"), recursive = TRUE))
+files[nchar(files, type = "bytes") > 100]
+```
+:::

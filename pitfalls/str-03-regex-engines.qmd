@@ -1,0 +1,42 @@
+---
+title: "gsub() and {stringr} do not read the same regular expression"
+ref: STR-03
+categories: [Strings]
+impact: incoherent
+extrait: 'gsub("[\\d]", "", "a1b2d")'
+reponse: '"a1b2"'
+attendu: "`\"abd\"`, with the digits removed"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+x <- "a1b2d"
+gsub("[\\d]", replacement = "", x = x)
+str_remove_all(x, pattern = "[\\d]")
+
+gsub("a(?=1)", replacement = "", x = x)
+str_remove_all(x, pattern = "a(?=1)")
+```
+:::
+
+## Why
+
+R ships several regular expression engines. By default, `gsub()`, `grepl()` or `sub()` use TRE, which follows the POSIX standard. With `perl = TRUE`, they switch to PCRE. {stringr}, through {stringi}, uses ICU. Simple patterns behave the same everywhere, the others do not.
+
+Inside square brackets, TRE reads `\d` as two literal characters, the backslash and the letter `d`: it removes the `d` and keeps the digits. ICU sees "a digit". TRE does not know lookarounds such as `(?=1)` either and returns an error, where ICU accepts them. Other differences exist: the non-breaking space, for instance, is a `\s` for ICU but not for TRE.
+
+## The fix
+
+Stick to a single engine within a project. In base R, `perl = TRUE` gives a behaviour close to ICU. POSIX classes such as `[0-9]` or `[[:digit:]]` read the same everywhere.
+
+::: {.piege}
+```{r}
+gsub("[\\d]", replacement = "", x = x, perl = TRUE)
+gsub("a(?=1)", replacement = "", x = x, perl = TRUE)
+gsub("[[:digit:]]", replacement = "", x = x)
+```
+:::

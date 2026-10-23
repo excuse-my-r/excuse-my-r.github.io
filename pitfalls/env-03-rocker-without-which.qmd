@@ -1,0 +1,41 @@
+---
+title: "A Docker image without the which command keeps R from starting"
+ref: ENV-03
+categories: [OS and CI]
+impact: cryptique
+attendu: "R starting normally in the rocker/verse image"
+versions: "rocker/verse images based on Ubuntu Jammy, in October 2023"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```yaml
+# .gitlab-ci.yml
+image: rocker/verse:latest
+
+check:
+  script:
+    - R -e 'devtools::check()'
+```
+:::
+
+This pitfall depends on the contents of a Docker image at a given date, so it cannot be replayed in the browser.
+
+## Why
+
+The `R` launcher is a shell script, which relies on system commands to locate its own components. In October 2023, the latest `rocker/verse` image, based on Ubuntu Jammy, no longer contained the `which` command, provided by the `debianutils` system package.
+
+R then could not find its base packages, `base`, `utils`, `stats`, and the pipeline stopped on startup errors that never mentioned `which`. Images based on Ubuntu Focal, such as `rocker/verse:4.1`, worked.
+
+## The fix
+
+Pin a tested image version rather than `latest`, as the team did by going back to a Focal-based image, and check that `which` is there before launching R.
+
+::: {.piege .piege-statique}
+```yaml
+image: rocker/verse:4.1.2
+
+before_script:
+  - command -v which
+```
+:::

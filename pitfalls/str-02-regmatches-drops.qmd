@@ -1,0 +1,36 @@
+---
+title: "regmatches() drops the strings with no match"
+ref: STR-02
+categories: [Strings]
+impact: silencieux
+attendu: "`\"1\" NA \"333\"`, one result per string"
+versions: "All"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+texts <- c("a1b22", "none", "c333")
+regmatches(texts, m = regexpr("[0-9]+", text = texts))
+regmatches(texts, m = gregexpr("[0-9]+", text = texts))
+```
+:::
+
+## Why
+
+Base R has no "extract" function: you have to combine a function that finds the positions (`regexpr()` for the first match, `gregexpr()` for all of them) with `regmatches()`, which cuts the text at those positions.
+
+With `regexpr()`, `regmatches()` only returns the matches it found. `"none"` vanishes without a warning: the result has two elements for three texts, and no longer lines up with them. Dropped into a data frame column, it gets recycled or triggers a length error far from its cause. With `gregexpr()`, you get a list, where a missing match is a `character(0)`.
+
+## The fix
+
+`stringr::str_extract()` returns one value per string, with `NA` when nothing matches. `str_extract_all()` gives the list of all matches.
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+str_extract(texts, pattern = "[0-9]+")
+str_extract_all(texts, pattern = "[0-9]+")
+```
+:::

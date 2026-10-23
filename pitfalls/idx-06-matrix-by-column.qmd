@@ -1,0 +1,37 @@
+---
+title: "matrix() fills column by column"
+ref: IDX-06
+categories: [Indexing]
+impact: incoherent
+extrait: 'matrix(1:6, nrow = 2)[1, ]'
+reponse: '1 3 5'
+attendu: "`1 2 3`, the first row filled reading from left to right"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+m <- matrix(1:6, nrow = 2)
+m
+m[1, ]
+```
+:::
+
+## Why
+
+R stores a matrix as a single vector, column after column. `matrix()` therefore fills the first column first, then the second. That is the opposite of reading order, and of the way you often copy a table typed in row by row.
+
+The same order applies the other way round: `as.vector(m)` reads the values back column by column.
+
+## The fix
+
+Set `byrow = TRUE` when the values are given row by row.
+
+::: {.piege}
+```{r}
+m <- matrix(1:6, nrow = 2, byrow = TRUE)
+m
+m[1, ]
+```
+:::
