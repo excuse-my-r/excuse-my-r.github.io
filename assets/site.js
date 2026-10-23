@@ -36,6 +36,8 @@ const TEXTES = {
     voisines: "Neighbouring pages",
     suivant: "Next pitfall",
     toutCatalogue: "The whole catalogue",
+    hasard: "Discover an oddity",
+    autreHasard: "Another oddity, at random",
     impacts: { silencieux: "Silently wrong", cryptique: "Obscure error", incoherent: "Inconsistency" },
     rechercher: "Search a pitfall",
     exemple: "ifelse, NA, factor...",
@@ -66,6 +68,8 @@ const TEXTES = {
     voisines: "Fiches voisines",
     suivant: "Piège suivant",
     toutCatalogue: "Tout le catalogue",
+    hasard: "Découvrir une bizarrerie",
+    autreHasard: "Une autre bizarrerie, au hasard",
     impacts: { silencieux: "Faux en silence", cryptique: "Erreur obscure", incoherent: "Incohérence" },
     rechercher: "Rechercher un piège",
     exemple: "ifelse, NA, facteur...",
@@ -626,7 +630,11 @@ async function ajouterSuite() {
     const lien = el("a", { class: "suite-lien", href: suivant.adresse });
     lien.append(el("span", { class: "suite-label" }, T.suivant), el("span", { class: "suite-titre" }, suivant.titre));
     const retour = el("a", { class: "suite-retour", href: RACINE_LANGUE + "index.html#catalogue" }, T.toutCatalogue);
-    nav.append(lien, retour);
+    const autres = fiches.filter((f, i) => i !== position);
+    const hasard = el("a", { class: "suite-retour", href: autres[Math.floor(Math.random() * autres.length)].adresse }, T.autreHasard);
+    const liens = el("div", { class: "suite-liens" });
+    liens.append(hasard, retour);
+    nav.append(lien, liens);
     document.getElementById("quarto-content").append(nav);
   } catch {
     // Sans accès à l'accueil, la fiche reste lisible sans navigation.
@@ -645,6 +653,17 @@ function normaliser(s) {
 
 const liste = document.querySelector(".catalogue");
 const zoneFiltres = document.getElementById("filtres");
+
+// Sur l'accueil, un piège tiré au hasard dans tout le catalogue
+const chapo = document.querySelector(".accueil-chapo");
+if (liste && chapo) {
+  const bouton = el("button", { type: "button", class: "bouton bouton-hasard" }, T.hasard);
+  bouton.addEventListener("click", () => {
+    const liens = [...liste.querySelectorAll(".catalogue-lien")];
+    location.href = liens[Math.floor(Math.random() * liens.length)].href;
+  });
+  chapo.after(bouton);
+}
 
 if (liste && zoneFiltres) {
   const lignes = [...liste.querySelectorAll(".catalogue-ligne")];
