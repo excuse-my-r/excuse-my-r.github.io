@@ -547,6 +547,14 @@ h1.accueil-titre {
 .suite-titre { font-size: var(--t-2); font-weight: 700; line-height: 1.25; }
 .suite-lien:hover .suite-titre { color: var(--bleu); text-decoration: underline; text-underline-offset: 0.18em; }
 .suite-retour { font-size: 0.95rem; }
+.suite-liens { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+
+/* Appel à découvrir un piège au hasard, sous le chapô de l'accueil */
+.bouton.bouton-hasard {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+  padding: 0.7rem 1.2rem;
+}
 
 /* Choix de la version de R */
 .choix-version {
