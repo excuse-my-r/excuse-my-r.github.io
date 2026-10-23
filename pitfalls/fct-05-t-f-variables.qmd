@@ -1,0 +1,39 @@
+---
+title: "T and F are variables you can overwrite"
+ref: FCT-05
+categories: [Factors]
+impact: silencieux
+attendu: "`T` always equals `TRUE`"
+versions: "All"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+T <- 0
+isTRUE(T)
+if (T) {
+  "yes"
+} else {
+  "no"
+}
+```
+:::
+
+## Why
+
+`TRUE` and `FALSE` are reserved words of the language. `T` and `F` are only variables from the {base} package, set to `TRUE` and `FALSE` for convenience. An assignment `T <- 0`, or a column named `T` inside a `with()`, masks them.
+
+Code that writes `na.rm = T` or `if (F)` then changes meaning without any error.
+
+## The fix
+
+Always spell out `TRUE` and `FALSE`. They cannot be overwritten: R refuses.
+
+::: {.piege}
+```{r}
+rm(T)
+isTRUE(T)
+TRUE <- 0
+```
+:::

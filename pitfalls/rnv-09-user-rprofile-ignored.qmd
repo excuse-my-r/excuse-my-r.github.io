@@ -1,0 +1,38 @@
+---
+title: "In a renv project, your ~/.Rprofile is no longer read"
+ref: RNV-09
+categories: [renv and installation]
+impact: incoherent
+attendu: "the personal options from `~/.Rprofile`, on top of {renv}"
+versions: "All"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+# ~/.Rprofile
+options(width = 120, digits = 4)
+
+# the project's .Rprofile, created by renv::init()
+source("renv/activate.R")
+```
+:::
+
+This pitfall depends on R's startup files on the machine, so it cannot be replayed in the browser.
+
+## Why
+
+{renv} is not the one choosing: at startup, R reads a single `.Rprofile`, the one in the working directory if it exists, otherwise the one in the home directory. `renv::init()` creates a `.Rprofile` in the project, which therefore takes the place of yours. Your options, shortcuts and personal repositories disappear without a message.
+
+By default {renv} does not load the user profile either, to keep personal code from breaking the project's isolation.
+
+## The fix
+
+Have {renv} load the user profile, or put environment variables in `~/.Renviron`, which is still read.
+
+::: {.piege .piege-statique}
+```bash
+# ~/.Renviron
+RENV_CONFIG_USER_PROFILE=TRUE
+```
+:::

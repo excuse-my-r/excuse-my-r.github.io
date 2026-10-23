@@ -1,0 +1,38 @@
+---
+title: "seq() with a decimal step misses the round values"
+ref: NUM-03
+categories: [Numbers]
+impact: silencieux
+extrait: '0.3 %in% seq(0, 1, by = 0.1)'
+reponse: 'FALSE'
+attendu: "`TRUE`, 0.3 is in the printed sequence"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- seq(0, 1, by = 0.1)
+x
+x[4] == 0.3
+0.3 %in% x
+```
+:::
+
+## Why
+
+`seq()` computes each term as `0 + i * 0.1`. But 0.1 has no exact binary representation, and `3 * 0.1` is not exactly the number R stores for `0.3`. Printing rounds to 7 digits and hides the gap.
+
+Here, three terms out of eleven differ from their "round" value: `0.3`, `0.6` and `0.7`. A `%in%` or an `==` filter on these values fails without warning.
+
+## The fix
+
+Build the sequence from integers, or search with a tolerance.
+
+::: {.piege}
+```{r}
+y <- (0:10) / 10
+0.3 %in% y
+any(abs(x - 0.3) < 1e-8)
+```
+:::

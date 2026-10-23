@@ -1,0 +1,49 @@
+---
+title: "{stringr} rejects the empty pattern that grepl() accepts"
+ref: STR-05
+categories: [Strings]
+impact: incoherent
+extrait: 'grepl("", c("apple", "pear"))'
+reponse: 'TRUE TRUE'
+attendu: "the same result with `str_detect()`"
+versions: "Since {stringr} 1.5.0; before that, `str_subset(x, \"\")` returned everything"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+fruits <- c("apple", "pear")
+pattern <- ""
+grepl(pattern, x = fruits)
+str_detect(fruits, pattern = pattern)
+str_subset(fruits, pattern = pattern)
+str_split(fruits, pattern = pattern)
+```
+:::
+
+## Why
+
+The empty pattern matches everywhere. Base R draws the logical conclusion: `grepl("", x)` is `TRUE` for every string. {stringr} did the same up to version 1.4. Since 1.5.0, `str_detect()`, `str_subset()`, `str_starts()` and `str_ends()` stop with an error, on the grounds that an empty pattern is almost always a bug.
+
+The pitfall appears when the pattern comes from a variable, for example a search field left blank: a filter that used to keep everything starts failing after an upgrade. And not every function follows the rule: `str_split()` still accepts the empty pattern and splits into characters.
+
+## The fix
+
+Handle the empty pattern explicitly, according to what it should mean.
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+keep_matching <- function(x, pattern) {
+  if (pattern == "") {
+    return(x)
+  }
+  str_subset(x, pattern = pattern)
+}
+keep_matching(fruits, pattern = "")
+keep_matching(fruits, pattern = "pp")
+```
+:::

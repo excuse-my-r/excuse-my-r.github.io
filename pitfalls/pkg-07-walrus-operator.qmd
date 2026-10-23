@@ -1,0 +1,42 @@
+---
+title: "R can parse := but cannot run it"
+ref: PKG-07
+categories: [Packages]
+impact: incoherent
+extrait: 'exists(":=")'
+reponse: 'FALSE'
+attendu: "an available operator, since the code is accepted"
+versions: "All"
+source: "Slack ThinkR (2022, 2024)"
+---
+
+::: {.piege}
+```{r}
+quote(total := 1)
+exists(":=")
+total := 1
+```
+:::
+
+In a package, `R CMD check` flags it with a note such as `no visible global function definition for ':='`.
+
+## Why
+
+R's parser knows `:=` and turns it into a function call, `` `:=`(total, 1) ``. But base R defines no function with that name: {data.table} and {rlang} are the ones that use it, each in its own way, in `dt[, x := 1]` or `mutate(!!name := 1)`.
+
+In a package, the code works at run time because the call is interpreted by {data.table} or {rlang}. The static analysis of the check, however, sees a call to a function that no imported package provides, and flags it.
+
+## The fix
+
+Import `:=` from the package that interprets it, in the package's `NAMESPACE` file.
+
+::: {.piege .piege-statique}
+```r
+#' @importFrom data.table :=
+NULL
+
+# or, for {dplyr} or {rlang} code
+#' @importFrom rlang :=
+NULL
+```
+:::

@@ -1,0 +1,44 @@
+---
+title: "renv::install(repos = ) could install a version missing from the repository"
+ref: RNV-02
+categories: [renv and installation]
+impact: silencieux
+attendu: "`xfun` 0.48, the version available on this dated repository"
+versions: "Old versions of {renv}, fixed in recent versions"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```r
+renv::install("xfun", repos = "https://p3m.dev/cran/2024-10-30")
+```
+
+```text
+The following package(s) will be installed:
+- xfun [0.57]
+```
+:::
+
+This pitfall depends on an old version of {renv} and the network, so it cannot be replayed in the browser.
+
+## Why
+
+In the original incident, a project used an old version of {renv}. With `repos =` pointing to a snapshot dated 30 October 2024, `renv::install()` offered `xfun` 0.57, a much more recent version than the one in that repository. The repository passed as an argument therefore did not restrict the version lookup.
+
+`utils::install.packages()` with the same `repos =` did download `xfun` 0.48. After updating {renv}, `renv::install()` offers 0.48 too.
+
+## The fix
+
+Update {renv}, then read the list of proposed versions before accepting the installation.
+
+::: {.piege .piege-statique}
+```r
+renv::upgrade()
+renv::install("xfun", repos = "https://p3m.dev/cran/2024-10-30")
+```
+
+```text
+The following package(s) will be installed:
+- xfun [0.48]
+```
+:::

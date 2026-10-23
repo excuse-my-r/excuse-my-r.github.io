@@ -1,0 +1,55 @@
+---
+title: 'A "# nolint" in a roxygen description becomes a heading'
+ref: PKG-06
+categories: [Packages]
+impact: cryptique
+attendu: "a comment for {lintr}, ignored by the documentation"
+versions: 'Cryptic warning with {roxygen2} in 2023, empty "nolint" section with {roxygen2} 8.1.0'
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```r
+#' Build the recipes table
+#'
+#' Aggregates the input parameters into a temporary table.
+#' # nolint
+#' @export
+build_recipes <- function(params) {
+  # ...
+}
+```
+
+```text
+> roxygen2::roxygenise()
+Warning message:
+[fct_database.R:59] @description markdown failed to process
+Caused by error in `attributes(.Data) <- c(attributes(.Data), attrib)`:
+! 'names' attribute [2] must be the same length as the vector [1]
+```
+:::
+
+This pitfall depends on generating a package's documentation, so it cannot be replayed in the browser. The output above is the one observed in 2023.
+
+## Why
+
+With markdown enabled in roxygen, a line that starts with `#` followed by a space is a level 1 heading. `# nolint`, meant for {lintr}, therefore becomes a heading in the middle of the description. In 2023, {roxygen2} failed to process that markdown, with a message that said nothing about the `# nolint`: three hours of debugging in the original incident.
+
+With {roxygen2} 8.1.0, there is no error any more, but the `.Rd` file contains an empty section named "nolint".
+
+## The fix
+
+Drop the space after the hash, since `#nolint` is not a markdown heading, or put the {lintr} exclusion on the line of code concerned rather than in the documentation.
+
+::: {.piege .piege-statique}
+```r
+#' Build the recipes table
+#'
+#' Aggregates the input parameters into a temporary table.
+#' #nolint
+#' @export
+build_recipes <- function(params) {
+  # ...
+}
+```
+:::

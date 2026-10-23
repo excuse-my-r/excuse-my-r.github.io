@@ -1,0 +1,39 @@
+---
+title: "The native pipe placeholder _ works only once, and named"
+ref: PIP-02
+categories: [Pipes]
+impact: cryptique
+attendu: "a vector named `a b c`, like `setNames(x, x)`"
+versions: "Since R 4.2.0, the placeholder does not exist before"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+x <- c("a", "b", "c")
+x |> setNames(_, _)
+x |> setNames(object = _, nm = _)
+x |> setNames(nm = toupper(_))
+```
+:::
+
+Run this block: every line with `_` is rejected, with three different messages: "pipe placeholder can only be used as a named argument", "pipe placeholder may only appear once", then "invalid use of pipe placeholder". Pick **R 4.1.3** in the menu: `_` is unknown there and R only answers "unexpected input".
+
+## Why
+
+The native pipe is not a function: it is a rewrite of the code at parse time, before anything runs. The `_` placeholder is subject to strict rules there: it must be the value of a named argument, it can appear only once, and it cannot be nested inside another call such as `toupper(_)`. Any other form is a syntax error.
+
+The {magrittr} `.` had none of these limits, hence the surprise when translating existing code.
+
+## The fix
+
+Rely on the function's defaults when they are enough (`setNames()` reuses `nm` as the value), otherwise go through an anonymous function, which can use its argument as many times as it likes.
+
+::: {.piege}
+```{r}
+x <- c("a", "b", "c")
+x |> setNames(nm = _)
+x |> (\(x) setNames(x, nm = toupper(x)))()
+```
+:::

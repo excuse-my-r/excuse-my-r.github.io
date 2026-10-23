@@ -1,0 +1,42 @@
+---
+title: "In {lubridate}, m means months and M minutes"
+ref: DAT-04
+categories: [Dates]
+impact: cryptique
+extrait: 'lubridate::duration("1h 32m 6s")'
+reponse: '"84157206s (~2.67 years)"'
+attendu: "`\"5526s (~1.53 hours)\"`"
+versions: "All versions of {lubridate}"
+source: "Slack ThinkR (2021, 2023)"
+---
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+duration("1h 32m 6s")
+period("1h 32m 6s")
+duration("01:32:06")
+hours(4.7)
+```
+:::
+
+## Why
+
+When {lubridate} parses a duration written as text, lowercase `m` stands for months and uppercase `M` for minutes. `"1h 32m 6s"` is therefore one hour, 32 months and 6 seconds: more than two and a half years. The period's printout does say so in its own way, `32m 0d 1H 0M 6S`, but you have to know how to read it.
+
+The other spellings fare no better: `duration()` does not understand the clock format `"01:32:06"` and returns `NA` without a warning. Finally, a period (`hours()`, `minutes()`...) counts calendar units and rejects decimals, with an unhelpful S4 object validation message.
+
+## The fix
+
+Write `min` for minutes, parse the clock format with `hms()`, and go through durations (`dhours()`, in exact seconds) for decimal quantities.
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+duration("1h 32min 6s")
+as.duration(hms("01:32:06"))
+dhours(4.7)
+```
+:::

@@ -1,0 +1,39 @@
+---
+title: "An NA can still count as two characters"
+ref: LEN-10
+categories: [Empty and NA]
+impact: incoherent
+extrait: 'nzchar(NA)'
+reponse: 'TRUE'
+attendu: "`NA`, the length of an unknown value is unknown"
+versions: "nchar(NA) was 2 up to R 3.2, it has been NA since R 3.3.0 except for type = \"width\""
+source: "The R Inferno, R 3.3.0 NEWS"
+---
+
+::: {.piege}
+```{r}
+nchar(NA)
+nchar(NA, type = "width")
+nzchar(NA)
+
+first_name <- c("Ana", NA)
+nchar(paste(first_name, "Martin"))
+```
+:::
+
+## Why
+
+Up to R 3.2, `nchar(NA)` was 2: R counted the characters of the printed "NA". R 3.3.0 changed the default, and `nchar(NA)` is now `NA`. But the fix is not complete: with `type = "width"`, the display width, the `NA` still counts as 2, and `nzchar()` still considers that an `NA` is not an empty string.
+
+The most common pitfall today comes from `paste()`, which turns an `NA` into the text `"NA"`. After that, nothing tells it apart from a real two-letter name.
+
+## The fix
+
+Ask explicitly to keep the `NA`s, and handle them before pasting text.
+
+::: {.piege}
+```{r}
+nzchar(NA, keepNA = TRUE)
+ifelse(is.na(first_name), yes = NA, no = nchar(paste(first_name, "Martin")))
+```
+:::

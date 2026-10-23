@@ -1,10 +1,10 @@
 ---
 title: "Excuse my R"
-pagetitle: "Les pièges de R, à exécuter dans votre navigateur"
+pagetitle: "R pitfalls, to run in your browser"
 accueil: true
 listing:
   id: liste-pieges
-  contents: pieges
+  contents: pitfalls
   template: assets/listing.ejs
   sort: "ref"
   fields: [title, ref, categories, impact, extrait, reponse]
@@ -15,23 +15,17 @@ listing:
 
 ::: {.accueil}
 
-::: {.piege .piege-hero}
-```{r}
-0.1 + 0.2 == 0.3
-```
-:::
-
-# R ne plante pas toujours. Parfois, il répond faux. {.accueil-titre .unnumbered .unlisted}
+# We love R. Sometimes we also feel like swearing at it. {.accueil-titre .unnumbered .unlisted}
 
 ::: {.accueil-chapo}
-Un catalogue des comportements de R qui surprennent même les habitués. Chaque piège se rejoue ici même : R tourne dans votre navigateur, sans rien installer.
+R rarely crashes for no reason. More often, it answers something plausible and wrong, or fails with a message that points elsewhere. This catalogue gathers those moments, spotted in real projects. Each pitfall comes with its explanation and its fix, and its code runs right here in your browser, on the R version of your choice.
 :::
 
 :::
 
 ::: {.catalogue-section}
 
-## Le catalogue {#catalogue}
+## The catalogue {#catalogue}
 
 ::: {#filtres}
 :::

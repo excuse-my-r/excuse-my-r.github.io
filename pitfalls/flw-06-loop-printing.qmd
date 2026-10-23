@@ -1,0 +1,48 @@
+---
+title: "Nothing gets printed inside a for loop"
+ref: FLW-06
+categories: [Control flow]
+impact: incoherent
+extrait: 'for (i in 1:2) i'
+attendu: "`[1] 1` then `[1] 2`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+for (i in 1:2) {
+  i
+  i * 10
+}
+
+compute <- function(x) {
+  x + 1
+  x * 2
+}
+compute(5)
+```
+:::
+
+## Why
+
+At the console, R prints the value of every statement typed at the top level: this is auto-printing. A `for` loop is a single statement, which invisibly returns `NULL`. The values computed inside it are never printed.
+
+A function does no better: only its last value is returned, and therefore printed. `x + 1` is computed, then lost. The same pitfall hits {ggplot2} plots created in a loop, which do not show up without `print()`.
+
+## The fix
+
+Ask for printing explicitly with `print()`, or store the results in a vector.
+
+::: {.piege}
+```{r}
+for (i in 1:2) {
+  print(i * 10)
+}
+
+results <- vapply(1:2, FUN = function(i) {
+  i * 10
+}, FUN.VALUE = numeric(1))
+results
+```
+:::

@@ -1,0 +1,37 @@
+---
+title: "data.frame() changes column names without telling you"
+ref: DF-04
+categories: [Data frames and lists]
+impact: incoherent
+extrait: 'names(data.frame("2024" = 1))'
+reponse: '"X2024"'
+attendu: "`\"my column\" \"2024\" \"a\" \"a\"`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+tab <- data.frame("my column" = 1, "2024" = 2, "a" = 3, "a" = 4)
+names(tab)
+tab$`my column`
+```
+:::
+
+## Why
+
+`data.frame()` has a `check.names = TRUE` argument that runs the names through `make.names()` then `make.unique()`. A space becomes a dot, a name starting with a digit gets an `X` in front, and a duplicate gets a `.1` suffix. `read.csv()` and `read.table()` do the same to the file headers.
+
+Code that then looks up the column under its real name gets `NULL`, with no error.
+
+## The fix
+
+Turn the correction off when you care about the original names, and write them between backticks.
+
+::: {.piege}
+```{r}
+tab <- data.frame("my column" = 1, "2024" = 2, check.names = FALSE)
+names(tab)
+tab$`my column`
+```
+:::

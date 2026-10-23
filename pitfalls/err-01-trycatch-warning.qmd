@@ -1,0 +1,47 @@
+---
+title: "tryCatch(warning = ) abandons the computation at the first warning"
+ref: ERR-01
+categories: [Errors and files]
+impact: silencieux
+attendu: "`4`, with a message about the ignored value"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+total <- function(x) {
+  numbers <- as.numeric(x)
+  sum(numbers, na.rm = TRUE)
+}
+tryCatch(
+  total(c("1", "two", "3")),
+  warning = function(w) {
+    message("Warning: ", conditionMessage(w))
+    NA
+  }
+)
+```
+:::
+
+## Why
+
+`tryCatch()` is built to exit. As soon as the expected condition is signalled, here the warning from `as.numeric()`, R leaves the current expression, runs the handler, and `tryCatch()` returns whatever the handler returns. The sum is never computed.
+
+You think you are merely intercepting the warning to display it differently, and you are actually replacing the result with `NA`.
+
+## The fix
+
+`withCallingHandlers()` calls the handler without leaving the computation. `invokeRestart("muffleWarning")` then silences the original warning, and execution resumes where it was.
+
+::: {.piege}
+```{r}
+withCallingHandlers(
+  total(c("1", "two", "3")),
+  warning = function(w) {
+    message("Warning: ", conditionMessage(w))
+    invokeRestart("muffleWarning")
+  }
+)
+```
+:::

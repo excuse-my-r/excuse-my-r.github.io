@@ -1,0 +1,37 @@
+---
+title: "The difference between two date-times changes unit with the gap"
+ref: DAT-05
+categories: [Dates]
+impact: silencieux
+attendu: "`90` seconds, then `45` seconds"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+start <- as.POSIXct("2026-10-23 10:00:00", tz = "UTC")
+end_1 <- as.POSIXct("2026-10-23 10:01:30", tz = "UTC")
+end_2 <- as.POSIXct("2026-10-23 10:00:45", tz = "UTC")
+
+as.numeric(end_1 - start)
+as.numeric(end_2 - start)
+```
+:::
+
+## Why
+
+Subtracting two date-times calls `difftime()` with `units = "auto"`. R then picks the most readable unit: seconds under a minute, minutes under an hour, then hours, days, weeks. The first gap is 1.5 *minutes*, the second 45 *seconds*.
+
+The printout says so ("Time difference of 1.5 mins"), but `as.numeric()` throws the unit away and keeps only the number. On a vector, the unit depends on the smallest gap: adding or removing a row can change the unit of the whole column.
+
+## The fix
+
+Choose the unit explicitly, when computing or when converting.
+
+::: {.piege}
+```{r}
+as.numeric(difftime(end_1, time2 = start, units = "secs"))
+as.numeric(end_2 - start, units = "secs")
+```
+:::

@@ -1,0 +1,41 @@
+---
+title: "tribble() accepts a column of functions that tibble() rejects"
+ref: TDY-12
+categories: [tidyverse]
+impact: incoherent
+attendu: "the same table, or the same error, with both constructors"
+versions: "All versions of {tibble}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="tibble"}
+```{r}
+suppressPackageStartupMessages(library(tibble))
+
+tibble(name = "mean", f = mean)
+tribble(
+  ~name,  ~f,
+  "mean", mean
+)
+```
+:::
+
+## Why
+
+A tibble column must be a vector, and a function is not one: `tibble()` rejects it. `tribble()` reads its values cell by cell and, when a cell is not a simple value, it stores the column in a list. The function then becomes an element of a list-column, which is allowed.
+
+So the two constructors of the same package give opposite answers for the same data.
+
+## The fix
+
+Build the list-column explicitly with `list()`, which works everywhere, then call the function with `[[ ]]`.
+
+::: {.piege packages="tibble"}
+```{r}
+suppressPackageStartupMessages(library(tibble))
+
+tools <- tibble(name = c("mean", "median"), f = list(mean, median))
+tools
+tools$f[[2]](c(1, 2, 10))
+```
+:::

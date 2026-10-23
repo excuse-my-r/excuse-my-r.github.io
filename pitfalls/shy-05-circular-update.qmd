@@ -1,0 +1,53 @@
+---
+title: "Two inputs that update each other go round in circles"
+ref: SHY-05
+categories: [Shiny]
+impact: incoherent
+attendu: "each field follows the other, once per entry"
+versions: "All versions of {shiny}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$celsius, {
+    updateNumericInput(session, "fahrenheit", value = input$celsius * 9 / 5 + 32)
+  })
+  observeEvent(input$fahrenheit, {
+    updateNumericInput(session, "celsius", value = (input$fahrenheit - 32) * 5 / 9)
+  })
+}
+```
+:::
+
+This pitfall depends on a Shiny app running in a browser, so it cannot be replayed here.
+
+## Why
+
+`updateNumericInput()` does not change the value on the server side: it sends a message to the browser, which updates the field and then sends the new value back to the server. That value triggers the other observer, which updates the first field, and so on.
+
+Because the conversions round, the value sent back is never quite the same. The fields flicker, the user's input is overwritten while they type, and the app may never settle.
+
+## The fix
+
+Only update the other field if its value really changes, or keep a single source of truth (for example a reactive value in Celsius) from which both fields derive.
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$celsius, {
+    target <- round(input$celsius * 9 / 5 + 32, digits = 1)
+    if (!isTRUE(all.equal(target, input$fahrenheit))) {
+      updateNumericInput(session, inputId = "fahrenheit", value = target)
+    }
+  })
+  observeEvent(input$fahrenheit, {
+    target <- round((input$fahrenheit - 32) * 5 / 9, digits = 1)
+    if (!isTRUE(all.equal(target, input$celsius))) {
+      updateNumericInput(session, inputId = "celsius", value = target)
+    }
+  })
+}
+```
+:::

@@ -31,7 +31,7 @@ options_de(selectInput(
 
 ## Pourquoi
 
-Dans `choices`, un élément nommé de longueur 1 est lu comme un choix simple, son nom servant d'étiquette. `Legumes = c("poireau")` ne crée donc pas de groupe : il crée une option affichée « Legumes » dont la valeur est `"poireau"`. Le groupe n'apparaît qu'à partir de deux éléments, ou si l'élément est une liste.
+Dans `choices`, un élément nommé de longueur 1 est lu comme un choix simple, son nom servant d'étiquette. `Legumes = c("poireau")` ne crée donc pas de groupe : il crée une option affichée « Legumes » dont la valeur est `"poireau"`. Le groupe n'apparaît qu'à partir de deux éléments, ou si l'élément est une liste ou un vecteur nommé.
 
 Second piège : deux options de groupes différents peuvent porter la même valeur. `input$choix` vaut alors `"pomme"` dans les deux cas, et le serveur ne peut pas savoir lequel a été choisi.
 

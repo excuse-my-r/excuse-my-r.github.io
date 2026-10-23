@@ -1,0 +1,48 @@
+---
+title: "sapply() is a loop, and ifelse() computes everything"
+ref: DF-09
+categories: [Data frames and lists]
+impact: incoherent
+attendu: "a single vectorised call, and no warning for the negative values"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+calls <- 0
+square <- function(v) {
+  calls <<- calls + 1
+  v^2
+}
+res <- sapply(1:1000, square)
+calls
+
+x <- c(-1, 10)
+ifelse(x > 0, yes = log(x), no = NA)
+```
+:::
+
+## Why
+
+The functions of the `apply` family hide a loop: `sapply()` calls the function once per element, here a thousand times. That is not vectorisation. When the function already knows how to work on a whole vector, like `^`, wrapping it in `sapply()` only slows things down.
+
+Conversely, vectorising at all costs has a price too. `ifelse()` computes both of its branches in full, then picks element by element. So `log(x)` is computed for -1 as well, hence the warning, even though the condition was meant to rule that case out. On heavy computations, you pay for every branch on every value.
+
+## The fix
+
+Call the vectorised functions directly, and keep the computation for the elements that need it.
+
+::: {.piege}
+```{r}
+calls <- 0
+res2 <- square(1:1000)
+calls
+identical(res, y = res2)
+
+result <- rep(NA_real_, times = length(x))
+positive <- x > 0
+result[positive] <- log(x[positive])
+result
+```
+:::

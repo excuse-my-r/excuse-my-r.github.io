@@ -1,0 +1,36 @@
+---
+title: "table() does not count NAs"
+ref: LEN-09
+categories: [Empty and NA]
+impact: silencieux
+extrait: 'sum(table(c("a", NA, "a")))'
+reponse: '2'
+attendu: "`3`, the number of values"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+answers <- c("yes", "no", NA, "yes", NA)
+table(answers)
+sum(table(answers))
+length(answers)
+```
+:::
+
+## Why
+
+By default, `table()` drops missing values before counting, without saying so. The table looks complete, but its counts do not add up to the number of observations.
+
+Proportions computed afterwards with `prop.table()` then only cover the known answers. That may be intended, but it is rarely a conscious decision.
+
+## The fix
+
+Ask for the `NA`s explicitly with `useNA = "ifany"`, which adds an `<NA>` column only when there are some.
+
+::: {.piege}
+```{r}
+table(answers, useNA = "ifany")
+```
+:::

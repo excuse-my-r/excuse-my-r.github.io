@@ -1,0 +1,35 @@
+---
+title: "x[-which(...)] wipes everything when nothing matches"
+ref: LEN-04
+categories: [Empty and NA]
+impact: silencieux
+extrait: '(1:3)[-which(1:3 > 10)]'
+attendu: "the whole of `x`, since there is nothing to remove"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c(a = 1, b = 2, c = 3)
+x[-which(x > 2)]
+x[-which(x > 10)]
+```
+:::
+
+## Why
+
+`which()` returns the positions where the condition is true. When no value meets it, it returns `integer(0)`. But `-integer(0)` is still `integer(0)`, and indexing by an empty vector selects nothing.
+
+The code works as long as there is something to remove. The day the data is clean, it deletes everything.
+
+## The fix
+
+Index with the negated logical vector, which keeps everything when no value needs excluding.
+
+::: {.piege}
+```{r}
+x[!(x > 10)]
+x[!(x > 2)]
+```
+:::

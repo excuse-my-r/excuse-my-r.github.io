@@ -1,0 +1,38 @@
+---
+title: "A Windows path pasted as is breaks the string"
+ref: STR-04
+categories: [Strings]
+impact: cryptique
+extrait: '"C:\Users\me"'
+attendu: "the path `C:\\Users\\me`"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+path <- "C:\Users\me\data.csv"
+```
+:::
+
+Run this block: R answers `Error: '\U' used without hex digits in character string`.
+
+## Why
+
+In an R string, the backslash starts an escape sequence: `\n` is a newline, `\t` a tab, and `\U` must be followed by the hexadecimal code of a Unicode character. `\Users` is not one, hence the error, raised before anything runs, while the code is being read.
+
+The worst case is the one that does not fail: `"C:\temp\new"` is a valid string, which contains a tab and a newline. The file is simply never found.
+
+## The fix
+
+Write paths with forward slashes, which Windows accepts, or double the backslashes. Since R 4.0.0, a raw string `r"(...)"` keeps the text as is.
+
+::: {.piege}
+```{r}
+"C:/Users/me/data.csv"
+"C:\\Users\\me\\data.csv"
+r"(C:\Users\me\data.csv)"
+file.path("C:", "Users", "me", "data.csv")
+```
+:::

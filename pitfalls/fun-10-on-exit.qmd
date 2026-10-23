@@ -1,0 +1,41 @@
+---
+title: "A second on.exit() erases the first"
+ref: FUN-10
+categories: [Functions]
+impact: silencieux
+attendu: "both cleanup actions run"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+process <- function() {
+  on.exit(cat("close the connection\n"))
+  on.exit(cat("delete the temporary file\n"))
+  invisible(NULL)
+}
+process()
+```
+:::
+
+## Why
+
+`on.exit()` records code to run when the function exits. By default, each call replaces whatever was recorded before. Here, closing the connection is forgotten without any message.
+
+The pitfall often hides in a long function, where the second `on.exit()` is added dozens of lines after the first.
+
+## The fix
+
+Add `add = TRUE` to every call. The actions then run in the order they were declared, or in reverse order with `after = FALSE`.
+
+::: {.piege}
+```{r}
+process <- function() {
+  on.exit(cat("close the connection\n"), add = TRUE)
+  on.exit(cat("delete the temporary file\n"), add = TRUE)
+  invisible(NULL)
+}
+process()
+```
+:::

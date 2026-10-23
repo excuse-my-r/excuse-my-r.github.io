@@ -1,0 +1,38 @@
+---
+title: "ifelse() fails on a NULL branch, but only when it is used"
+ref: FLW-02
+categories: [Control flow]
+impact: cryptique
+extrait: 'ifelse(FALSE, 1, NULL)'
+attendu: "`NULL` or `NA` for the missing value"
+versions: "All"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+params <- list(threshold = 10)
+ifelse(TRUE, yes = params$threshold, no = params$default)
+ifelse(c(TRUE, FALSE), yes = params$threshold, no = params$default)
+```
+:::
+
+## Why
+
+`params$default` does not exist, so `$` quietly returns `NULL`. As long as the test holds only `TRUE` values, `ifelse()` never needs the `no` branch and does not even evaluate it, hence the 10 with no error.
+
+As soon as a `FALSE` shows up, `ifelse()` recycles `no` to the length of the test with `rep()`, which returns `NULL` (the first warning), then tries to assign it into the result: "replacement has length zero". The message talks about replacement and zero length without ever naming the faulty variable, and the bug only appears with some data.
+
+## The fix
+
+Check the value before using it, and give it an explicit fallback.
+
+::: {.piege}
+```{r}
+default <- params$default
+if (is.null(default)) {
+  default <- NA
+}
+ifelse(c(TRUE, FALSE), yes = params$threshold, no = default)
+```
+:::

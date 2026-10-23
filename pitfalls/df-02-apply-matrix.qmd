@@ -1,0 +1,45 @@
+---
+title: "apply() on a data.frame turns everything into text"
+ref: DF-02
+categories: [Data frames and lists]
+impact: silencieux
+attendu: "`FALSE TRUE`: only the price of 12 is above 9"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+sales <- data.frame(
+  product = c("A", "B"),
+  price = c(5, 12),
+  quantity = c(10, 3)
+)
+apply(sales, MARGIN = 1, FUN = function(row) {
+  row[["price"]]
+})
+apply(sales, MARGIN = 1, FUN = function(row) {
+  row[["price"]] > 9
+})
+apply(sales, MARGIN = 1, FUN = function(row) {
+  row[["price"]] * row[["quantity"]]
+})
+```
+:::
+
+## Why
+
+`apply()` works on a matrix. So it starts by converting the data.frame with `as.matrix()`, and a matrix holds a single type. Since the `product` column is text, everything becomes text, numbers included, and they are even padded with spaces to the same width: `" 5"` and `"12"`.
+
+The comparison `" 5" > 9` is then made between strings, in alphabetical order, and `"12"` comes before `"9"`. The result is wrong without any warning. Only the multiplication ends in an error.
+
+## The fix
+
+Work column by column, which is what R does natively, rather than row by row.
+
+::: {.piege}
+```{r}
+sales$price > 9
+sales$price * sales$quantity
+```
+:::

@@ -1,0 +1,42 @@
+---
+title: "match.arg() rejects the empty string even when it is one of the choices"
+ref: FUN-06
+categories: [Functions]
+impact: cryptique
+extrait: 'match.arg("", choices = c("", "a"))'
+attendu: "`\"\"`, since it is one of the choices offered"
+versions: "All, the error message changed in R 4.2.0"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+extension <- function(ext = c("", "a")) {
+  match.arg(ext)
+}
+extension()
+extension("a")
+extension("")
+```
+:::
+
+Pick **R 4.1.3** in the menu, then run again: the error is the same, with a different message.
+
+## Why
+
+`match.arg()` compares the value it receives with the choices using `pmatch()`, which accepts word beginnings. But `pmatch()` never matches the empty string to anything. `match.arg()` concludes that the value is not allowed.
+
+Without an argument, the function does return `""`, the first choice by default. Things break only when you pass `""` explicitly, and the message does not even list the empty string among the possible choices.
+
+## The fix
+
+Do not offer the empty string as a choice: replace it with a word.
+
+::: {.piege}
+```{r}
+extension <- function(ext = c("none", "a")) {
+  match.arg(ext)
+}
+extension("none")
+```
+:::

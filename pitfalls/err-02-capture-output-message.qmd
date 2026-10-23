@@ -1,0 +1,48 @@
+---
+title: "capture.output() does not capture messages"
+ref: ERR-02
+categories: [Errors and files]
+impact: incoherent
+extrait: 'capture.output(message("a"))'
+attendu: "everything the function prints"
+versions: "All"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="cli"}
+```{r}
+chatty <- function() {
+  print("result")
+  message("step done")
+  cli::cli_alert_success("All set")
+  invisible(NULL)
+}
+output <- capture.output(chatty())
+output
+```
+:::
+
+## Why
+
+R has two output streams. `print()` and `cat()` write to standard output, which `capture.output()` intercepts. `message()`, `warning()` and {cli} alerts go through the message stream, which always shows on screen and which `capture.output()` ignores by default.
+
+So a function that "prints" something can return an almost empty capture, depending on how its author chose to write it.
+
+## The fix
+
+To collect the messages, intercept them as conditions with `withCallingHandlers()`. `capture.output(type = "message")` also exists, but it diverts the stream itself: it sees nothing as soon as another tool is already intercepting messages, like knitr, which produced this page.
+
+::: {.piege packages="cli"}
+```{r}
+messages <- character()
+output <- withCallingHandlers(
+  capture.output(chatty()),
+  message = function(m) {
+    messages <<- c(messages, conditionMessage(m))
+    invokeRestart("muffleMessage")
+  }
+)
+output
+messages
+```
+:::

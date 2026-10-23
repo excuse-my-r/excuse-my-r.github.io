@@ -1,0 +1,43 @@
+---
+title: "switch() silently returns NULL when no case matches"
+ref: FLW-05
+categories: [Control flow]
+impact: silencieux
+extrait: 'is.null(switch("z", a = 1, b = 2))'
+reponse: 'TRUE'
+attendu: "an error, since `\"medium\"` is not handled"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+choice <- "medium"
+size <- switch(choice, small = 1, large = 3)
+size
+
+switch(2, "a", "b")
+switch(3, "a", "b")
+```
+:::
+
+## Why
+
+When no name matches and there is no default value, `switch()` returns `NULL`, and invisibly: nothing is printed. So `size` is `NULL`, and the error will surface further down, in a computation that has nothing to do with `switch()`.
+
+With a number, `switch()` picks by position: `switch(2, "a", "b")` gives `"b"`, and `switch(3, "a", "b")` returns the same invisible `NULL`. With the string `"2"`, the unnamed cases become defaults, and R refuses to have two of them: `switch("2", "a", "b")` is a "duplicate 'switch' defaults" error.
+
+## The fix
+
+End with an unnamed case that stops the program with a clear message.
+
+::: {.piege}
+```{r}
+size <- switch(
+  choice,
+  small = 1,
+  large = 3,
+  stop("unknown choice: ", choice)
+)
+```
+:::

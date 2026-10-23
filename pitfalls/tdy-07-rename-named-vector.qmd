@@ -1,0 +1,36 @@
+---
+title: "rename() with a named vector builds an extra-long name"
+ref: TDY-07
+categories: [tidyverse]
+impact: silencieux
+attendu: "a column `identifier`"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+sales <- data.frame(code = 1:2, amount = c(10, 20))
+config <- c(id = "code", measure = "amount")
+rename(sales, identifier = config["id"])
+```
+:::
+
+## Why
+
+`config["id"]` is not just `"code"`: it is a vector that keeps its name, `id`. When a named selection receives a vector that is itself named, {tidyselect} combines both names so as to lose nothing, and the column becomes `identifier...id`. Code that then looks for `identifier` does not find it.
+
+## The fix
+
+Extract the bare value with `[[ ]]`, or drop the names with `unname()`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+rename(sales, identifier = config[["id"]])
+rename(sales, identifier = unname(config["id"]))
+```
+:::

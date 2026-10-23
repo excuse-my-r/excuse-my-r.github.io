@@ -1,0 +1,38 @@
+---
+title: "select() does not keep the same column twice"
+ref: TDY-04
+categories: [tidyverse]
+impact: silencieux
+extrait: 'names(select(mtcars, foo = mpg, mpg))'
+reponse: '"foo"'
+attendu: "`\"foo\" \"mpg\"`"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+cars <- head(mtcars, n = 2)
+select(cars, foo = mpg, mpg)
+```
+:::
+
+## Why
+
+`select()` picks columns, it does not copy them. `foo = mpg` selects `mpg` while renaming it, and the second mention of `mpg` refers to the same column, already taken: it is not duplicated. Only one column is left, under the first name given, without a warning.
+
+## The fix
+
+To get a copy, create it with `mutate()`, then select.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+cars |>
+  mutate(foo = mpg) |>
+  select(foo, mpg)
+```
+:::

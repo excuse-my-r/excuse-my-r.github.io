@@ -1,0 +1,34 @@
+---
+title: "Equality between decimals lies"
+ref: NUM-01
+categories: [Numbers]
+impact: silencieux
+extrait: '0.1 + 0.2 == 0.3'
+reponse: 'FALSE'
+attendu: "`TRUE`"
+versions: "All"
+source: "Slack ThinkR (2021), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+0.1 + 0.2 == 0.3
+```
+:::
+
+## Why
+
+R stores decimal numbers in binary, in the IEEE 754 format. Just as 1/3 has no finite decimal expansion, most numbers like 0.1 have no finite binary one: R keeps an approximation. The sum of the two approximations is not exactly the approximation of 0.3, and `==` compares down to the last bit.
+
+The pitfall hides in filters: `df[df$rate == 0.3, ]` can return zero rows without the slightest warning.
+
+## The fix
+
+Compare with a tolerance. `all.equal()` applies one by default, but returns a string when the values differ: wrap it in `isTRUE()`.
+
+::: {.piege}
+```{r}
+isTRUE(all.equal(0.1 + 0.2, 0.3))
+abs((0.1 + 0.2) - 0.3) < 1e-8
+```
+:::

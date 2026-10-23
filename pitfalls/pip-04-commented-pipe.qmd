@@ -1,0 +1,40 @@
+---
+title: "Commenting out the last step of a pipe swallows the next statement"
+ref: PIP-04
+categories: [Pipes]
+impact: cryptique
+attendu: "`[1] 1 2 3`"
+versions: "All"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege}
+```{r}
+result <- c(3, 1, 2) |>
+  sort() |>
+  # rev()
+
+print(result)
+```
+:::
+
+## Why
+
+R ignores the comment and the blank line. What it reads is a chain ending with `|>`, hence an incomplete statement, which carries on onto the next line of code it finds. The code actually run is `result <- print(sort(c(3, 1, 2)), result)`.
+
+`result` does not exist yet when `print()` evaluates its second argument, hence "object 'result' not found" on a line that seems to merely print a variable just created. If the next statement did not use `result`, the code would run silently, with an absurd result. {magrittr} has the same problem with a trailing `%>%`.
+
+## The fix
+
+Comment out a step in the middle, never the last one, or end every chain with a neutral step such as `identity()` so that everything before it can be commented out.
+
+::: {.piege}
+```{r}
+result <- c(3, 1, 2) |>
+  sort() |>
+  # rev() |>
+  identity()
+
+print(result)
+```
+:::

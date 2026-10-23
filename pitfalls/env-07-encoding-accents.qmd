@@ -1,0 +1,42 @@
+---
+title: "UTF-8 bytes read as latin1 corrupt accented letters"
+ref: ENV-07
+categories: [OS and CI]
+impact: silencieux
+extrait: 'x <- "é"; Encoding(x) <- "latin1"; x'
+reponse: '"Ã©"'
+attendu: "`\"Café\"`"
+versions: "All, more frequent on Windows before R 4.2.0"
+source: "Slack ThinkR (2020), General R knowledge"
+---
+
+::: {.piege}
+```{r}
+text <- "Café"
+charToRaw("é")
+
+misread <- text
+Encoding(misread) <- "latin1"
+misread
+```
+:::
+
+## Why
+
+A string is just a sequence of bytes. In UTF-8, "é" takes two bytes, `c3` and `a9`. Read with the latin1 table, where each byte is one character, they become "Ã" and "©". Nothing flags the error: the text stays readable, just wrong.
+
+This is what happens when a file written on one system is read back on another without stating the encoding. Up to R 4.1, R on Windows used the local encoding (often latin1 or CP1252) while Linux and macOS were in UTF-8. Since R 4.2.0, R on Windows runs natively in UTF-8, which removes most of these mismatches, but not those of old files or of files produced by other software.
+
+## The fix
+
+Always declare the encoding when reading and writing, and convert explicitly when a source is in latin1.
+
+::: {.piege}
+```{r}
+path <- tempfile(fileext = ".csv")
+writeLines(iconv("Café", from = "UTF-8", to = "latin1"), con = path, useBytes = TRUE)
+
+readLines(path, encoding = "latin1")
+iconv(readLines(path), from = "latin1", to = "UTF-8")
+```
+:::

@@ -1,0 +1,45 @@
+---
+title: "here::here() in a check climbs far beyond the package"
+ref: PKG-04
+categories: [Packages]
+impact: silencieux
+attendu: "the package root"
+versions: "All versions of {here}"
+source: "Slack ThinkR (2025)"
+---
+
+::: {.piege packages="here"}
+```{r}
+home <- file.path(tempfile(), "home")
+dir.create(file.path(home, ".git"), recursive = TRUE)
+tests <- file.path(home, "work", "mypackage.Rcheck", "tests")
+dir.create(tests, recursive = TRUE)
+
+old <- setwd(tests)
+suppressPackageStartupMessages(library(here))
+basename(here())
+setwd(old)
+```
+:::
+
+Here, a forgotten `.git` folder in the home directory is enough: `here()` points to that directory, not to the package.
+
+## Why
+
+`here()` starts from the working directory and climbs up to the first folder that looks like a project root: a `.Rproj` file, a `DESCRIPTION`, a `.here`, a `.git` folder, among others. In your project, it finds the `.Rproj` and all is well.
+
+`R CMD check` runs the tests in `mypackage.Rcheck/tests`, on the built package. The `.Rproj` is excluded by `.Rbuildignore`, and the copied `DESCRIPTION` is not in a parent folder of the tests. So `here()` keeps climbing, up to the home directory if it finds a marker there. The paths it builds then point outside the package, to files that do not exist or, worse, to other files with the same name.
+
+## The fix
+
+Do not use {here} in a package: `testthat::test_path()` in the tests, `system.file()` for files installed from `inst/`.
+
+::: {.piege .piege-statique}
+```r
+# In tests/testthat/test-read.R
+data <- read.csv(testthat::test_path("fixtures", "input.csv"))
+
+# In R/, for a file in inst/extdata
+path <- system.file("extdata", "template.csv", package = "mypackage")
+```
+:::

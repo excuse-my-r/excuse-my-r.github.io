@@ -25,7 +25,7 @@ Exécutez ce bloc : R affiche « Error: unexpected 'else' in "else" », puis év
 
 ## Pourquoi
 
-À la console, et dans un script exécuté ligne à ligne, R évalue une instruction dès qu'elle est complète. Après le `}` de la troisième ligne, `if (x > 0) { "positif" }` est une instruction complète, sans `else`. La ligne suivante commence par `else`, qui ne peut pas commencer une instruction : erreur de syntaxe.
+À la console, et dans un script exécuté ligne à ligne, R évalue une instruction dès qu'elle est complète. Après le `}` de la quatrième ligne, `if (x > 0) { "positif" }` est une instruction complète, sans `else`. La ligne suivante commence par `else`, qui ne peut pas commencer une instruction : erreur de syntaxe.
 
 Le même code passe sans problème à l'intérieur d'une fonction ou de tout autre bloc entre accolades, car R ne termine l'instruction qu'à l'accolade fermante du bloc. Un code copié d'une fonction vers la console casse donc sans raison apparente.
 

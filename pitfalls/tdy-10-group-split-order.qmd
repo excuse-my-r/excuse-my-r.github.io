@@ -1,0 +1,43 @@
+---
+title: "group_split() puts the groups in alphabetical order"
+ref: TDY-10
+categories: [tidyverse]
+impact: silencieux
+attendu: "the row for Switzerland"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+sales <- data.frame(country = c("Switzerland", "Austria", "France"), n = 1:3)
+pieces <- group_split(sales, country)
+names(pieces) <- unique(sales$country)
+pieces$Switzerland
+```
+:::
+
+## Why
+
+`group_split()` returns an unnamed list, in group order, that is sorted by the key: Austria, France, Switzerland. That is not the order in which they appear in the data. Naming the list with `unique()`, which follows the order of appearance, shifts every name, and each piece bears the name of another country.
+
+For a factor column, the order is that of the levels, which does not make things simpler.
+
+## The fix
+
+Take the names from `group_keys()`, which follows the same order as `group_split()`, or use base R's `split()`, which names the list itself.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+groups <- group_by(sales, country)
+pieces <- group_split(groups)
+names(pieces) <- group_keys(groups)$country
+pieces$Switzerland
+
+split(sales, f = sales$country)$Switzerland
+```
+:::

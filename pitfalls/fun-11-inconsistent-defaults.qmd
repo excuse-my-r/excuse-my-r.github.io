@@ -1,0 +1,43 @@
+---
+title: "Sibling functions do not share the same default values"
+ref: FUN-11
+categories: [Functions]
+impact: incoherent
+extrait: 'formals(list.dirs)$recursive'
+reponse: 'TRUE'
+attendu: "`FALSE`, as for `list.files()`"
+versions: "All"
+source: "Slack ThinkR (2023, 2024)"
+---
+
+::: {.piege}
+```{r}
+root <- tempfile()
+dir.create(file.path(root, "a", "b"), recursive = TRUE)
+list.files(root)
+list.dirs(root, full.names = FALSE)
+
+formals(list.files)$recursive
+formals(list.dirs)$recursive
+names(formals(pdf))[1]
+names(formals(png))[1]
+```
+:::
+
+## Why
+
+`list.files()` does not go down into subfolders by default, `list.dirs()` does. The latter also returns the starting folder itself, as an empty string when `full.names = FALSE`.
+
+Likewise, the output file is called `file` in `pdf()` but `filename` in `png()`. These functions were written at different times, and their arguments were never harmonised.
+
+## The fix
+
+Write every argument you depend on, even when you think you know its default value, and check with `args()` when in doubt.
+
+::: {.piege}
+```{r}
+list.dirs(root, full.names = FALSE, recursive = FALSE)
+list.files(root, recursive = TRUE, include.dirs = TRUE)
+args(list.dirs)
+```
+:::

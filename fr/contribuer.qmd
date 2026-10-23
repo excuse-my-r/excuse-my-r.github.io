@@ -1,0 +1,63 @@
+---
+title: "Comment contribuer"
+pagetitle: "Comment contribuer"
+---
+
+Un piège a sa place ici quand R surprend un utilisateur expérimenté : une réponse plausible mais fausse, une erreur qui regarde ailleurs, ou deux fonctions qui se contredisent. Il y a deux façons d'en proposer un. Dans les deux cas, il devient une fiche du catalogue, relue par les mainteneurs.
+
+## Signaler un piège dans un ticket
+
+C'est le plus rapide. [Ouvrez un ticket avec le formulaire « Propose a pitfall »](https://github.com/excuse-my-r/excuse-my-r.github.io/issues/new?template=pitfall.yml) et indiquez :
+
+- le plus petit code qui montre le problème, prêt à copier dans une session R neuve ;
+- ce que R répond, et ce que vous attendiez ;
+- la version de R, et celle des paquets s'il y en a ;
+- où vous l'avez rencontré (un projet, un fil de forum, un livre), si vous pouvez le dire.
+
+Un mainteneur en fait une fiche, en anglais et en français, et cite votre ticket dans la pull request. Le ticket peut être rédigé en français ou en anglais.
+
+## Écrire la fiche dans une pull request
+
+Si vous êtes à l'aise avec Git et Quarto, vous pouvez écrire la fiche vous-même.
+
+1. Forkez [le dépôt](https://github.com/excuse-my-r/excuse-my-r.github.io) et créez une branche.
+2. Copiez une fiche du même genre dans `fr/pieges/` (français) ou `pitfalls/` (anglais), et nommez-la `<ref>-<slug-court>.qmd`, avec la prochaine référence libre de sa catégorie (`NUM-14`, `TDY-17`...). Une seule langue suffit : les mainteneurs traduisent l'autre.
+3. Remplissez l'en-tête et le corps, comme décrit ci-dessous.
+4. Prévisualisez le site avec `quarto preview` et exécutez chaque bloc dans le navigateur, avec la plus ancienne et la plus récente version de R du menu.
+5. Ouvrez la pull request. Le site est construit automatiquement : une fiche dont le code casse le build ne peut pas être fusionnée.
+
+### L'en-tête
+
+```yaml
+title: "Ce que fait le piège, en une phrase"
+ref: NUM-14
+categories: [Numérique]
+impact: silencieux          # silencieux, cryptique ou incoherent
+extrait: 'round(2.5)'       # une ligne affichée dans le catalogue
+reponse: '2'                # ce que R affiche après [1] pour cette ligne
+attendu: "`3`"              # ce qu'on attendrait
+versions: "Toutes"          # ou « Depuis R 4.3.0 », « Toutes les versions de {dplyr} »...
+source: "Votre nom, ou là où vous l'avez trouvé"
+```
+
+### Le corps
+
+La fiche commence par le bloc du piège, puis une section `## Pourquoi` qui explique le mécanisme, puis une section `## La parade` avec un second bloc qui montre la bonne façon de faire.
+
+````markdown
+::: {.piege}
+```{{r}}
+round(2.5)
+```
+:::
+````
+
+Un bloc qui a besoin d'un paquet le déclare, pour que le navigateur l'installe : `::: {.piege packages="dplyr"}`. Un piège qui ne peut pas s'exécuter dans un navigateur (Shiny, renv, CI, système d'exploitation) utilise `::: {.piege .piege-statique}` avec du code en bloc simple, affiché sans console.
+
+## Ce qui fait accepter un piège
+
+- **Il est reproductible.** Le code tourne dans une session neuve, sans fichier, sans réseau, sans aléatoire non fixé par `set.seed()`, et donne la même sortie sur toutes les machines.
+- **Il surprend.** Un comportement documenté peut être un piège, du moment qu'un utilisateur attentif s'y trompe.
+- **Chaque bloc tourne seul.** Dans le navigateur, un bloc rejoue les blocs placés au-dessus de lui sur la page, jamais ceux du dessous.
+- **Le texte correspond à la sortie.** Le site exécute le code au build et dans le navigateur : si R répond autre chose, c'est la fiche qui a tort.
+- **Le code suit le style maison.** Des accolades autour de chaque `if`, `for` et corps de fonction, et des arguments nommés après le premier, sauf quand enfreindre la règle est le piège lui-même.

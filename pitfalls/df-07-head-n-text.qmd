@@ -1,0 +1,38 @@
+---
+title: "head() and tail() with n as text used to return the whole vector"
+ref: DF-07
+categories: [Data frames and lists]
+impact: silencieux
+attendu: "the first 3 or the last 3 elements"
+versions: "Wrong result without error up to R 4.2, error since R 4.3.0"
+source: "Slack ThinkR (2022), R 4.3.0 NEWS"
+---
+
+::: {.piege}
+```{r}
+n <- "3"
+head(1:10, n)
+head(1:5, n)
+tail(letters, n)
+```
+:::
+
+Pick **R 4.1.3** in the menu, then run again: without any error, `head(1:10, n)` returns all ten values, `head(1:5, n)` the first three, and `tail(letters, n)` the whole alphabet.
+
+## Why
+
+An `n` stored as text slips in easily, for instance read from a parameter file or from a Shiny `input`. Up to R 4.2, `head()` did not check its type and computed `min(n, length(x))`. With text, `min()` compares strings in alphabetical order: `min("3", "10")` is `"10"`, because `"1"` comes before `"3"`. So the result depended on the length of the vector: right for 5 elements, wrong for 10. A data.frame suffered the same fate, `head(iris, "2")` returning all 150 rows.
+
+R 4.3.0 turned this case into an error. An old script that "worked" may therefore stop after an upgrade, and that is a good thing.
+
+## The fix
+
+Convert the parameter to a number as soon as it enters the code.
+
+::: {.piege}
+```{r}
+n <- as.integer("3")
+head(1:10, n = n)
+tail(letters, n = n)
+```
+:::

@@ -1,6 +1,12 @@
 <%
-const ordre = ["Numérique", "Vides et NA", "Indexation", "Facteurs", "Fonctions", "Contrôle de flux", "Chaînes", "Dates", "Data frames et listes", "Pipes", "Erreurs et fichiers", "tidyverse", "data.table", "Shiny", "Packages", "renv et installation", "OS et CI"];
-const rang = c => (ordre.indexOf(c) === -1 ? ordre.length : ordre.indexOf(c));
+const ordres = [
+  ["Numérique", "Vides et NA", "Indexation", "Facteurs", "Fonctions", "Contrôle de flux", "Chaînes", "Dates", "Data frames et listes", "Pipes", "Erreurs et fichiers", "tidyverse", "data.table", "Shiny", "Packages", "renv et installation", "OS et CI"],
+  ["Numbers", "Empty and NA", "Indexing", "Factors", "Functions", "Control flow", "Strings", "Dates", "Data frames and lists", "Pipes", "Errors and files", "tidyverse", "data.table", "Shiny", "Packages", "renv and installation", "OS and CI"]
+];
+const rang = c => {
+  const positions = ordres.map(o => o.indexOf(c)).filter(i => i !== -1);
+  return positions.length ? positions[0] : ordres[0].length;
+};
 const groupes = {};
 for (const item of items) {
   const c = (item.categories || ["Autres"])[0];
@@ -15,7 +21,7 @@ const categories = Object.keys(groupes).sort((a, b) => rang(a) - rang(b) || a.lo
     <h3 class="catalogue-groupe-titre"><%= c %></h3>
     <ul class="catalogue-liste" role="list">
     <% for (const item of groupes[c].sort((a, b) => String(a.ref).localeCompare(String(b.ref)))) { %>
-      <li class="catalogue-ligne" data-impact="<%= item.impact %>" data-categorie="<%= c %>">
+      <li class="catalogue-ligne" data-ref="<%= item.ref %>" data-impact="<%= item.impact %>" data-categorie="<%= c %>">
         <a class="catalogue-lien" href="<%- item.path %>">
           <span class="catalogue-titre"><%= item.title %></span>
           <% if (item.extrait) { %>

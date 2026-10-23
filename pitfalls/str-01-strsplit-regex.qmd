@@ -1,0 +1,36 @@
+---
+title: "strsplit() reads the separator as a regular expression"
+ref: STR-01
+categories: [Strings]
+impact: silencieux
+extrait: 'strsplit("a.b", ".")[[1]]'
+reponse: '"" "" ""'
+attendu: "`\"a\" \"b\"`"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+strsplit("a.b", split = ".")
+strsplit("2026.10.23", split = ".")
+strsplit("a|b", split = "|")
+```
+:::
+
+## Why
+
+The `split` argument is a regular expression, and in a regular expression the dot means "any character". Every character of the string is therefore a separator, and only empty pieces are left between them.
+
+The vertical bar `|` means "or": `"|"` is the alternation between two empty patterns, which matches the empty string. `strsplit()` then splits between every character, and the bar ends up in the result instead of disappearing.
+
+## The fix
+
+Ask for a literal match with `fixed = TRUE`, or escape the special character.
+
+::: {.piege}
+```{r}
+strsplit("a.b", split = ".", fixed = TRUE)
+strsplit("a|b", split = "\\|")
+```
+:::

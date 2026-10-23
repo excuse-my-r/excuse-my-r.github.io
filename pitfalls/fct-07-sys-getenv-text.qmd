@@ -1,0 +1,40 @@
+---
+title: "Sys.getenv() always returns text"
+ref: FCT-07
+categories: [Factors]
+impact: incoherent
+extrait: 'Sys.getenv("MISSING_VAR", unset = 1234)'
+reponse: '"1234"'
+attendu: "the number `1234`"
+versions: "All"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+Sys.getenv("MISSING_VAR", unset = 1234)
+
+Sys.setenv(N_CORES = 4)
+Sys.getenv("N_CORES") + 1
+
+Sys.setenv(DEBUG = 1)
+Sys.getenv("DEBUG") == TRUE
+```
+:::
+
+## Why
+
+To the operating system, an environment variable is a character string. `Sys.getenv()` therefore always returns text, including the `unset` fallback value, which gets converted too.
+
+The arithmetic fails loudly, but the comparison gives no warning: `"1" == TRUE` compares the text `"1"` with the text `"TRUE"`, and returns `FALSE`.
+
+## The fix
+
+Convert the value you read explicitly, with a fallback given as text.
+
+::: {.piege}
+```{r}
+as.integer(Sys.getenv("N_CORES", unset = "1")) + 1
+as.logical(as.integer(Sys.getenv("DEBUG", unset = "0")))
+```
+:::

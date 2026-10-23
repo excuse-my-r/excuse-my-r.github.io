@@ -1,0 +1,52 @@
+---
+title: "sapply() does not guarantee the type of what it returns"
+ref: DF-01
+categories: [Data frames and lists]
+impact: silencieux
+extrait: 'class(sapply(list(), length))'
+reponse: '"list"'
+attendu: "an integer vector, possibly empty"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+get_lengths <- function(l) {
+  sapply(l, length)
+}
+get_lengths(list(1:3, 1:5))
+get_lengths(list())
+
+sapply(1:3, function(i) {
+  seq_len(i)
+})
+sapply(1:3, function(i) {
+  c(min = i, max = i^2)
+})
+```
+:::
+
+## Why
+
+`sapply()` applies the function, then tries to simplify the result. If every call returns a single value, you get a vector. If they all return the same number of values, a matrix. Otherwise, a list. And on an empty input there is nothing to simplify: `sapply()` returns `list()`.
+
+So the type of the result depends on the data, not on the code. A function that works on the example breaks further down the line, the day the input is empty or irregular.
+
+## The fix
+
+`vapply()` makes you declare the shape of each result, and stops if it is not respected.
+
+::: {.piege}
+```{r}
+get_lengths <- function(l) {
+  vapply(l, FUN = length, FUN.VALUE = integer(1))
+}
+get_lengths(list(1:3, 1:5))
+get_lengths(list())
+
+vapply(1:3, FUN = function(i) {
+  seq_len(i)
+}, FUN.VALUE = integer(1))
+```
+:::

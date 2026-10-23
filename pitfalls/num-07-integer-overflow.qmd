@@ -1,0 +1,36 @@
+---
+title: "An integer that grows too large becomes NA"
+ref: NUM-07
+categories: [Numbers]
+impact: cryptique
+extrait: '50000L * 50000L'
+reponse: 'NA'
+attendu: "`2.5e+09`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+.Machine$integer.max
+.Machine$integer.max + 1L
+50000L * 50000L
+```
+:::
+
+## Why
+
+R integers (the `L` suffix, but also `length()`, `nrow()`, `1:n` or columns read as integers) are stored on 32 bits. Beyond 2,147,483,647, R does not switch to double: it returns `NA` with a mere warning.
+
+That `NA` then spreads through the calculations, and the warning is easily lost in the middle of a long job. You discover it further down, as a missing total whose cause is far away.
+
+## The fix
+
+Switch to double before the calculation, with `as.numeric()` or literals without `L`.
+
+::: {.piege}
+```{r}
+50000 * 50000
+as.numeric(50000L) * 50000L
+```
+:::

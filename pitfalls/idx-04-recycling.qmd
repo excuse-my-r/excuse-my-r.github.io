@@ -1,0 +1,41 @@
+---
+title: "Recycling pads the shorter vector without warning"
+ref: IDX-04
+categories: [Indexing]
+impact: silencieux
+extrait: 'c(2, 1, 1, 2) == c(1, 2)'
+reponse: 'FALSE FALSE  TRUE  TRUE'
+attendu: "`TRUE TRUE TRUE TRUE`, each value being 1 or 2"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+values <- c(2, 1, 1, 2)
+values == c(1, 2)
+
+1:6 + 1:2
+1:5 + 1:2
+```
+:::
+
+## Why
+
+When two vectors of different lengths meet, R repeats the shorter one until it reaches the length of the longer. `values == c(1, 2)` therefore compares element by element with `1, 2, 1, 2`, which has nothing to do with "belongs to".
+
+R only warns when the longer length is not a multiple of the shorter, as for `1:5 + 1:2`. In every other case, recycling goes unnoticed.
+
+## The fix
+
+To test membership, use `%in%`. For a calculation, check that lengths are equal before combining: `stopifnot()` then stops the script instead of recycling.
+
+::: {.piege}
+```{r}
+values %in% c(1, 2)
+
+a <- 1:6
+b <- 1:2
+stopifnot(length(a) == length(b))
+```
+:::

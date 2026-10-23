@@ -1,0 +1,38 @@
+---
+title: "An anonymous function in the native pipe needs parentheses and a call"
+ref: PIP-03
+categories: [Pipes]
+impact: incoherent
+attendu: "`\"bbc\" \"bbb\"`"
+versions: "Since R 4.1.0 (native pipe and `\\(x)` syntax)"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+words <- c("abc", "bab")
+words |> \(y) gsub("a", replacement = "b", x = y)
+words |> (\(y) gsub("a", replacement = "b", x = y))
+```
+:::
+
+Run this block: the first form gives "function 'function' not supported in RHS call of a pipe", the second "function '(' not supported in RHS call of a pipe".
+
+## Why
+
+On the right of `|>`, R expects a function call, into which it inserts the value as the first argument. A function definition `\(y) ...` is not a call, and neither is a definition in parentheses: R rejects both as soon as it parses the code.
+
+With `%>%`, `x %>% (\(y) ...)` works, without the call parentheses. The native pipe requires you to call the function explicitly, with a trailing `()` that looks superfluous.
+
+## The fix
+
+Wrap the function in parentheses and call it. Since R 4.2.0, the `_` placeholder often removes the need for an anonymous function.
+
+::: {.piege}
+```{r}
+words <- c("abc", "bab")
+words |> (\(y) gsub("a", replacement = "b", x = y))()
+words |> gsub(pattern = "a", replacement = "b", x = _)
+```
+:::

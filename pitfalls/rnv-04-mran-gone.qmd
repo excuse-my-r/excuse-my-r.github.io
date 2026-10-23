@@ -1,0 +1,36 @@
+---
+title: "Old versions of renv still look for MRAN, which no longer exists"
+ref: RNV-04
+categories: [renv and installation]
+impact: cryptique
+attendu: "a restore that downloads the requested packages"
+versions: "{renv} before 1.0.0, where the MRAN integration was on by default"
+source: "Slack ThinkR (2024), {renv} NEWS"
+---
+
+::: {.piege .piege-statique}
+```r
+# project frozen with an old version of renv, on Windows or macOS
+renv::restore()
+```
+:::
+
+This pitfall depends on an old version of {renv} and on a network service that is gone, so it cannot be replayed in the browser.
+
+## Why
+
+MRAN was the daily CRAN snapshot run by Microsoft. On Windows and macOS, old versions of {renv} looked there for binaries of old package versions. Microsoft shut the service down in 2023.
+
+A project still on an old version of {renv} therefore keeps trying to reach MRAN during `restore()`. The resulting download errors talk about addresses or connections, not about MRAN being closed. {renv} 1.0.0 turned this integration off by default, and the option is now marked as deprecated.
+
+## The fix
+
+Turn MRAN off before restoring, then update {renv} in the project.
+
+::: {.piege .piege-statique}
+```r
+options(renv.config.mran.enabled = FALSE)
+renv::restore()
+renv::upgrade()
+```
+:::

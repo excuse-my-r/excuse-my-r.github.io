@@ -1,0 +1,56 @@
+---
+title: "units::set_units() takes the variable name for the unit"
+ref: TDY-16
+categories: [tidyverse]
+impact: silencieux
+attendu: "values in kilometres"
+versions: "All versions of {units}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(units)
+x <- 1:3
+u <- "km"
+set_units(x, u)
+set_units(set_units(x, u), value = "g", mode = "standard")
+
+target <- "km"
+set_units(x, target)
+```
+
+```text
+Units: [u]
+[1] 1 2 3
+Units: [g]
+[1] 1.660540e-24 3.321080e-24 4.981621e-24
+Error: In 'target', 'target' is not recognized by udunits.
+```
+:::
+
+This pitfall depends on the {units} package, so it cannot be replayed in the browser.
+
+## Why
+
+`set_units()` reads its second argument without evaluating it, so that you can write `set_units(x, m)` or `set_units(x, km/h)` without quotes. The symbol `u` is therefore never replaced by its value `"km"`: it is taken as is, as a unit name. And `u` exists: it is the atomic mass unit. The values become masses, and convert to grams without a murmur.
+
+With a variable name that is not a unit, such as `target`, you at least get an error. The trap only snaps shut on short names that are also units: `u`, `m`, `g`, `s`, `h`...
+
+## The fix
+
+Pass the unit as text, with `mode = "standard"`, which evaluates the argument normally.
+
+::: {.piege .piege-statique}
+```r
+set_units(x, value = u, mode = "standard")
+set_units(x, value = "km", mode = "standard")
+```
+
+```text
+Units: [km]
+[1] 1 2 3
+Units: [km]
+[1] 1 2 3
+```
+:::

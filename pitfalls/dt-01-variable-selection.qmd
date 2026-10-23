@@ -1,0 +1,44 @@
+---
+title: "DT[, v] does not select the columns whose names v holds"
+ref: DT-01
+categories: [data.table]
+impact: cryptique
+attendu: "columns a and b"
+versions: "All versions of {data.table}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2, b = 3:4, v = c("x", "y"))
+v <- c("a", "b")
+dt[, v]
+
+columns <- function() {
+  c("a", "b")
+}
+dt[, columns()]
+dt[, c(columns())]
+```
+:::
+
+## Why
+
+In `dt[, j]`, `j` is an expression evaluated **inside** the table, as in `with()`. There, `v` refers first to the column `v`, and `dt[, v]` returns its content. `columns()` returns a character vector, which {data.table} hands back as is: it is a computed result, not a selection.
+
+{data.table} adds convenience rules that make the whole thing unpredictable: a `j` reduced to a symbol with no column of that name gives an error suggesting `..v`, and a `c()` around a function call is enough to trigger a column selection.
+
+## The fix
+
+Say explicitly that `j` holds column names, with the `..` prefix or `with = FALSE`.
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt[, ..v]
+dt[, columns(), with = FALSE]
+```
+:::

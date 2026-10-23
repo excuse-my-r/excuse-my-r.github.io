@@ -1,0 +1,42 @@
+---
+title: "install.packages() on a local archive crashed inside a renv project"
+ref: RNV-12
+categories: [renv and installation]
+impact: cryptique
+attendu: "the package installed from the `.tar.gz` file"
+versions: "Observed in 2022 with R 4.1 and {renv}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+install.packages("~/bee2_0.0.1.tar.gz", repos = NULL, type = "source")
+```
+
+```text
+Installing package into '/home/florence/sunglasses/renv/library/R-4.1/x86_64-pc-linux-gnu'
+(as 'lib' is unspecified)
+Error in startsWith(contriburl, "file:") : non-character object(s)
+```
+:::
+
+This pitfall depends on a {renv} project and a package archive on disk, so it cannot be replayed in the browser.
+
+## Why
+
+With `repos = NULL`, `install.packages()` is supposed to install the given file directly. In this {renv} project, though, the call ended up in the part of the code that handles repositories: `contrib.url(NULL)` does not return text, and `startsWith()` refuses anything that is not text.
+
+The message mentions `contriburl`, an argument the user never passed. Nothing suggests that the problem comes from installing a local file in this context.
+
+## The fix
+
+Go through a function designed to install a local archive, which worked in the same project.
+
+::: {.piege .piege-statique}
+```r
+remotes::install_local("~/bee2_0.0.1.tar.gz")
+
+# or, in a renv project
+renv::install("~/bee2_0.0.1.tar.gz")
+```
+:::

@@ -1,0 +1,38 @@
+---
+title: "summarise() reuses the columns it has just created"
+ref: TDY-08
+categories: [tidyverse]
+impact: silencieux
+extrait: 'summarise(df, x = mean(x), s = sd(x))$s'
+reponse: 'NA'
+attendu: "the mean and the standard deviation of x"
+versions: "All versions of {dplyr}"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+measures <- data.frame(x = c(1, 2, 3, 10))
+summarise(measures, x = mean(x), s = sd(x))
+```
+:::
+
+## Why
+
+`summarise()` and `mutate()` evaluate their expressions in order, and each new column is visible to the following ones. Here, `x` is first replaced by its mean, a single value. `sd()` is then computed on that single value, and the standard deviation of a single value is `NA`.
+
+This is by design, and often handy. The trap appears when you reuse the name of an existing column.
+
+## The fix
+
+Give the result a new name, or compute the standard deviation first.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+summarise(measures, mean = mean(x), s = sd(x))
+```
+:::

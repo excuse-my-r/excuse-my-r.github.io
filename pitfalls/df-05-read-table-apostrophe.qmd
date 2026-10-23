@@ -1,0 +1,41 @@
+---
+title: "read.table() takes apostrophes for quotes and # for a comment"
+ref: DF-05
+categories: [Data frames and lists]
+impact: silencieux
+attendu: "a table of 4 rows"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+lines <- "name;n
+Mary D'Angelo;12
+Martin;5
+O'Neil;7
+Smith;3"
+people <- read.table(text = lines, sep = ";", header = TRUE)
+people
+nrow(people)
+
+read.table(text = "ref;n\nA#3;12\nB;5", sep = ";", header = TRUE)
+```
+:::
+
+## Why
+
+By default, `read.table()` uses `quote = "\"'"`: the apostrophe opens a quoted string, which only closes at the next apostrophe, several lines further down. Everything in between becomes a single value. Here, three people are merged into one, and the table loses two rows without the slightest warning.
+
+Likewise, `comment.char = "#"` cuts each line at the first `#`. A reference such as `A#3` truncates the line, and R stops on an error about the number of columns that does not point to the real culprit.
+
+## The fix
+
+State explicitly which quotes and which comments the file uses, or go through `read.csv()` and `read.csv2()`, which only accept double quotes and ignore `#`.
+
+::: {.piege}
+```{r}
+read.table(text = lines, sep = ";", header = TRUE, quote = "\"", comment.char = "")
+read.csv2(text = "ref;n\nA#3;12\nB;5")
+```
+:::

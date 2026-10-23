@@ -1,0 +1,44 @@
+---
+title: "To req(), the number 0 is a valid value"
+ref: SHY-04
+categories: [Shiny]
+impact: incoherent
+extrait: 'shiny::isTruthy(0)'
+reponse: 'TRUE'
+attendu: "`FALSE`, like `FALSE`, `NULL` or `\"\"`"
+versions: "All versions of {shiny}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+isTruthy(0)
+isTruthy(FALSE)
+isTruthy("")
+req(0)
+```
+:::
+
+## Why
+
+`req()` silently stops a reactive computation when a value is not "truthy". The list is short: `FALSE`, `NULL`, `""`, an empty vector, a vector made only of `NA`, a `try()` error, and an action button that was never clicked.
+
+The number 0 is not on it. A `numericInput()` left at 0 therefore gets through `req()`, and the computation runs with a zero quantity. Only the action button is an exception: its value 0 carries a special class that `isTruthy()` recognises.
+
+## The fix
+
+Give `req()` the business rule itself, as a logical test.
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+quantity <- 0
+isTruthy(quantity > 0)
+tryCatch(req(quantity > 0), error = function(e) {
+  class(e)[1]
+})
+```
+:::

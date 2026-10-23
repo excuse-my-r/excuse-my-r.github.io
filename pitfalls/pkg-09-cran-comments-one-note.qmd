@@ -1,0 +1,45 @@
+---
+title: "The cran-comments.md template already announces a note"
+ref: PKG-09
+categories: [Packages]
+impact: incoherent
+attendu: "a neutral template, to fill in with the actual check results"
+versions: "All recent versions of {usethis}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+usethis::use_cran_comments()
+```
+
+```text
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+* This is a new release.
+```
+:::
+
+This pitfall depends on a package's files and on {usethis}, so it cannot be replayed in the browser.
+
+## Why
+
+The template starts from the most common case, a first submission: CRAN then always reports a "New submission" note. The file comes pre-filled with that note, and nothing reminds you to correct it.
+
+For an update with no note at all, or with two notes, the file sent to CRAN describes a check that is not yours. The reviewers read it, and an inconsistency like this can cost a round trip.
+
+## The fix
+
+Rerun the check, then rewrite the summary with the actual figures and explain every remaining note.
+
+::: {.piege .piege-statique}
+```text
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
+
+* This is a minor update fixing a bug in summarise_data().
+```
+:::

@@ -1,0 +1,48 @@
+---
+title: "Copying a data.table with <- does not copy it"
+ref: DT-02
+categories: [data.table]
+impact: silencieux
+attendu: "`backup` unchanged, with column a only"
+versions: "All versions of {data.table}"
+source: "General R knowledge"
+---
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2)
+backup <- dt
+dt[, b := a * 10]
+backup
+
+add_total <- function(d) {
+  d[, total := 0]
+  nrow(d)
+}
+add_total(backup)
+names(dt)
+```
+:::
+
+## Why
+
+In R, `backup <- dt` copies nothing right away: both names point to the same object, and R only makes the copy when one of them is modified. But `:=` modifies the table **in place**, bypassing that mechanism. So both names see the new column.
+
+The same goes inside a function: the argument `d` points to the caller's table, and `:=` modifies it, even though the function only returns a number.
+
+## The fix
+
+Make a real copy with `copy()` when you want to keep the original.
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2)
+backup <- copy(dt)
+dt[, b := a * 10]
+backup
+```
+:::

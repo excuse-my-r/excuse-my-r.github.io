@@ -8,20 +8,32 @@ project:
 
 website:
   title: "Excuse my R"
-  description: "Les comportements de R qui surprennent même les habitués, à exécuter dans votre navigateur."
+  description: "R behaviours that surprise even seasoned users, to run in your browser."
   favicon: assets/favicon.svg
   navbar:
     logo: assets/favicon.svg
     logo-alt: ""
+    left:
+      - text: "How to contribute"
+        href: contributing.qmd
     right:
       - icon: github
         href: https://github.com/excuse-my-r/excuse-my-r.github.io
-        aria-label: Dépôt GitHub du projet
+        aria-label: GitHub repository
   page-footer:
-    left: "Un projet ThinkR et Institut Pasteur (safer-r)."
-    right: "Le code s'exécute dans votre navigateur grâce à [webR](https://docs.r-wasm.org/webr/)."
+    left: "[A ThinkR and Institut Pasteur (safer-r) project.]{.seulement-en}[Un projet ThinkR et Institut Pasteur (safer-r).]{.seulement-fr}"
+    right: "[Code runs in your browser thanks to [webR](https://docs.r-wasm.org/webr/).]{.seulement-en}[Le code s'exécute dans votre navigateur grâce à [webR](https://docs.r-wasm.org/webr/).]{.seulement-fr}"
 
-lang: fr
+lang: en
+
+# Libellés des fiches, traduits dans fr/_metadata.yml
+libelles:
+  catalogue: "Catalogue"
+  gravite: "Severity"
+  reference: "Reference"
+  versions: "Affected versions"
+  source: "Spotted by"
+  attendu: "You would expect"
 
 format:
   html:

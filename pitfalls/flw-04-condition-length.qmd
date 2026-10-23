@@ -1,0 +1,44 @@
+---
+title: "if and && long ignored everything but the first element"
+ref: FLW-04
+categories: [Control flow]
+impact: silencieux
+attendu: "an error, since the condition holds two values"
+versions: "Silent up to R 4.1, an error for if since R 4.2.0 and for && since R 4.3.0"
+source: "The R Inferno, R 4.2.0 and 4.3.0 NEWS"
+---
+
+::: {.piege}
+```{r}
+x <- c(5, -1)
+if (x > 0) {
+  "all positive"
+}
+
+c(TRUE, FALSE) && TRUE
+```
+:::
+
+Pick **R 4.1.3** in the menu, then run it again: the same code answers "all positive" with a mere warning, and `&&` returns `TRUE` without a word.
+
+## Why
+
+`if` expects a single logical value. Up to R 4.1, when given several, it used the first one and settled for a warning, easy to miss in a script or in a function called in a loop. Here, `x > 0` is `c(TRUE, FALSE)`: only the 5 was tested, the -1 went unnoticed.
+
+`&&` and `||` were worse: they took the first element without any warning. R 4.2.0 turned the `if` case into an error, and R 4.3.0 did the same for `&&` and `||`. An old script that "worked" can therefore stop dead after an R upgrade.
+
+## The fix
+
+Say explicitly what you want to test across the whole vector.
+
+::: {.piege}
+```{r}
+x <- c(5, -1)
+if (all(x > 0)) {
+  "all positive"
+} else {
+  "at least one value zero or negative"
+}
+any(x > 0)
+```
+:::

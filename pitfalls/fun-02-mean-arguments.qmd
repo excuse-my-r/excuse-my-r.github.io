@@ -1,0 +1,37 @@
+---
+title: "mean() does not take several numbers the way max() does"
+ref: FUN-02
+categories: [Functions]
+impact: silencieux
+extrait: 'mean(1, 5, 3)'
+reponse: '1'
+attendu: "`3`, the mean of 1, 5 and 3"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+max(1, 5, 3)
+sum(1, 5, 3)
+mean(1, 5, 3)
+median(1, 5, 3)
+```
+:::
+
+## Why
+
+`max()` and `sum()` gather everything you pass them through `...`. `mean()` and `median()` expect a single vector `x`: the following numbers fill other arguments. In `mean(1, 5, 3)`, `x` is 1, `trim` is 5 and `na.rm` is 3.
+
+The mean of a single value is that value, hence 1. No argument is refused, so no error.
+
+## The fix
+
+Group the values into a vector with `c()`.
+
+::: {.piege}
+```{r}
+mean(c(1, 5, 3))
+median(c(1, 5, 3))
+```
+:::

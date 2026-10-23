@@ -1,0 +1,44 @@
+---
+title: "observe() and isolate() are no substitute for observeEvent()"
+ref: SHY-06
+categories: [Shiny]
+impact: incoherent
+attendu: "the action only runs when the button is clicked"
+versions: "All versions of {shiny}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observe({
+    input$save
+    isolate({
+      save_entry(name = input$name, amount = input$amount)
+    })
+  })
+}
+```
+:::
+
+This pitfall depends on a running Shiny app, so it cannot be replayed in the browser.
+
+## Why
+
+An `observe()` runs once at startup, to discover its dependencies. Here, `save_entry()` is therefore called as soon as the app opens, before any click, with the default values of the fields.
+
+The real dependency hangs on a lone `input$save` line, easy to delete by mistake during a cleanup. And if someone later adds an `input$...` outside the `isolate()`, the action also fires when that field changes.
+
+## The fix
+
+`observeEvent()` states explicitly which event triggers the action, isolates the rest of the code, and by default ignores a button that was never clicked.
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$save, {
+    save_entry(name = input$name, amount = input$amount)
+  })
+}
+```
+:::

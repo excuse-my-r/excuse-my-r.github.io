@@ -1,0 +1,36 @@
+---
+title: "as.Date() on a date-time ignores its time zone"
+ref: DAT-01
+categories: [Dates]
+impact: silencieux
+extrait: 'as.Date(as.POSIXct("2022-03-04 00:35", tz = "Europe/Paris"))'
+reponse: '"2022-03-03"'
+attendu: "`\"2022-03-04\"`, the day displayed"
+versions: "All"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+h <- as.POSIXct("2022-03-04 00:35:51", tz = "Europe/Paris")
+h
+as.Date(h)
+```
+:::
+
+## Why
+
+A `POSIXct` is a number of seconds since 1 January 1970 in universal time, along with a time zone that is only used for display. `as.Date()` defaults to `tz = "UTC"` and does not look at that time zone. Yet 00:35 in Paris is still 23:35 the previous day in UTC.
+
+Every time between midnight and 1 a.m. (2 a.m. in summer) therefore lands on the wrong day. On a timestamped dataset, the error only hits a small share of the rows, which makes it hard to spot. {lubridate}, for its part, uses the object's time zone: `as_date(h)` and `as.Date(h)` do not give the same day.
+
+## The fix
+
+Pass the time zone explicitly.
+
+::: {.piege}
+```{r}
+as.Date(h, tz = "Europe/Paris")
+as.Date(h, tz = attr(h, which = "tzone"))
+```
+:::

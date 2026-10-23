@@ -1,0 +1,35 @@
+---
+title: "Assigning NULL to a list element deletes it"
+ref: LEN-06
+categories: [Empty and NA]
+impact: silencieux
+attendu: "the list keeps `threshold`, with an empty value"
+versions: "All"
+source: "Slack ThinkR (2022), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+settings <- list(threshold = 10, colour = "red")
+settings$threshold <- NULL
+str(settings)
+```
+:::
+
+## Why
+
+For a list, `l$a <- NULL` (like `l[["a"]] <- NULL`) is the way to delete an element. It is not a value assignment: the element disappears, along with its name, and the list gets shorter.
+
+When `NULL` is a legitimate value (a setting "left blank", a default argument), the code believes it stored it, and the key no longer exists. The positions of the following elements shift too.
+
+## The fix
+
+Assign a list containing `NULL`, with single brackets.
+
+::: {.piege}
+```{r}
+settings <- list(threshold = 10, colour = "red")
+settings["threshold"] <- list(NULL)
+str(settings)
+```
+:::

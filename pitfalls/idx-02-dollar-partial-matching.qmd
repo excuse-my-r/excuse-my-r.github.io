@@ -1,0 +1,36 @@
+---
+title: "$ completes names for you"
+ref: IDX-02
+categories: [Indexing]
+impact: silencieux
+extrait: 'list(alpha = 0.05)$a'
+reponse: '0.05'
+attendu: "`NULL`, there is no element named a"
+versions: "All"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+settings <- list(alpha = 0.05)
+settings$a
+settings[["a"]]
+```
+:::
+
+## Why
+
+On a list, `$` accepts a prefix: if only one name starts with `a`, that element is returned, without warning. `[[` requires the exact name.
+
+The day someone adds an `amplitude` element to the list, `settings$a` starts returning `NULL`, and the code that depends on it changes behaviour although nobody touched it.
+
+## The fix
+
+Use `[[` in production code, or ask R to flag every partial match.
+
+::: {.piege}
+```{r}
+options(warnPartialMatchDollar = TRUE)
+settings$a
+```
+:::
