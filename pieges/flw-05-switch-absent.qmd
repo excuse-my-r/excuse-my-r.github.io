@@ -1,0 +1,43 @@
+---
+title: "switch() renvoie NULL sans prévenir quand aucun cas ne correspond"
+ref: FLW-05
+categories: [Contrôle de flux]
+impact: silencieux
+extrait: 'is.null(switch("z", a = 1, b = 2))'
+reponse: 'TRUE'
+attendu: "une erreur, puisque `\"moyen\"` n'est pas prévu"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+choix <- "moyen"
+taille <- switch(choix, petit = 1, grand = 3)
+taille
+
+switch(2, "a", "b")
+switch(3, "a", "b")
+```
+:::
+
+## Pourquoi
+
+Quand aucun nom ne correspond et qu'il n'y a pas de valeur par défaut, `switch()` renvoie `NULL`, et de façon invisible : rien ne s'affiche. `taille` vaut donc `NULL`, et l'erreur surgira plus loin, dans un calcul qui n'a rien à voir avec `switch()`.
+
+Avec un nombre, `switch()` choisit par position : `switch(2, "a", "b")` donne `"b"`, et `switch(3, "a", "b")` renvoie le même `NULL` invisible. Avec le texte `"2"`, les cas sans nom deviennent des valeurs par défaut, et R refuse d'en avoir deux : `switch("2", "a", "b")` est une erreur « duplicate 'switch' defaults ».
+
+## La parade
+
+Terminer par un cas sans nom qui arrête le programme avec un message clair.
+
+::: {.piege}
+```{r}
+taille <- switch(
+  choix,
+  petit = 1,
+  grand = 3,
+  stop("choix inconnu : ", choix)
+)
+```
+:::

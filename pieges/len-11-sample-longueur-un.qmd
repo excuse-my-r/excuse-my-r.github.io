@@ -1,0 +1,39 @@
+---
+title: "sample() sur une seule valeur tire dans 1:valeur"
+ref: LEN-11
+categories: [Vides et NA]
+impact: silencieux
+extrait: 'length(sample(c(12)))'
+reponse: '12'
+attendu: "`1`, il n'y a qu'une valeur à mélanger"
+versions: "Toutes"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c(3, 8, 12)
+set.seed(42)
+sample(x[x > 5])
+set.seed(42)
+sample(x[x > 10])
+```
+:::
+
+## Pourquoi
+
+`sample()` a deux comportements. Si on lui donne un vecteur de plusieurs éléments, il mélange ces éléments. Si on lui donne un seul nombre `n`, il le prend pour une taille et tire dans `1:n`.
+
+Tant que le filtre garde plusieurs valeurs, tout va bien. Le jour où il n'en garde qu'une, ici 12, `sample()` renvoie une permutation des entiers de 1 à 12, qui n'ont rien à voir avec les données.
+
+## La parade
+
+Tirer des positions avec `sample.int()`, puis indexer le vecteur.
+
+::: {.piege}
+```{r}
+selection <- x[x > 10]
+set.seed(42)
+selection[sample.int(length(selection))]
+```
+:::

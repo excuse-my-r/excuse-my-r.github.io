@@ -1,0 +1,42 @@
+---
+title: "install.packages() d'une archive locale a planté dans un projet renv"
+ref: RNV-12
+categories: [renv et installation]
+impact: cryptique
+attendu: "le paquet installé depuis le fichier `.tar.gz`"
+versions: "Observé en 2022 avec R 4.1 et {renv}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+install.packages("~/bee2_0.0.1.tar.gz", repos = NULL, type = "source")
+```
+
+```text
+Installing package into '/home/florence/sunglasses/renv/library/R-4.1/x86_64-pc-linux-gnu'
+(as 'lib' is unspecified)
+Error in startsWith(contriburl, "file:") : non-character object(s)
+```
+:::
+
+Ce piège dépend d'un projet {renv} et d'une archive de paquet sur le disque, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Avec `repos = NULL`, `install.packages()` doit installer directement le fichier donné. Dans ce projet {renv}, l'appel est pourtant arrivé dans la partie du code qui gère les dépôts : `contrib.url(NULL)` ne renvoie pas de texte, et `startsWith()` refuse ce qui n'est pas du texte.
+
+Le message parle de `contriburl`, un argument que l'utilisateur n'a jamais passé. Rien n'indique que le problème vient de l'installation d'un fichier local dans ce contexte.
+
+## La parade
+
+Passer par une fonction faite pour installer une archive locale, qui fonctionnait dans le même projet.
+
+::: {.piege .piege-statique}
+```r
+remotes::install_local("~/bee2_0.0.1.tar.gz")
+
+# ou, dans un projet renv
+renv::install("~/bee2_0.0.1.tar.gz")
+```
+:::

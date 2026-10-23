@@ -1,0 +1,37 @@
+---
+title: "Redéfinir une fonction existante la masque sans avertissement"
+ref: FUN-05
+categories: [Fonctions]
+impact: silencieux
+attendu: "`2`, la moyenne"
+versions: "Toutes"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+mean <- function(...) {
+  sum(...)
+}
+mean(c(1, 2, 3))
+find("mean")
+```
+:::
+
+## Pourquoi
+
+R cherche une fonction d'abord dans l'environnement courant, puis dans les paquets chargés, du plus récent au plus ancien. Une fonction `mean` créée dans l'espace de travail passe donc avant celle de {base}, et R ne dit rien.
+
+Le même mécanisme joue entre paquets. Charger {plyr} après {dplyr} remplace `summarise()` et `mutate()` par leurs homonymes de {plyr}, qui ignorent `group_by()`. R affiche bien un message au chargement, mais il est facile à manquer.
+
+## La parade
+
+Préfixer par le nom du paquet quand le doute est permis, supprimer l'objet qui masque, ou utiliser {conflicted}, qui transforme toute ambiguïté en erreur.
+
+::: {.piege}
+```{r}
+base::mean(c(1, 2, 3))
+rm(mean)
+mean(c(1, 2, 3))
+```
+:::

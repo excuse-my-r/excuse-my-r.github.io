@@ -1,0 +1,40 @@
+---
+title: "remotes::install_cran(lib = ) peut sauter l'installation demandée"
+ref: RNV-10
+categories: [renv et installation]
+impact: silencieux
+attendu: "le paquet installé dans la bibliothèque donnée par `lib`"
+versions: "Toutes les versions de {remotes}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+remotes::install_cran("glue", lib = "ci/lib")
+```
+
+```text
+Skipping install of 'glue' from a cran remote, the SHA1 (1.8.0) has not changed since last install.
+  Use `force = TRUE` to force installation
+```
+:::
+
+Ce piège dépend de plusieurs bibliothèques et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Avant d'installer, {remotes} compare la version disponible (pour CRAN, le « SHA1 » est le numéro de version) à celle déjà installée. Mais il cherche le paquet installé dans toutes les bibliothèques de `.libPaths()`, pas seulement dans `lib`.
+
+Si `glue` est déjà présent ailleurs, par exemple dans la bibliothèque système, l'installation est sautée. Le dossier `ci/lib` reste vide, et le script qui comptait y trouver le paquet échoue plus loin, ou utilise une autre version.
+
+## La parade
+
+Forcer l'installation quand la bibliothèque cible compte, ou restreindre `.libPaths()` à cette bibliothèque le temps de l'installation.
+
+::: {.piege .piege-statique}
+```r
+remotes::install_cran("glue", lib = "ci/lib", force = TRUE)
+
+withr::with_libpaths(new = "ci/lib", code = remotes::install_cran("glue"))
+```
+:::

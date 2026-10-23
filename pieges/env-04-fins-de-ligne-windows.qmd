@@ -1,0 +1,43 @@
+---
+title: "Des fins de ligne Windows font échouer un check sous Linux"
+ref: ENV-04
+categories: [OS et CI]
+impact: cryptique
+attendu: "le même check que sous Windows"
+versions: "Toutes"
+source: "Slack ThinkR (2019, 2021)"
+---
+
+::: {.piege .piege-statique}
+```bash
+git config core.autocrlf true   # sur le poste Windows
+git push
+# puis, dans la CI Linux
+Rscript -e 'rcmdcheck::rcmdcheck()'
+```
+
+```text
+input string 1 is invalid in this locale
+```
+:::
+
+Ce piège dépend de git, de deux systèmes d'exploitation et d'une CI, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Windows termine les lignes par deux caractères, retour chariot puis saut de ligne (`\r\n`), Linux et macOS par un seul (`\n`). Selon la configuration de git, des fichiers peuvent arriver dans le dépôt ou dans la CI avec des `\r` en trop.
+
+Ces caractères invisibles se retrouvent dans `DESCRIPTION`, dans des fichiers de données ou dans le code, et font échouer des outils qui lisent le texte. L'incident d'origine s'est soldé par une erreur du type « input string 1 is invalid in this locale », qui évoque l'encodage et non les fins de ligne.
+
+## La parade
+
+Fixer les fins de ligne dans le dépôt lui-même, par un fichier `.gitattributes`, plutôt que dans la configuration de chaque poste.
+
+::: {.piege .piege-statique}
+```text
+# .gitattributes
+* text=auto eol=lf
+*.R text eol=lf
+DESCRIPTION text eol=lf
+```
+:::

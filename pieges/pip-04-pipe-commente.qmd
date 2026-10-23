@@ -1,0 +1,40 @@
+---
+title: "Commenter la dernière étape d'un pipe avale l'instruction suivante"
+ref: PIP-04
+categories: [Pipes]
+impact: cryptique
+attendu: "`[1] 1 2 3`"
+versions: "Toutes"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege}
+```{r}
+resultat <- c(3, 1, 2) |>
+  sort() |>
+  # rev()
+
+print(resultat)
+```
+:::
+
+## Pourquoi
+
+Le commentaire et la ligne vide sont ignorés par R. Ce qu'il lit, c'est une chaîne qui se termine par `|>`, donc une instruction incomplète, qui continue sur la première ligne de code trouvée ensuite. Le code réellement exécuté est `resultat <- print(sort(c(3, 1, 2)), resultat)`.
+
+`resultat` n'existe pas encore au moment où `print()` évalue son second argument, d'où « object 'resultat' not found » sur une ligne qui semble juste afficher une variable qu'on vient de créer. Si l'instruction suivante n'utilisait pas `resultat`, le code tournerait en silence, avec un résultat absurde. {magrittr} pose le même problème avec un `%>%` final.
+
+## La parade
+
+Commenter une étape au milieu, jamais la dernière, ou terminer chaque chaîne par une étape neutre comme `identity()` pour pouvoir commenter tout ce qui précède.
+
+::: {.piege}
+```{r}
+resultat <- c(3, 1, 2) |>
+  sort() |>
+  # rev() |>
+  identity()
+
+print(resultat)
+```
+:::

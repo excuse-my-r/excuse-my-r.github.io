@@ -1,0 +1,35 @@
+---
+title: "as.integer() tronque au lieu d'arrondir"
+ref: NUM-08
+categories: [Numérique]
+impact: silencieux
+extrait: 'as.integer(0.29 * 100)'
+reponse: '28'
+attendu: "`29`"
+versions: "Toutes"
+source: "Connaissance générale de R, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+as.integer(2.9999)
+as.integer(-2.9)
+as.integer(0.29 * 100)
+```
+:::
+
+## Pourquoi
+
+`as.integer()` supprime la partie décimale, vers zéro : 2.9999 devient 2 et -2.9 devient -2. Ce n'est pas un arrondi.
+
+Combiné à la représentation binaire, le résultat devient franchement faux. `0.29 * 100` s'affiche `29`, mais vaut en réalité 28.999999999999996 : la troncature donne 28. Un pourcentage converti en entier perd ainsi une unité sans un mot.
+
+## La parade
+
+Arrondir d'abord, convertir ensuite.
+
+::: {.piege}
+```{r}
+as.integer(round(0.29 * 100))
+```
+:::

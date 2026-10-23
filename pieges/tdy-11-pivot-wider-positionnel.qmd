@@ -1,0 +1,37 @@
+---
+title: "pivot_wider() n'accepte pas les arguments positionnels de spread()"
+ref: TDY-11
+categories: [tidyverse]
+impact: cryptique
+attendu: "le même tableau large qu'avec `spread(long, cle, val)`"
+versions: "Toutes les versions de {tidyr} depuis 1.0.0"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+long <- data.frame(id = c(1, 1, 2, 2), cle = c("a", "b", "a", "b"), val = 1:4)
+spread(long, cle, val)
+pivot_wider(long, cle, val)
+```
+:::
+
+## Pourquoi
+
+`spread()` prenait en deuxième et troisième position la colonne des noms et celle des valeurs. `pivot_wider()`, qui le remplace, a placé `...` juste après les données : tous les autres arguments doivent être nommés. `cle` et `val` tombent donc dans `...`, et `names_from` garde sa valeur par défaut, une colonne `name`.
+
+L'erreur parle d'une colonne `name` que l'on n'a jamais écrite, ce qui ne met pas sur la piste.
+
+## La parade
+
+Nommer `names_from` et `values_from`.
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+pivot_wider(long, names_from = cle, values_from = val)
+```
+:::

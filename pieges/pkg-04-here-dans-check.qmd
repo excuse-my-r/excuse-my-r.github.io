@@ -1,0 +1,45 @@
+---
+title: "here::here() dans un check remonte bien au-delà du paquet"
+ref: PKG-04
+categories: [Packages]
+impact: silencieux
+attendu: "la racine du paquet"
+versions: "Toutes les versions de {here}"
+source: "Slack ThinkR (2025)"
+---
+
+::: {.piege packages="here"}
+```{r}
+maison <- file.path(tempfile(), "maison")
+dir.create(file.path(maison, ".git"), recursive = TRUE)
+tests <- file.path(maison, "travail", "monpaquet.Rcheck", "tests")
+dir.create(tests, recursive = TRUE)
+
+ancien <- setwd(tests)
+suppressPackageStartupMessages(library(here))
+basename(here())
+setwd(ancien)
+```
+:::
+
+Ici, un dossier `.git` oublié dans le répertoire personnel suffit : `here()` désigne ce répertoire, et non le paquet.
+
+## Pourquoi
+
+`here()` part du dossier de travail et remonte jusqu'au premier dossier qui ressemble à une racine de projet : un fichier `.Rproj`, un `DESCRIPTION`, un `.here`, un dossier `.git`, entre autres. Dans votre projet, il trouve le `.Rproj` et tout va bien.
+
+`R CMD check` lance les tests dans `monpaquet.Rcheck/tests`, sur le paquet construit. Le `.Rproj` est exclu par `.Rbuildignore`, et le `DESCRIPTION` copié n'est pas dans un dossier parent des tests. `here()` continue donc à remonter, jusqu'au répertoire personnel s'il y trouve un marqueur. Les chemins construits pointent alors hors du paquet, vers des fichiers qui n'existent pas ou, pire, vers d'autres fichiers du même nom.
+
+## La parade
+
+Dans un paquet, ne pas utiliser {here} : `testthat::test_path()` dans les tests, `system.file()` pour les fichiers installés depuis `inst/`.
+
+::: {.piege .piege-statique}
+```r
+# Dans tests/testthat/test-lecture.R
+donnees <- read.csv(testthat::test_path("fixtures", "entree.csv"))
+
+# Dans R/, pour un fichier de inst/extdata
+chemin <- system.file("extdata", "modele.csv", package = "monpaquet")
+```
+:::

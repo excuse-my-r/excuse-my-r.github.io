@@ -1,0 +1,41 @@
+---
+title: "Un second on.exit() efface le premier"
+ref: FUN-10
+categories: [Fonctions]
+impact: silencieux
+attendu: "les deux actions de nettoyage exécutées"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+traiter <- function() {
+  on.exit(cat("fermer la connexion\n"))
+  on.exit(cat("effacer le fichier temporaire\n"))
+  invisible(NULL)
+}
+traiter()
+```
+:::
+
+## Pourquoi
+
+`on.exit()` enregistre du code à exécuter à la sortie de la fonction. Par défaut, chaque appel remplace ce qui était enregistré avant. Ici, la fermeture de la connexion est oubliée sans aucun message.
+
+Le piège se cache souvent dans une longue fonction, où le second `on.exit()` est ajouté des dizaines de lignes après le premier.
+
+## La parade
+
+Ajouter `add = TRUE` à chaque appel. Les actions s'exécutent alors dans l'ordre où elles ont été déclarées, ou dans l'ordre inverse avec `after = FALSE`.
+
+::: {.piege}
+```{r}
+traiter <- function() {
+  on.exit(cat("fermer la connexion\n"), add = TRUE)
+  on.exit(cat("effacer le fichier temporaire\n"), add = TRUE)
+  invisible(NULL)
+}
+traiter()
+```
+:::

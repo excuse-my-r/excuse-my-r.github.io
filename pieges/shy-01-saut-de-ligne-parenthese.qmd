@@ -1,0 +1,44 @@
+---
+title: "Un saut de ligne avant la parenthèse coupe l'appel en deux"
+ref: SHY-01
+categories: [Shiny]
+impact: silencieux
+attendu: "`rendu` contient le résultat de l'appel"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+calculer <- function(expr) {
+  paste("résultat :", expr)
+}
+
+rendu <- calculer
+({
+  1 + 1
+})
+
+class(rendu)
+```
+:::
+
+## Pourquoi
+
+R lit une ligne, et s'arrête dès que l'expression est complète. `rendu <- calculer` est complète : R affecte la fonction elle-même à `rendu`. La ligne suivante, `({ 1 + 1 })`, devient une instruction indépendante, évaluée puis affichée.
+
+Dans Shiny, l'erreur prend la forme `output$graphique <- renderPlot` suivi à la ligne de `({ ... })`. La sortie reçoit la fonction `renderPlot` au lieu d'un rendu, et le code entre accolades est exécuté une fois, hors de toute réactivité. Le graphique n'apparaît pas, sans erreur qui pointe vers ce saut de ligne.
+
+## La parade
+
+Garder la parenthèse ouvrante sur la même ligne que le nom de la fonction.
+
+::: {.piege}
+```{r}
+rendu <- calculer({
+  1 + 1
+})
+
+rendu
+```
+:::

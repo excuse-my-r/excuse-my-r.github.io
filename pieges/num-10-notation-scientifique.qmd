@@ -1,0 +1,35 @@
+---
+title: "Les nombres ronds deviennent 1e+05 dans le texte"
+ref: NUM-10
+categories: [Numérique]
+impact: silencieux
+extrait: 'paste0("id_", 100000)'
+reponse: '"id_1e+05"'
+attendu: "`\"id_100000\"`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+as.character(100000)
+paste0("id_", c(99999, 100000, 100001))
+```
+:::
+
+## Pourquoi
+
+Pour convertir un double en texte, R choisit l'écriture la plus courte. `100000` s'écrit en 6 caractères, `1e+05` en 5 : la notation scientifique gagne. `100001` n'a pas d'écriture courte, il reste tel quel.
+
+Seuls les nombres « ronds » sont touchés, ce qui rend le piège rare et donc difficile à repérer. Des identifiants, des codes ou des noms de fichiers construits avec `paste0()` cassent une jointure pour quelques lignes seulement.
+
+## La parade
+
+Formater explicitement le nombre avant de le coller.
+
+::: {.piege}
+```{r}
+paste0("id_", format(c(99999, 100000, 100001), scientific = FALSE, trim = TRUE))
+sprintf("id_%.0f", c(99999, 100000, 100001))
+```
+:::

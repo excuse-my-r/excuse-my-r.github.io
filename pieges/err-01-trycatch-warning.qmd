@@ -1,0 +1,47 @@
+---
+title: "tryCatch(warning = ) abandonne le calcul au premier avertissement"
+ref: ERR-01
+categories: [Erreurs et fichiers]
+impact: silencieux
+attendu: "`4`, avec un message sur la valeur ignorée"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+total <- function(x) {
+  nombres <- as.numeric(x)
+  sum(nombres, na.rm = TRUE)
+}
+tryCatch(
+  total(c("1", "deux", "3")),
+  warning = function(w) {
+    message("Attention : ", conditionMessage(w))
+    NA
+  }
+)
+```
+:::
+
+## Pourquoi
+
+`tryCatch()` est fait pour sortir. Dès que la condition attendue est signalée, ici l'avertissement de `as.numeric()`, R quitte l'expression en cours, exécute le gestionnaire, et `tryCatch()` renvoie ce que le gestionnaire renvoie. La somme n'est jamais calculée.
+
+On croit seulement intercepter l'avertissement pour l'afficher autrement, et on remplace en réalité le résultat par `NA`.
+
+## La parade
+
+`withCallingHandlers()` appelle le gestionnaire sans quitter le calcul. `invokeRestart("muffleWarning")` étouffe ensuite l'avertissement d'origine, et l'exécution reprend là où elle était.
+
+::: {.piege}
+```{r}
+withCallingHandlers(
+  total(c("1", "deux", "3")),
+  warning = function(w) {
+    message("Attention : ", conditionMessage(w))
+    invokeRestart("muffleWarning")
+  }
+)
+```
+:::

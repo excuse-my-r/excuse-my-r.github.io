@@ -1,0 +1,41 @@
+---
+title: "round() n'arrondit pas comme à l'école"
+ref: NUM-04
+categories: [Numérique]
+impact: silencieux
+extrait: 'round(2.5)'
+reponse: '2'
+attendu: "`1`, `2`, `3`, puis `0.2`"
+versions: "Toutes, l'algorithme a changé en R 4.0.0"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+round(0.5)
+round(1.5)
+round(2.5)
+round(0.15, digits = 1)
+```
+:::
+
+## Pourquoi
+
+R suit la norme IEC 60559 : quand un nombre tombe exactement à mi-chemin, il est arrondi vers le chiffre pair. C'est l'arrondi « du banquier », qui évite de biaiser les sommes vers le haut. D'où `round(0.5)` qui vaut 0 et `round(2.5)` qui vaut 2.
+
+Pour `0.15`, s'ajoute la représentation binaire : le nombre stocké n'est pas exactement 0.15, et R arrondit ce qu'il a réellement en mémoire.
+
+## La parade
+
+Si la règle métier impose l'arrondi commercial (mi-chemin vers le haut), l'écrire explicitement, avec une petite marge pour absorber l'erreur binaire.
+
+::: {.piege}
+```{r}
+arrondi_commercial <- function(x, digits = 0) {
+  echelle <- 10^digits
+  sign(x) * floor(abs(x) * echelle + 0.5 + sqrt(.Machine$double.eps)) / echelle
+}
+arrondi_commercial(c(0.5, 1.5, 2.5))
+arrondi_commercial(0.15, digits = 1)
+```
+:::

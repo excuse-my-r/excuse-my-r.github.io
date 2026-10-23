@@ -1,0 +1,48 @@
+---
+title: "sapply() est une boucle, et ifelse() calcule tout"
+ref: DF-09
+categories: [Data frames et listes]
+impact: incoherent
+attendu: "un seul appel vectorisé, et aucun avertissement pour les valeurs négatives"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+appels <- 0
+au_carre <- function(v) {
+  appels <<- appels + 1
+  v^2
+}
+res <- sapply(1:1000, au_carre)
+appels
+
+x <- c(-1, 10)
+ifelse(x > 0, yes = log(x), no = NA)
+```
+:::
+
+## Pourquoi
+
+Les fonctions de la famille `apply` cachent une boucle : `sapply()` appelle la fonction une fois par élément, ici mille fois. Ce n'est pas de la vectorisation. Quand la fonction sait déjà travailler sur un vecteur entier, comme `^`, l'envelopper dans `sapply()` ne fait que ralentir.
+
+À l'inverse, vectoriser à tout prix a aussi un coût. `ifelse()` calcule ses deux branches en entier, puis choisit élément par élément. `log(x)` est donc calculé aussi pour -1, d'où l'avertissement, alors que la condition écartait justement ce cas. Sur des calculs lourds, on paie toutes les branches pour toutes les valeurs.
+
+## La parade
+
+Appeler directement les fonctions vectorisées, et réserver le calcul aux éléments qui en ont besoin.
+
+::: {.piege}
+```{r}
+appels <- 0
+res2 <- au_carre(1:1000)
+appels
+identical(res, y = res2)
+
+resultat <- rep(NA_real_, times = length(x))
+positif <- x > 0
+resultat[positif] <- log(x[positif])
+resultat
+```
+:::

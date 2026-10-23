@@ -1,0 +1,53 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - assets/site.js
+    - _headers
+    - coi-serviceworker.js
+
+website:
+  title: "Excuse my R"
+  description: "Les comportements de R qui surprennent même les habitués, à exécuter dans votre navigateur."
+  favicon: assets/favicon.svg
+  navbar:
+    logo: assets/favicon.svg
+    logo-alt: ""
+    right:
+      - icon: github
+        href: https://github.com/excuse-my-r/excuse-my-r.github.io
+        aria-label: Dépôt GitHub du projet
+  page-footer:
+    left: "Un projet ThinkR et Institut Pasteur (safer-r)."
+    right: "Le code s'exécute dans votre navigateur grâce à [webR](https://docs.r-wasm.org/webr/)."
+
+lang: fr
+
+format:
+  html:
+    theme:
+      light: [cosmo, assets/theme-light.scss]
+      dark: [cosmo, assets/theme-dark.scss]
+    respect-user-color-scheme: true
+    css: assets/site.css
+    page-layout: custom
+    template-partials:
+      - assets/title-block.html
+      - assets/metadata.html
+    include-in-header: assets/head.html
+    include-after-body: assets/after-body.html
+    html-math-method: plain
+    highlight-style: a11y
+    code-copy: false
+    anchor-sections: false
+    smooth-scroll: false
+
+execute:
+  freeze: false
+  error: true
+  warning: true
+
+knitr:
+  opts_chunk:
+    comment: ""
+    collapse: false

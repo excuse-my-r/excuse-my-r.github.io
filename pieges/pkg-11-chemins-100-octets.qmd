@@ -1,0 +1,43 @@
+---
+title: "Un chemin de plus de 100 octets n'est pas portable dans un paquet"
+ref: PKG-11
+categories: [Packages]
+impact: incoherent
+attendu: "une archive construite sans remarque"
+versions: "Toutes"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege}
+```{r}
+racine <- tempfile()
+chemin <- file.path(
+  "monpaquet", "inst", "extdata", "donnees_brutes_issues_du_questionnaire",
+  "reponses_des_etablissements_de_sante_2024.csv"
+)
+nchar(chemin, type = "bytes")
+
+dir.create(file.path(racine, dirname(chemin)), recursive = TRUE)
+writeLines("a,b", file.path(racine, chemin))
+ancien <- setwd(racine)
+utils::tar("monpaquet.tar.gz", files = "monpaquet", compression = "gzip", tar = "internal")
+setwd(ancien)
+```
+:::
+
+`R CMD build` passe par ce même code et affiche le même avertissement, puis `R CMD check` ajoute une note sur les noms de fichiers non portables.
+
+## Pourquoi
+
+Le format tar d'origine réserve 100 octets au chemin de chaque fichier. Les formats plus récents savent stocker des chemins plus longs, mais pas tous les outils qui lisent les archives. R avertit donc dès qu'un chemin, compté depuis le dossier du paquet, dépasse 100 octets. En octets, pas en caractères : une lettre accentuée en UTF-8 en compte deux.
+
+## La parade
+
+Raccourcir les noms de dossiers et de fichiers, et vérifier les longueurs avant de construire.
+
+::: {.piege}
+```{r}
+fichiers <- file.path("monpaquet", list.files(file.path(racine, "monpaquet"), recursive = TRUE))
+fichiers[nchar(fichiers, type = "bytes") > 100]
+```
+:::

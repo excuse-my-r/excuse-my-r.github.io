@@ -1,0 +1,41 @@
+---
+title: ".data[[ ]] ne marche dans facet_grid() qu'enveloppé dans vars()"
+ref: TDY-13
+categories: [tidyverse]
+impact: cryptique
+attendu: "un panneau par nombre de cylindres"
+versions: "Toutes les versions de {ggplot2}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="ggplot2"}
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+
+variable <- "cyl"
+p <- ggplot(mtcars, mapping = aes(x = mpg, y = wt)) +
+  geom_point() +
+  facet_grid(rows = .data[[variable]])
+```
+:::
+
+## Pourquoi
+
+Dans `aes()`, `.data` est le pronom qui désigne le tableau de données. Mais `facet_grid()` et `facet_wrap()` évaluent leurs arguments tout de suite, au moment où l'on écrit le graphique, hors de tout tableau : `.data` n'a encore rien à désigner, d'où l'erreur. Le message parle d'un « data mask », notion que l'on n'a pas besoin de connaître pour écrire un graphique.
+
+La forme formule, `facet_grid(.data[[variable]] ~ .)`, ne plante pas, mais la variable y perd son nom : {ggplot2} la range sous le nom `<unknown>`, qui ressort par exemple avec `labeller = label_both`.
+
+## La parade
+
+`vars()` retarde l'évaluation, comme `aes()`, jusqu'au moment où les données sont disponibles. La variable garde alors son nom.
+
+::: {.piege packages="ggplot2"}
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+
+p <- ggplot(mtcars, mapping = aes(x = mpg, y = wt)) +
+  geom_point() +
+  facet_grid(rows = vars(.data[[variable]]))
+ggplot_build(p)$layout$layout[, c("PANEL", "cyl")]
+```
+:::

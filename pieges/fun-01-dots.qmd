@@ -1,0 +1,34 @@
+---
+title: "... avale les fautes de frappe"
+ref: FUN-01
+categories: [Fonctions]
+impact: silencieux
+extrait: 'sum(1, 2, na.rn = TRUE)'
+reponse: '4'
+attendu: "`3`, ou une erreur sur l'argument mal orthographié"
+versions: "Toutes"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+sum(1, 2, na.rm = TRUE)
+sum(1, 2, na.rn = TRUE)
+paste(c("a", "b"), colapse = "+")
+```
+:::
+
+## Pourquoi
+
+`sum()` et `paste()` acceptent un nombre quelconque de valeurs via `...`. Un argument dont le nom n'est pas reconnu n'est pas rejeté : il rejoint les données. `na.rn = TRUE` devient la valeur `TRUE`, soit 1, ajoutée à la somme. `colapse = "+"` devient une chaîne de plus à coller.
+
+## La parade
+
+Relire les noms d'arguments, et dans vos propres fonctions, refuser ce qui n'est pas attendu dans `...`, par exemple avec `rlang::check_dots_empty()`.
+
+::: {.piege}
+```{r}
+sum(c(1, 2, NA), na.rm = TRUE)
+paste(c("a", "b"), collapse = "+")
+```
+:::

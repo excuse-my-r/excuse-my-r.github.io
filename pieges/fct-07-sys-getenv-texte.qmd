@@ -1,0 +1,40 @@
+---
+title: "Sys.getenv() renvoie toujours du texte"
+ref: FCT-07
+categories: [Facteurs]
+impact: incoherent
+extrait: 'Sys.getenv("VAR_INEXISTANTE", unset = 1234)'
+reponse: '"1234"'
+attendu: "le nombre `1234`"
+versions: "Toutes"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+Sys.getenv("VAR_INEXISTANTE", unset = 1234)
+
+Sys.setenv(NB_COEURS = 4)
+Sys.getenv("NB_COEURS") + 1
+
+Sys.setenv(DEBUG = 1)
+Sys.getenv("DEBUG") == TRUE
+```
+:::
+
+## Pourquoi
+
+Une variable d'environnement est une chaîne de caractères pour le système. `Sys.getenv()` renvoie donc toujours du texte, y compris la valeur de repli `unset`, convertie elle aussi.
+
+Le calcul échoue franchement, mais la comparaison ne prévient pas : `"1" == TRUE` compare le texte `"1"` au texte `"TRUE"`, et renvoie `FALSE`.
+
+## La parade
+
+Convertir explicitement la valeur lue, avec un repli sous forme de texte.
+
+::: {.piege}
+```{r}
+as.integer(Sys.getenv("NB_COEURS", unset = "1")) + 1
+as.logical(as.integer(Sys.getenv("DEBUG", unset = "0")))
+```
+:::

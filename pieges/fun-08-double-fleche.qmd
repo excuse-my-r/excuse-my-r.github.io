@@ -1,0 +1,42 @@
+---
+title: "<<- crée une variable globale quand il ne trouve rien à modifier"
+ref: FUN-08
+categories: [Fonctions]
+impact: silencieux
+attendu: "une variable locale à la fonction, ou une erreur"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+compter <- function(x) {
+  nb_valeurs <<- length(x)
+  nb_valeurs
+}
+exists("nb_valeurs")
+compter(1:3)
+exists("nb_valeurs")
+nb_valeurs
+```
+:::
+
+## Pourquoi
+
+`<<-` ne crée pas la variable dans la fonction : il remonte les environnements parents à la recherche d'une variable de ce nom, pour la modifier. S'il n'en trouve aucune, il la crée dans l'environnement global.
+
+La fonction laisse alors une trace dans l'espace de travail. Pire, si une variable `nb_valeurs` existait déjà, elle est écrasée sans prévenir.
+
+## La parade
+
+Renvoyer la valeur et l'affecter à l'appel. Réserver `<<-` aux fermetures, où la variable existe déjà dans la fonction englobante.
+
+::: {.piege}
+```{r}
+compter <- function(x) {
+  length(x)
+}
+nb <- compter(1:3)
+nb
+```
+:::

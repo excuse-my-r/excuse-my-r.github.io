@@ -1,0 +1,44 @@
+---
+title: "observe() et isolate() ne remplacent pas observeEvent()"
+ref: SHY-06
+categories: [Shiny]
+impact: incoherent
+attendu: "l'action ne s'exécute qu'au clic sur le bouton"
+versions: "Toutes les versions de {shiny}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observe({
+    input$enregistrer
+    isolate({
+      sauvegarder(input$nom, input$montant)
+    })
+  })
+}
+```
+:::
+
+Ce piège dépend d'une application Shiny en cours d'exécution, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Un `observe()` s'exécute une première fois au démarrage, pour découvrir ses dépendances. Ici, `sauvegarder()` est donc appelé à l'ouverture de l'application, avant tout clic, avec les valeurs par défaut des champs.
+
+La dépendance réelle tient à une ligne `input$enregistrer` posée seule, facile à supprimer par erreur lors d'un nettoyage. Et si quelqu'un ajoute plus tard un `input$...` hors du `isolate()`, l'action se déclenche aussi quand ce champ change.
+
+## La parade
+
+`observeEvent()` dit explicitement quel événement déclenche l'action, isole le reste du code, et ignore par défaut le bouton jamais cliqué.
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$enregistrer, {
+    sauvegarder(input$nom, input$montant)
+  })
+}
+```
+:::

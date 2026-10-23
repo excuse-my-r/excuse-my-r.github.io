@@ -1,0 +1,41 @@
+---
+title: "Le cache knitr n'existe que pendant un vrai knit"
+ref: ENV-09
+categories: [OS et CI]
+impact: incoherent
+attendu: "le chunk mis en cache aussi quand on l'exécute dans l'IDE"
+versions: "Toutes les versions de {knitr}"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+````markdown
+```{r modele, cache = TRUE}
+modele <- ajuster_modele_long(donnees)
+```
+````
+:::
+
+Ce piège dépend de l'IDE et d'un rendu de document, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+L'option `cache = TRUE` est lue par {knitr}, pendant le rendu du document. Quand on exécute le chunk dans RStudio ou Positron (bouton ou raccourci), c'est l'IDE qui envoie le code à la console : {knitr} n'intervient pas, aucun cache n'est créé ni relu, et le calcul long recommence à chaque fois.
+
+À l'inverse, le cache créé au rendu n'est pas chargé dans la session de l'IDE. Les objets ne sont donc pas disponibles en console tant qu'on n'a pas relancé les chunks.
+
+## La parade
+
+Pour un calcul long utilisé aussi en dehors du rendu, gérer soi-même la sauvegarde du résultat.
+
+::: {.piege .piege-statique}
+```r
+fichier <- "cache/modele.rds"
+if (file.exists(fichier)) {
+  modele <- readRDS(fichier)
+} else {
+  modele <- ajuster_modele_long(donnees)
+  saveRDS(modele, file = fichier)
+}
+```
+:::

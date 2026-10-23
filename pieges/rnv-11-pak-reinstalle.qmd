@@ -1,0 +1,37 @@
+---
+title: "pak réinstalle des paquets déjà présents dans une autre bibliothèque"
+ref: RNV-11
+categories: [renv et installation]
+impact: incoherent
+attendu: "rien à installer, les dépendances sont déjà là"
+versions: "Comportement par défaut de toutes les versions de {pak}, contournable depuis {pak} 0.9.3"
+source: "Slack ThinkR (2024), NEWS de {pak} 0.9.3"
+---
+
+::: {.piege .piege-statique}
+```r
+.libPaths()
+# [1] "~/R/library-perso"
+# [2] "/opt/R/library-commune"
+
+pak::pkg_install("monpaquet")
+```
+:::
+
+Ce piège dépend de plusieurs bibliothèques et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+{pak} installe dans une seule bibliothèque, la première de `.libPaths()` par défaut, et raisonne sur le contenu de cette bibliothèque. Une dépendance déjà installée dans la bibliothèque commune, plus bas dans `.libPaths()`, ne compte pas : {pak} la télécharge et l'installe à nouveau dans la bibliothèque personnelle.
+
+`install.packages()` se comporte autrement, ce qui surprend quand on passe de l'un à l'autre. Sur un serveur partagé, chaque utilisateur finit avec sa propre copie de paquets que l'administrateur avait installés pour tous.
+
+## La parade
+
+Depuis {pak} 0.9.3, passer toutes les bibliothèques à `lib` : la première reste la cible, les suivantes servent à satisfaire les dépendances sans réinstaller.
+
+::: {.piege .piege-statique}
+```r
+pak::pkg_install("monpaquet", lib = .libPaths())
+```
+:::

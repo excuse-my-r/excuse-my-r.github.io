@@ -1,0 +1,40 @@
+---
+title: "max() d'un vecteur vide vaut -Inf"
+ref: NUM-13
+categories: [Numérique]
+impact: cryptique
+extrait: 'max(numeric(0))'
+reponse: '-Inf'
+attendu: "`NA`, ou une erreur"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+notes <- c(12, 15, 9)
+max(notes[notes > 20])
+min(notes[notes > 20])
+```
+:::
+
+## Pourquoi
+
+Le maximum d'un ensemble vide n'existe pas. R choisit de renvoyer l'élément neutre du maximum, `-Inf`, et pour le minimum `Inf`, avec un avertissement.
+
+Le cas arrive après un filtre qui ne garde rien. `-Inf` est un nombre valide : il passe dans les calculs suivants, s'affiche dans un tableau de résultats ou fait exploser l'échelle d'un graphique, loin de la cause.
+
+## La parade
+
+Tester la longueur avant de calculer, et décider soi-même de la valeur à renvoyer.
+
+::: {.piege}
+```{r}
+selection <- notes[notes > 20]
+if (length(selection) > 0) {
+  max(selection)
+} else {
+  NA_real_
+}
+```
+:::

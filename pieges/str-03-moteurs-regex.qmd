@@ -1,0 +1,42 @@
+---
+title: "gsub() et {stringr} ne lisent pas la même expression régulière"
+ref: STR-03
+categories: [Chaînes]
+impact: incoherent
+extrait: 'gsub("[\\d]", "", "a1b2d")'
+reponse: '"a1b2"'
+attendu: "`\"abd\"`, les chiffres retirés"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+x <- "a1b2d"
+gsub("[\\d]", replacement = "", x = x)
+str_remove_all(x, pattern = "[\\d]")
+
+gsub("a(?=1)", replacement = "", x = x)
+str_remove_all(x, pattern = "a(?=1)")
+```
+:::
+
+## Pourquoi
+
+R contient plusieurs moteurs d'expressions régulières. Par défaut, `gsub()`, `grepl()` ou `sub()` utilisent TRE, qui suit la norme POSIX. Avec `perl = TRUE`, ils passent à PCRE. {stringr}, via {stringi}, utilise ICU. Les motifs simples se comportent pareil partout, les autres non.
+
+Entre crochets, TRE lit `\d` comme deux caractères littéraux, la barre oblique inverse et la lettre `d` : il retire le `d` et garde les chiffres. ICU y voit « un chiffre ». TRE ne connaît pas non plus les assertions comme `(?=1)` et renvoie une erreur, là où ICU les accepte. D'autres écarts existent : l'espace insécable, par exemple, est un `\s` pour ICU mais pas pour TRE.
+
+## La parade
+
+Rester sur un seul moteur dans un projet. En base R, `perl = TRUE` donne un comportement proche d'ICU. Les classes POSIX comme `[0-9]` ou `[[:digit:]]` se lisent pareil partout.
+
+::: {.piege}
+```{r}
+gsub("[\\d]", replacement = "", x = x, perl = TRUE)
+gsub("a(?=1)", replacement = "", x = x, perl = TRUE)
+gsub("[[:digit:]]", replacement = "", x = x)
+```
+:::

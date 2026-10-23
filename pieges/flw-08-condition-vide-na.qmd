@@ -1,0 +1,48 @@
+---
+title: "if s'arrête sur une condition vide ou NA"
+ref: FLW-08
+categories: [Contrôle de flux]
+impact: cryptique
+extrait: 'if (NA) "oui"'
+attendu: "que la branche soit simplement sautée"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+seuil <- NA
+if (5 > seuil) {
+  "au-dessus"
+}
+
+trouve <- grepl("z", x = character(0))
+trouve
+if (trouve) {
+  "trouvé"
+}
+```
+:::
+
+## Pourquoi
+
+`if` exige exactement une valeur, `TRUE` ou `FALSE`. Une comparaison avec `NA` donne `NA`, et R refuse de choisir : « missing value where TRUE/FALSE needed ». Un vecteur vide, comme `logical(0)` renvoyé par `grepl()` sur une entrée vide, donne « argument is of length zero ».
+
+Ces deux cas arrivent avec des données réelles : une valeur manquante dans un fichier, un filtre qui ne garde aucune ligne. Le code a tourné cent fois, puis s'arrête le jour où une donnée manque.
+
+## La parade
+
+`isTRUE()` et `isFALSE()` renvoient toujours une seule valeur, `FALSE` pour `NA` ou pour un vecteur vide. Quand ces cas méritent un traitement à part, les tester d'abord.
+
+::: {.piege}
+```{r}
+isTRUE(5 > seuil)
+isTRUE(trouve)
+
+if (isTRUE(5 > seuil)) {
+  "au-dessus"
+} else {
+  "inconnu ou en dessous"
+}
+```
+:::

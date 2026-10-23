@@ -1,0 +1,37 @@
+---
+title: "La différence de deux dates-heures change d'unité selon l'écart"
+ref: DAT-05
+categories: [Dates]
+impact: silencieux
+attendu: "`90` secondes, puis `45` secondes"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+debut <- as.POSIXct("2026-10-23 10:00:00", tz = "UTC")
+fin_1 <- as.POSIXct("2026-10-23 10:01:30", tz = "UTC")
+fin_2 <- as.POSIXct("2026-10-23 10:00:45", tz = "UTC")
+
+as.numeric(fin_1 - debut)
+as.numeric(fin_2 - debut)
+```
+:::
+
+## Pourquoi
+
+La soustraction de deux dates-heures appelle `difftime()` avec `units = "auto"`. R choisit alors l'unité la plus lisible : les secondes sous une minute, les minutes sous une heure, puis les heures, les jours, les semaines. Le premier écart vaut 1.5 *minutes*, le second 45 *secondes*.
+
+L'affichage le dit (« Time difference of 1.5 mins »), mais `as.numeric()` jette l'unité et ne garde que le nombre. Sur un vecteur, l'unité dépend du plus petit écart : ajouter ou retirer une ligne peut changer l'unité de toute la colonne.
+
+## La parade
+
+Choisir l'unité explicitement, au moment du calcul ou de la conversion.
+
+::: {.piege}
+```{r}
+as.numeric(difftime(fin_1, time2 = debut, units = "secs"))
+as.numeric(fin_2 - debut, units = "secs")
+```
+:::

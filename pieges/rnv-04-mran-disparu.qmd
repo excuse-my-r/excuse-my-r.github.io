@@ -1,0 +1,36 @@
+---
+title: "Les anciennes versions de renv cherchent encore MRAN, qui n'existe plus"
+ref: RNV-04
+categories: [renv et installation]
+impact: cryptique
+attendu: "une restauration qui télécharge les paquets demandés"
+versions: "{renv} avant 1.0.0, où l'intégration MRAN était active par défaut"
+source: "Slack ThinkR (2024), NEWS de {renv}"
+---
+
+::: {.piege .piege-statique}
+```r
+# projet figé avec une ancienne version de renv, sous Windows ou macOS
+renv::restore()
+```
+:::
+
+Ce piège dépend d'une ancienne version de {renv} et d'un service réseau disparu, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+MRAN était l'instantané quotidien de CRAN tenu par Microsoft. Sous Windows et macOS, les anciennes versions de {renv} y cherchaient les binaires des vieilles versions de paquets. Microsoft a fermé ce service en 2023.
+
+Un projet resté sur une ancienne version de {renv} tente donc encore de joindre MRAN pendant `restore()`. Les erreurs de téléchargement qui en résultent parlent d'adresses ou de connexions, pas de MRAN fermé. {renv} 1.0.0 a désactivé cette intégration par défaut, et l'option est aujourd'hui marquée comme obsolète.
+
+## La parade
+
+Désactiver MRAN avant la restauration, puis mettre {renv} à jour dans le projet.
+
+::: {.piege .piege-statique}
+```r
+options(renv.config.mran.enabled = FALSE)
+renv::restore()
+renv::upgrade()
+```
+:::

@@ -1,0 +1,48 @@
+---
+title: "Rien ne s'affiche dans une boucle for"
+ref: FLW-06
+categories: [Contrôle de flux]
+impact: incoherent
+extrait: 'for (i in 1:2) i'
+attendu: "`[1] 1` puis `[1] 2`"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+for (i in 1:2) {
+  i
+  i * 10
+}
+
+calcule <- function(x) {
+  x + 1
+  x * 2
+}
+calcule(5)
+```
+:::
+
+## Pourquoi
+
+À la console, R affiche la valeur de chaque instruction tapée au niveau supérieur : c'est l'affichage automatique. Une boucle `for` est une seule instruction, qui renvoie `NULL` de façon invisible. Les valeurs calculées à l'intérieur ne sont jamais affichées.
+
+Une fonction ne fait pas mieux : seule sa dernière valeur est renvoyée, et donc affichée. `x + 1` est calculé puis perdu. Le même piège touche les graphiques {ggplot2} créés dans une boucle, qui ne s'affichent pas sans `print()`.
+
+## La parade
+
+Demander l'affichage explicitement avec `print()`, ou ranger les résultats dans un vecteur.
+
+::: {.piege}
+```{r}
+for (i in 1:2) {
+  print(i * 10)
+}
+
+resultats <- vapply(1:2, FUN = function(i) {
+  i * 10
+}, FUN.VALUE = numeric(1))
+resultats
+```
+:::

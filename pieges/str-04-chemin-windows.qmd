@@ -1,0 +1,38 @@
+---
+title: "Un chemin Windows collé tel quel casse la chaîne"
+ref: STR-04
+categories: [Chaînes]
+impact: cryptique
+extrait: '"C:\Users\moi"'
+attendu: "le chemin `C:\\Users\\moi`"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+chemin <- "C:\Users\moi\donnees.csv"
+```
+:::
+
+Exécutez ce bloc : R répond `Error: '\U' used without hex digits in character string`.
+
+## Pourquoi
+
+Dans une chaîne R, la barre oblique inverse introduit une séquence d'échappement : `\n` est un saut de ligne, `\t` une tabulation, et `\U` doit être suivi du code hexadécimal d'un caractère Unicode. `\Users` n'en est pas un, d'où l'erreur, levée avant même l'exécution, au moment de la lecture du code.
+
+Le pire cas est celui qui ne plante pas : `"C:\temp\nouveau"` est une chaîne valide, qui contient une tabulation et un saut de ligne. Le fichier n'est simplement jamais trouvé.
+
+## La parade
+
+Écrire les chemins avec des barres obliques, que Windows accepte, ou doubler les barres inverses. Depuis R 4.0.0, une chaîne brute `r"(...)"` garde le texte tel quel.
+
+::: {.piege}
+```{r}
+"C:/Users/moi/donnees.csv"
+"C:\\Users\\moi\\donnees.csv"
+r"(C:\Users\moi\donnees.csv)"
+file.path("C:", "Users", "moi", "donnees.csv")
+```
+:::

@@ -1,0 +1,36 @@
+---
+title: "ifelse() transforme les dates en nombres"
+ref: FLW-01
+categories: [Contrôle de flux]
+impact: silencieux
+extrait: 'ifelse(TRUE, as.Date("2026-10-22"), NA)'
+reponse: '20748'
+attendu: "la date `2026-10-22`"
+versions: "Toutes"
+source: "Slack ThinkR (2022), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+ifelse(TRUE, as.Date("2026-10-22"), as.Date("2026-01-01"))
+```
+:::
+
+## Pourquoi
+
+`ifelse()` construit son résultat à partir du test, pas des valeurs renvoyées. Il hérite donc des attributs du test (ici, aucun) et perd ceux des branches, dont la classe `Date`. Il reste le nombre de jours depuis le 1er janvier 1970. Les facteurs subissent le même sort et deviennent leurs codes entiers.
+
+## La parade
+
+Pour une seule condition, `if` suffit. Pour un vecteur, `dplyr::if_else()` et `data.table::fifelse()` conservent le type et vérifient que les deux branches sont compatibles.
+
+::: {.piege packages="dplyr"}
+```{r}
+if (TRUE) {
+  as.Date("2026-10-22")
+} else {
+  as.Date("2026-01-01")
+}
+dplyr::if_else(TRUE, true = as.Date("2026-10-22"), false = as.Date("2026-01-01"))
+```
+:::

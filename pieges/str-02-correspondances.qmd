@@ -1,0 +1,36 @@
+---
+title: "regmatches() perd les chaînes sans correspondance"
+ref: STR-02
+categories: [Chaînes]
+impact: silencieux
+attendu: "`\"1\" NA \"333\"`, un résultat par chaîne"
+versions: "Toutes"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+textes <- c("a1b22", "rien", "c333")
+regmatches(textes, m = regexpr("[0-9]+", text = textes))
+regmatches(textes, m = gregexpr("[0-9]+", text = textes))
+```
+:::
+
+## Pourquoi
+
+Base R n'a pas de fonction « extraire » : il faut combiner une fonction qui cherche les positions (`regexpr()` pour la première correspondance, `gregexpr()` pour toutes) et `regmatches()`, qui découpe le texte à ces positions.
+
+Avec `regexpr()`, `regmatches()` ne renvoie que les correspondances trouvées. `"rien"` disparaît sans avertissement : le résultat a deux éléments pour trois textes, et ne s'aligne plus sur eux. Glissé dans une colonne de data frame, il est recyclé ou provoque une erreur de longueur loin de sa cause. Avec `gregexpr()`, on obtient une liste, où l'absence est un `character(0)`.
+
+## La parade
+
+`stringr::str_extract()` renvoie une valeur par chaîne, avec `NA` quand rien ne correspond. `str_extract_all()` donne la liste de toutes les correspondances.
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+str_extract(textes, pattern = "[0-9]+")
+str_extract_all(textes, pattern = "[0-9]+")
+```
+:::

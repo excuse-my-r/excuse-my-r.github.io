@@ -1,0 +1,54 @@
+---
+title: "selectInput() aplatit un groupe d'un seul choix"
+ref: SHY-03
+categories: [Shiny]
+impact: silencieux
+attendu: "un groupe « Legumes » qui contient « poireau »"
+versions: "Toutes les versions de {shiny}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+options_de <- function(entree) {
+  html <- as.character(entree)
+  regmatches(html, gregexpr("<(optgroup|option)[^>]*>[^<\n]*", html))[[1]]
+}
+
+options_de(selectInput(
+  "choix", "Choix",
+  choices = list(Fruits = c("pomme", "poire"), Legumes = c("poireau"))
+))
+
+options_de(selectInput(
+  "choix", "Choix",
+  choices = list(Fruits = c(Pomme = "pomme"), Legumes = c(Pomme = "pomme"))
+))
+```
+:::
+
+## Pourquoi
+
+Dans `choices`, un élément nommé de longueur 1 est lu comme un choix simple, son nom servant d'étiquette. `Legumes = c("poireau")` ne crée donc pas de groupe : il crée une option affichée « Legumes » dont la valeur est `"poireau"`. Le groupe n'apparaît qu'à partir de deux éléments, ou si l'élément est une liste.
+
+Second piège : deux options de groupes différents peuvent porter la même valeur. `input$choix` vaut alors `"pomme"` dans les deux cas, et le serveur ne peut pas savoir lequel a été choisi.
+
+## La parade
+
+Écrire chaque groupe comme une liste, et donner des valeurs uniques à toutes les options.
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+options_de(selectInput(
+  "choix", "Choix",
+  choices = list(
+    Fruits = list(Pomme = "fruit_pomme", Poire = "fruit_poire"),
+    Legumes = list(Poireau = "legume_poireau")
+  )
+))
+```
+:::

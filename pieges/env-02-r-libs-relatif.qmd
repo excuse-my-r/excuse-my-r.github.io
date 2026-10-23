@@ -1,0 +1,39 @@
+---
+title: "Un R_LIBS relatif casse dès que R tourne dans un sous-dossier"
+ref: ENV-02
+categories: [OS et CI]
+impact: cryptique
+attendu: "la même bibliothèque, quel que soit le dossier de travail"
+versions: "Toutes"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```yaml
+# .gitlab-ci.yml
+variables:
+  R_LIBS: "ci/lib"
+
+rendu:
+  script:
+    - Rscript -e 'install.packages("rmarkdown")'
+    - quarto render rapports/bilan.qmd
+```
+:::
+
+Ce piège dépend d'un pipeline de CI, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Un chemin relatif dans `R_LIBS` est interprété depuis le dossier de travail du processus R, au moment où il démarre. L'installation se fait depuis la racine du dépôt, dans `ci/lib`. Mais `quarto render` exécute le document dans un nouveau processus R lancé depuis `rapports/`, qui cherche alors `rapports/ci/lib`. Ce dossier n'existe pas, et R l'écarte de `.libPaths()` sans avertir : les paquets sont simplement introuvables.
+
+## La parade
+
+Construire un chemin absolu à partir de la variable fournie par la CI.
+
+::: {.piege .piege-statique}
+```yaml
+variables:
+  R_LIBS: "${CI_PROJECT_DIR}/ci/lib"
+```
+:::

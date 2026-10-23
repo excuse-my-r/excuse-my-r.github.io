@@ -1,0 +1,48 @@
+---
+title: "capture.output() ne capture pas les messages"
+ref: ERR-02
+categories: [Erreurs et fichiers]
+impact: incoherent
+extrait: 'capture.output(message("a"))'
+attendu: "tout ce que la fonction affiche"
+versions: "Toutes"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="cli"}
+```{r}
+bavard <- function() {
+  print("résultat")
+  message("étape terminée")
+  cli::cli_alert_success("Tout est prêt")
+  invisible(NULL)
+}
+sortie <- capture.output(bavard())
+sortie
+```
+:::
+
+## Pourquoi
+
+R a deux flux de sortie. `print()` et `cat()` écrivent sur la sortie standard, que `capture.output()` intercepte. `message()`, `warning()` et les alertes de {cli} passent par le flux des messages, qui s'affiche toujours à l'écran et que `capture.output()` ignore par défaut.
+
+Une fonction qui « affiche » quelque chose peut donc renvoyer une capture presque vide, selon la façon dont son auteur a choisi d'écrire.
+
+## La parade
+
+Pour récupérer les messages, les intercepter comme des conditions avec `withCallingHandlers()`. `capture.output(type = "message")` existe aussi, mais il détourne le flux lui-même : il ne voit plus rien dès qu'un autre outil intercepte déjà les messages, comme knitr qui a produit cette page.
+
+::: {.piege packages="cli"}
+```{r}
+messages <- character()
+sortie <- withCallingHandlers(
+  capture.output(bavard()),
+  message = function(m) {
+    messages <<- c(messages, conditionMessage(m))
+    invokeRestart("muffleMessage")
+  }
+)
+sortie
+messages
+```
+:::

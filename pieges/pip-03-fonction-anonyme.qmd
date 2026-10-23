@@ -1,0 +1,38 @@
+---
+title: "Une fonction anonyme dans le pipe natif exige parenthèses et appel"
+ref: PIP-03
+categories: [Pipes]
+impact: incoherent
+attendu: "`\"bbc\" \"bbb\"`"
+versions: "Depuis R 4.1.0 (pipe natif et syntaxe `\\(x)`)"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+mots <- c("abc", "bab")
+mots |> \(y) gsub("a", replacement = "b", x = y)
+mots |> (\(y) gsub("a", replacement = "b", x = y))
+```
+:::
+
+Exécutez ce bloc : la première forme donne « function 'function' not supported in RHS call of a pipe », la seconde « function '(' not supported in RHS call of a pipe ».
+
+## Pourquoi
+
+À droite de `|>`, R attend un appel de fonction, dans lequel il insère la valeur en premier argument. Une définition de fonction `\(y) ...` n'est pas un appel, et une définition entre parenthèses non plus : R refuse les deux dès la lecture du code.
+
+Avec `%>%`, `x %>% (\(y) ...)` fonctionne, sans les parenthèses d'appel. Le pipe natif demande d'appeler explicitement la fonction, avec un `()` final qui a l'air superflu.
+
+## La parade
+
+Entourer la fonction de parenthèses et l'appeler. Depuis R 4.2.0, le placeholder `_` évite souvent d'avoir besoin d'une fonction anonyme.
+
+::: {.piege}
+```{r}
+mots <- c("abc", "bab")
+mots |> (\(y) gsub("a", replacement = "b", x = y))()
+mots |> gsub(pattern = "a", replacement = "b", x = _)
+```
+:::

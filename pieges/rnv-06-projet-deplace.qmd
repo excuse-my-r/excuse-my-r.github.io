@@ -1,0 +1,36 @@
+---
+title: "Déplacer ou renommer un projet renv peut casser sa bibliothèque"
+ref: RNV-06
+categories: [renv et installation]
+impact: cryptique
+attendu: "le même projet, avec les mêmes paquets, à son nouvel emplacement"
+versions: "Toutes les versions de {renv}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```bash
+mv ~/projets/analyse ~/projets/analyse-2021
+cd ~/projets/analyse-2021
+Rscript -e 'library(dplyr)'
+```
+:::
+
+Ce piège dépend du système de fichiers et du cache de {renv}, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+La bibliothèque d'un projet {renv} ne contient pas vraiment les paquets : ce sont des liens vers le cache global de {renv}. Selon le système et la façon de déplacer le dossier (copie, archive, synchronisation de fichiers, autre disque), ces liens peuvent être perdus ou pointer dans le vide.
+
+Quand la bibliothèque est rangée hors du projet (variable `RENV_PATHS_LIBRARY_ROOT`), son emplacement dépend en plus du nom et du chemin du projet : après un renommage, {renv} cherche une autre bibliothèque, vide. Dans les deux cas, les erreurs parlent de paquets introuvables, pas du déplacement.
+
+## La parade
+
+Ne pas compter sur la bibliothèque après un déplacement : la reconstruire depuis le lockfile, qui suffit à décrire le projet.
+
+::: {.piege .piege-statique}
+```r
+renv::restore()
+renv::status()
+```
+:::

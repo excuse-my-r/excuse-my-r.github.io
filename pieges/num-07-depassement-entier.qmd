@@ -1,0 +1,36 @@
+---
+title: "Un entier trop grand devient NA"
+ref: NUM-07
+categories: [Numérique]
+impact: cryptique
+extrait: '50000L * 50000L'
+reponse: 'NA'
+attendu: "`2.5e+09`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+.Machine$integer.max
+.Machine$integer.max + 1L
+50000L * 50000L
+```
+:::
+
+## Pourquoi
+
+Les entiers de R (le suffixe `L`, mais aussi `length()`, `nrow()`, `1:n` ou les colonnes lues comme entières) sont stockés sur 32 bits. Au-delà de 2 147 483 647, R ne bascule pas en double : il renvoie `NA` avec un simple avertissement.
+
+Ce `NA` se propage ensuite dans les calculs, et l'avertissement se perd facilement au milieu d'un long traitement. On le découvre plus loin, sur un total manquant dont la cause est lointaine.
+
+## La parade
+
+Passer en double avant le calcul, avec `as.numeric()` ou des littéraux sans `L`.
+
+::: {.piege}
+```{r}
+50000 * 50000
+as.numeric(50000L) * 50000L
+```
+:::

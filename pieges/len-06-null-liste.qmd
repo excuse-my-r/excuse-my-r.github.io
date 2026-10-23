@@ -1,0 +1,35 @@
+---
+title: "Affecter NULL à un élément de liste le supprime"
+ref: LEN-06
+categories: [Vides et NA]
+impact: silencieux
+attendu: "la liste garde `seuil`, avec une valeur vide"
+versions: "Toutes"
+source: "Slack ThinkR (2022), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+reglages <- list(seuil = 10, couleur = "rouge")
+reglages$seuil <- NULL
+str(reglages)
+```
+:::
+
+## Pourquoi
+
+Pour une liste, `l$a <- NULL` (comme `l[["a"]] <- NULL`) est la façon de supprimer un élément. Ce n'est pas une affectation de valeur : l'élément disparaît, avec son nom, et la liste raccourcit.
+
+Quand `NULL` est une valeur légitime (un réglage « non renseigné », un argument par défaut), le code croit l'avoir enregistré, et la clé n'existe plus. Les positions des éléments suivants changent aussi.
+
+## La parade
+
+Affecter une liste qui contient `NULL`, avec des crochets simples.
+
+::: {.piege}
+```{r}
+reglages <- list(seuil = 10, couleur = "rouge")
+reglages["seuil"] <- list(NULL)
+str(reglages)
+```
+:::

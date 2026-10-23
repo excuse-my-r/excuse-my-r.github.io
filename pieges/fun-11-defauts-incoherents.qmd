@@ -1,0 +1,43 @@
+---
+title: "Des fonctions sœurs n'ont pas les mêmes valeurs par défaut"
+ref: FUN-11
+categories: [Fonctions]
+impact: incoherent
+extrait: 'formals(list.dirs)$recursive'
+reponse: 'TRUE'
+attendu: "`FALSE`, comme pour `list.files()`"
+versions: "Toutes"
+source: "Slack ThinkR (2023, 2024)"
+---
+
+::: {.piege}
+```{r}
+racine <- tempfile()
+dir.create(file.path(racine, "a", "b"), recursive = TRUE)
+list.files(racine)
+list.dirs(racine, full.names = FALSE)
+
+formals(list.files)$recursive
+formals(list.dirs)$recursive
+names(formals(pdf))[1]
+names(formals(png))[1]
+```
+:::
+
+## Pourquoi
+
+`list.files()` ne descend pas dans les sous-dossiers par défaut, `list.dirs()` le fait. Ce dernier renvoie aussi le dossier de départ lui-même, sous la forme d'une chaîne vide quand `full.names = FALSE`.
+
+De même, le fichier de sortie s'appelle `file` dans `pdf()` mais `filename` dans `png()`. Ces fonctions ont été écrites à des époques différentes, et leurs arguments n'ont jamais été harmonisés.
+
+## La parade
+
+Écrire chaque argument dont on dépend, même quand on croit connaître sa valeur par défaut, et vérifier avec `args()` en cas de doute.
+
+::: {.piege}
+```{r}
+list.dirs(racine, full.names = FALSE, recursive = FALSE)
+list.files(racine, recursive = TRUE, include.dirs = TRUE)
+args(list.dirs)
+```
+:::

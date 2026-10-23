@@ -1,0 +1,34 @@
+---
+title: "Le pipe natif ne connaît pas le point de magrittr"
+ref: PIP-01
+categories: [Pipes]
+impact: cryptique
+extrait: 'quote(mots |> gsub("a", "b", .))'
+attendu: "`gsub(\"a\", \"b\", mots)`, comme avec `%>%`"
+versions: "Depuis R 4.1.0 (pipe natif) ; le placeholder `_` existe depuis R 4.2.0"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+mots <- c("abc", "bab")
+mots |> gsub("a", "b", .)
+quote(mots |> gsub("a", "b", .))
+```
+:::
+
+## Pourquoi
+
+Avec `%>%` de {magrittr}, le point désigne la valeur qui arrive par le pipe, et sa présence empêche l'insertion en première position. Le pipe natif `|>` n'a pas cette règle : il insère toujours la valeur en premier argument, et le point reste un simple nom de variable.
+
+`quote()` montre l'appel réellement construit : `mots` devient le motif, `"a"` le remplacement, `"b"` le texte, et `.` est passé en quatrième argument. Si aucune variable `.` n'existe, l'erreur « object '.' not found » ne dit rien du pipe. Si une variable `.` traîne dans l'environnement, le calcul tourne et donne un résultat faux.
+
+## La parade
+
+Depuis R 4.2.0, le pipe natif a son propre placeholder, `_`, qui doit être passé à un argument nommé.
+
+::: {.piege}
+```{r}
+mots |> gsub(pattern = "a", replacement = "b", x = _)
+```
+:::

@@ -1,0 +1,46 @@
+---
+title: "Un message d'erreur ne dit pas d'où vient l'appel"
+ref: FUN-09
+categories: [Fonctions]
+impact: cryptique
+attendu: "une erreur qui mentionne `fun2()` et la valeur reçue"
+versions: "Toutes"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+fun1 <- function(x) {
+  if (x == 0) {
+    bob
+  } else {
+    x
+  }
+}
+fun2 <- function(x) {
+  fun1(x)
+}
+fun2(0)
+```
+:::
+
+## Pourquoi
+
+Le message d'erreur cite seulement l'appel où l'erreur s'est produite, ici `fun1()`. On ne sait ni que `fun2()` était l'appelant, ni quelle valeur de `x` a déclenché le problème.
+
+Dans une console interactive, `traceback()` permet de retrouver la pile d'appels. Dans un script lancé en tâche planifiée, ou dans une boucle sur des centaines d'éléments, il ne reste souvent que ce message.
+
+## La parade
+
+Ajouter le contexte là où on le connaît, en interceptant l'erreur pour la relancer avec un message complet.
+
+::: {.piege}
+```{r}
+fun2 <- function(x) {
+  tryCatch(fun1(x), error = function(e) {
+    stop("fun2() a échoué pour x = ", x, " : ", conditionMessage(e), call. = FALSE)
+  })
+}
+fun2(0)
+```
+:::

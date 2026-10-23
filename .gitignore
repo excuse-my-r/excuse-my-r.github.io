@@ -1,0 +1,17 @@
+/.quarto/
+/_site/
+*_files/
+.Rproj.user/
+.Rhistory
+
+**/*.quarto_ipynb
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
+/.wrangler/
+pieges/*_cache/
+pieges/*.html

@@ -1,0 +1,38 @@
+---
+title: "seq() avec un pas décimal ne tombe pas sur les valeurs rondes"
+ref: NUM-03
+categories: [Numérique]
+impact: silencieux
+extrait: '0.3 %in% seq(0, 1, by = 0.1)'
+reponse: 'FALSE'
+attendu: "`TRUE`, 0.3 est dans la séquence affichée"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- seq(0, 1, by = 0.1)
+x
+x[4] == 0.3
+0.3 %in% x
+```
+:::
+
+## Pourquoi
+
+`seq()` calcule chaque terme comme `0 + i * 0.1`. Or 0.1 n'a pas d'écriture binaire exacte, et `3 * 0.1` ne donne pas exactement le même nombre que celui que R stocke pour `0.3`. L'affichage arrondit à 7 chiffres et cache l'écart.
+
+Ici, trois termes sur onze diffèrent de leur valeur « ronde » : `0.3`, `0.6` et `0.7`. Un `%in%` ou un filtre `==` sur ces valeurs échoue sans prévenir.
+
+## La parade
+
+Construire la séquence à partir d'entiers, ou chercher avec une tolérance.
+
+::: {.piege}
+```{r}
+y <- (0:10) / 10
+0.3 %in% y
+any(abs(x - 0.3) < 1e-8)
+```
+:::

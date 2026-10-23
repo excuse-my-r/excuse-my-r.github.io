@@ -1,0 +1,37 @@
+---
+title: "data.frame() modifie les noms de colonnes sans prévenir"
+ref: DF-04
+categories: [Data frames et listes]
+impact: incoherent
+extrait: 'names(data.frame("2024" = 1))'
+reponse: '"X2024"'
+attendu: "`\"ma colonne\" \"2024\" \"a\" \"a\"`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+tab <- data.frame("ma colonne" = 1, "2024" = 2, "a" = 3, "a" = 4)
+names(tab)
+tab$`ma colonne`
+```
+:::
+
+## Pourquoi
+
+`data.frame()` a un argument `check.names = TRUE` qui passe les noms dans `make.names()` puis `make.unique()`. Un espace devient un point, un nom qui commence par un chiffre reçoit un `X` devant, et un doublon prend un suffixe `.1`. `read.csv()` et `read.table()` font la même chose sur les en-têtes du fichier.
+
+Le code qui cherche ensuite la colonne sous son vrai nom obtient `NULL`, sans erreur.
+
+## La parade
+
+Désactiver la correction quand on tient aux noms d'origine, et les écrire entre backticks.
+
+::: {.piege}
+```{r}
+tab <- data.frame("ma colonne" = 1, "2024" = 2, check.names = FALSE)
+names(tab)
+tab$`ma colonne`
+```
+:::

@@ -1,0 +1,34 @@
+---
+title: "merge() trie les lignes et renomme les colonnes en double"
+ref: DF-03
+categories: [Data frames et listes]
+impact: incoherent
+attendu: "les commandes dans leur ordre d'origine, 3, 1, 2"
+versions: "Toutes"
+source: "Slack ThinkR (2020), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+commandes <- data.frame(id = c(3, 1, 2), statut = c("livrée", "annulée", "en cours"))
+clients <- data.frame(id = c(2, 3, 1), statut = c("pro", "particulier", "pro"))
+merge(commandes, y = clients, by = "id")
+```
+:::
+
+## Pourquoi
+
+Par défaut, `merge()` trie le résultat selon la clé (`sort = TRUE`). L'ordre des lignes de départ est perdu, ce qui casse tout code qui suppose que la ligne 1 du résultat correspond à la ligne 1 de `commandes`.
+
+Les colonnes présentes des deux côtés sans servir de clé sont gardées toutes les deux, avec les suffixes `.x` et `.y`. Le code qui utilisait `statut` ne trouve plus la colonne. Même avec `sort = FALSE`, l'aide précise que l'ordre des lignes n'est pas garanti.
+
+## La parade
+
+Choisir des suffixes parlants, et rétablir explicitement l'ordre voulu.
+
+::: {.piege}
+```{r}
+res <- merge(commandes, y = clients, by = "id", suffixes = c("_commande", "_client"))
+res[order(match(res$id, table = commandes$id)), ]
+```
+:::

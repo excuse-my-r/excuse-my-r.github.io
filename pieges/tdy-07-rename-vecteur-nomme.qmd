@@ -1,0 +1,36 @@
+---
+title: "rename() avec un vecteur nommé fabrique un nom à rallonge"
+ref: TDY-07
+categories: [tidyverse]
+impact: silencieux
+attendu: "une colonne `identifiant`"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+ventes <- data.frame(code = 1:2, montant = c(10, 20))
+config <- c(id = "code", mesure = "montant")
+rename(ventes, identifiant = config["id"])
+```
+:::
+
+## Pourquoi
+
+`config["id"]` n'est pas seulement `"code"` : c'est un vecteur qui garde son nom, `id`. Quand une sélection nommée reçoit un vecteur lui-même nommé, {tidyselect} combine les deux noms pour ne rien perdre, et la colonne devient `identifiant...id`. Le code qui cherche ensuite `identifiant` ne la trouve pas.
+
+## La parade
+
+Extraire la valeur seule avec `[[ ]]`, ou retirer les noms avec `unname()`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+rename(ventes, identifiant = config[["id"]])
+rename(ventes, identifiant = unname(config["id"]))
+```
+:::

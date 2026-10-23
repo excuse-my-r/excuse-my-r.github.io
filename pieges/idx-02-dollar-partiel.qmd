@@ -1,0 +1,36 @@
+---
+title: "$ complète les noms à votre place"
+ref: IDX-02
+categories: [Indexation]
+impact: silencieux
+extrait: 'list(alpha = 0.05)$a'
+reponse: '0.05'
+attendu: "`NULL`, il n'y a pas d'élément nommé a"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+reglages <- list(alpha = 0.05)
+reglages$a
+reglages[["a"]]
+```
+:::
+
+## Pourquoi
+
+Sur une liste, `$` accepte un préfixe : s'il n'existe qu'un seul nom qui commence par `a`, c'est lui qui est renvoyé, sans avertissement. `[[` exige le nom exact.
+
+Le jour où quelqu'un ajoute un élément `amplitude` à la liste, `reglages$a` se met à renvoyer `NULL`, et le code qui en dépend change de comportement sans que personne ne l'ait modifié.
+
+## La parade
+
+Utiliser `[[` dans le code de production, ou demander à R de signaler chaque correspondance partielle.
+
+::: {.piege}
+```{r}
+options(warnPartialMatchDollar = TRUE)
+reglages$a
+```
+:::

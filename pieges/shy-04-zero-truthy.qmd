@@ -1,0 +1,44 @@
+---
+title: "Pour req(), le nombre 0 est une valeur valide"
+ref: SHY-04
+categories: [Shiny]
+impact: incoherent
+extrait: 'shiny::isTruthy(0)'
+reponse: 'TRUE'
+attendu: "`FALSE`, comme `FALSE`, `NULL` ou `\"\"`"
+versions: "Toutes les versions de {shiny}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+isTruthy(0)
+isTruthy(FALSE)
+isTruthy("")
+req(0)
+```
+:::
+
+## Pourquoi
+
+`req()` arrête silencieusement un calcul réactif quand une valeur n'est pas « truthy ». La liste est courte : `FALSE`, `NULL`, `""`, un vecteur vide, un vecteur entièrement `NA`, une erreur `try()`, et un bouton d'action jamais cliqué.
+
+Le nombre 0 n'en fait pas partie. Un `numericInput()` laissé à 0 passe donc `req()`, et le calcul tourne avec une quantité nulle. Seul le bouton d'action fait exception : sa valeur 0 porte une classe spéciale que `isTruthy()` reconnaît.
+
+## La parade
+
+Donner à `req()` la condition métier elle-même, sous forme d'un test logique.
+
+::: {.piege packages="shiny"}
+```{r}
+suppressPackageStartupMessages(library(shiny))
+
+quantite <- 0
+isTruthy(quantite > 0)
+tryCatch(req(quantite > 0), error = function(e) {
+  class(e)[1]
+})
+```
+:::

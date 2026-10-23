@@ -1,0 +1,36 @@
+---
+title: "as.Date() sur une date-heure ignore son fuseau horaire"
+ref: DAT-01
+categories: [Dates]
+impact: silencieux
+extrait: 'as.Date(as.POSIXct("2022-03-04 00:35", tz = "Europe/Paris"))'
+reponse: '"2022-03-03"'
+attendu: "`\"2022-03-04\"`, le jour affiché"
+versions: "Toutes"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+h <- as.POSIXct("2022-03-04 00:35:51", tz = "Europe/Paris")
+h
+as.Date(h)
+```
+:::
+
+## Pourquoi
+
+Un `POSIXct` est un nombre de secondes depuis le 1er janvier 1970 en temps universel, accompagné d'un fuseau qui ne sert qu'à l'affichage. `as.Date()` a pour argument par défaut `tz = "UTC"` et ne regarde pas ce fuseau. Or minuit trente-cinq à Paris, c'est encore 23 h 35 la veille en UTC.
+
+Toutes les heures entre minuit et une heure du matin (deux heures en été) changent donc de jour. Sur un jeu de données horodaté, l'erreur ne touche qu'une petite partie des lignes, ce qui la rend difficile à repérer. {lubridate}, lui, utilise le fuseau de l'objet : `as_date(h)` et `as.Date(h)` ne donnent pas le même jour.
+
+## La parade
+
+Passer le fuseau explicitement.
+
+::: {.piege}
+```{r}
+as.Date(h, tz = "Europe/Paris")
+as.Date(h, tz = attr(h, which = "tzone"))
+```
+:::

@@ -1,0 +1,37 @@
+---
+title: "Avec des noms dupliqués, seul le premier élément est concerné"
+ref: IDX-03
+categories: [Indexation]
+impact: silencieux
+extrait: 'c(a = 1, a = 2)[["a"]]'
+reponse: '1'
+attendu: "les deux éléments nommés a, ou une erreur sur le nom ambigu"
+versions: "Toutes"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+foo <- c("a" = 1, "a" = 1)
+foo["a"] <- 2
+foo
+```
+:::
+
+## Pourquoi
+
+R n'interdit pas deux éléments portant le même nom. Quand on indexe par un nom, il cherche la première correspondance et s'arrête là. La lecture renvoie le premier élément, l'affectation ne modifie que le premier, sans avertissement.
+
+Ces doublons arrivent facilement : `c()` de deux vecteurs nommés, `unlist()` d'une liste, ou une jointure faite à la main.
+
+## La parade
+
+Comparer les noms pour viser tous les éléments, et repérer les doublons tôt.
+
+::: {.piege}
+```{r}
+foo[names(foo) == "a"] <- 3
+foo
+anyDuplicated(names(foo))
+```
+:::

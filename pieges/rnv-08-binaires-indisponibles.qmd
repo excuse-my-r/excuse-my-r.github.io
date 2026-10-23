@@ -1,0 +1,39 @@
+---
+title: "Sans binaire disponible, l'installation compile et échoue sur une bibliothèque système"
+ref: RNV-08
+categories: [renv et installation]
+impact: cryptique
+attendu: "le paquet installé, comme sur le poste du collègue"
+versions: "Toutes, surtout sous Linux et avec des versions anciennes de paquets"
+source: "Slack ThinkR (2021, 2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+renv::restore()
+```
+:::
+
+Ce piège dépend du système d'exploitation, des bibliothèques système installées et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+CRAN ne fournit des binaires que pour Windows et macOS, et seulement pour les versions récentes des paquets. Sous Linux, ou pour une version ancienne figée dans un lockfile, R télécharge les sources et compile. Certains paquets ont alors besoin de bibliothèques système (`libxml2`, `libcurl`, `gdal`...) et de leurs fichiers de développement.
+
+Si elles manquent, la compilation échoue. Le message utile, du type « configuration failed » ou « fichier d'en-tête introuvable », est enfoui dans un long journal de compilation. Le même lockfile marche sur un poste qui a déjà ces bibliothèques.
+
+## La parade
+
+Utiliser un dépôt qui sert des binaires Linux (Posit Package Manager), et lister les dépendances système à installer.
+
+::: {.piege .piege-statique}
+```r
+options(repos = c(CRAN = "https://p3m.dev/cran/__linux__/noble/latest"))
+renv::restore()
+```
+
+```bash
+# pour un paquet donné, la liste des dépendances système
+Rscript -e 'pak::pkg_sysreqs("xml2")'
+```
+:::

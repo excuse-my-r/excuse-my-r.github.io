@@ -1,0 +1,55 @@
+---
+title: "Un « # nolint » dans une description roxygen devient un titre"
+ref: PKG-06
+categories: [Packages]
+impact: cryptique
+attendu: "un commentaire pour {lintr}, ignoré par la documentation"
+versions: "Avertissement cryptique avec {roxygen2} en 2023, section vide « nolint » avec {roxygen2} 8.1.0"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```r
+#' Créer la table des recettes
+#'
+#' Agrège les paramètres d'entrée dans une table temporaire.
+#' # nolint
+#' @export
+creer_recettes <- function(parametres) {
+  # ...
+}
+```
+
+```text
+> roxygen2::roxygenise()
+Warning message:
+[fct_database.R:59] @description markdown failed to process
+Caused by error in `attributes(.Data) <- c(attributes(.Data), attrib)`:
+! 'names' attribute [2] must be the same length as the vector [1]
+```
+:::
+
+Ce piège dépend de la génération de documentation d'un paquet, il ne peut pas se rejouer dans le navigateur. La sortie ci-dessus est celle observée en 2023.
+
+## Pourquoi
+
+Avec le markdown activé dans roxygen, une ligne qui commence par `#` suivi d'une espace est un titre de niveau 1. `# nolint`, destiné à {lintr}, devient donc un titre au milieu de la description. En 2023, {roxygen2} échouait à traiter ce markdown, avec un message qui ne disait rien du `# nolint` : trois heures de débogage dans l'incident d'origine.
+
+Avec {roxygen2} 8.1.0, il n'y a plus d'erreur, mais le fichier `.Rd` contient une section vide nommée « nolint ».
+
+## La parade
+
+Coller le dièse, `#nolint` n'étant pas un titre markdown, ou placer l'exclusion {lintr} sur la ligne de code concernée plutôt que dans la documentation.
+
+::: {.piege .piege-statique}
+```r
+#' Créer la table des recettes
+#'
+#' Agrège les paramètres d'entrée dans une table temporaire.
+#' #nolint
+#' @export
+creer_recettes <- function(parametres) {
+  # ...
+}
+```
+:::

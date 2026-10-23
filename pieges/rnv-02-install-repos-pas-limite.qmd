@@ -1,0 +1,44 @@
+---
+title: "renv::install(repos = ) a pu installer une version absente du dépôt"
+ref: RNV-02
+categories: [renv et installation]
+impact: silencieux
+attendu: "`xfun` 0.48, la version disponible sur ce dépôt daté"
+versions: "Anciennes versions de {renv}, corrigé dans les versions récentes"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```r
+renv::install("xfun", repos = "https://p3m.dev/cran/2024-10-30")
+```
+
+```text
+The following package(s) will be installed:
+- xfun [0.57]
+```
+:::
+
+Ce piège dépend d'une version ancienne de {renv} et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Dans l'incident d'origine, un projet utilisait une ancienne version de {renv}. Avec `repos =` pointant vers un instantané daté du 30 octobre 2024, `renv::install()` proposait `xfun` 0.57, une version bien plus récente que celle de ce dépôt. Le dépôt passé en argument ne limitait donc pas la recherche des versions.
+
+`utils::install.packages()` avec le même `repos =` téléchargeait bien `xfun` 0.48. Après la mise à jour de {renv}, `renv::install()` propose lui aussi 0.48.
+
+## La parade
+
+Mettre {renv} à jour, puis relire la liste des versions proposées avant d'accepter l'installation.
+
+::: {.piege .piege-statique}
+```r
+renv::upgrade()
+renv::install("xfun", repos = "https://p3m.dev/cran/2024-10-30")
+```
+
+```text
+The following package(s) will be installed:
+- xfun [0.48]
+```
+:::

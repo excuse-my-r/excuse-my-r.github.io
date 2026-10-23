@@ -1,0 +1,38 @@
+---
+title: "select(-absente) plante, select(-matches(\"absente\")) se tait"
+ref: TDY-05
+categories: [tidyverse]
+impact: incoherent
+attendu: "le même comportement pour une colonne qui n'existe pas"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+fleurs <- head(iris, n = 2)
+select(fleurs, -Sepal.Lenght)
+names(select(fleurs, -matches("Sepal.Lenght")))
+```
+:::
+
+## Pourquoi
+
+Un nom nu doit désigner une colonne existante : `select()` s'arrête s'il ne la trouve pas. Les fonctions d'aide comme `matches()`, `starts_with()` ou `contains()` renvoient l'ensemble des colonnes qui correspondent, et un ensemble vide n'est pas une erreur. Retirer « rien » ne retire rien.
+
+Une faute de frappe dans un `matches()` passe ainsi inaperçue : la colonne qu'on croyait retirer est toujours là.
+
+## La parade
+
+Dire ce qu'on veut : `all_of()` quand les colonnes doivent exister, `any_of()` quand elles sont facultatives.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+select(fleurs, -all_of("Sepal.Lenght"))
+names(select(fleurs, -any_of(c("Sepal.Length", "colonne_facultative"))))
+```
+:::

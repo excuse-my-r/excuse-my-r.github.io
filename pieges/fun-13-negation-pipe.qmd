@@ -1,0 +1,36 @@
+---
+title: "! s'applique au résultat de tout le pipe, pas à la première valeur"
+ref: FUN-13
+categories: [Fonctions]
+impact: silencieux
+extrait: '!c(TRUE, FALSE) |> any()'
+reponse: 'FALSE'
+attendu: "`TRUE`, puisqu'une des valeurs niées vaut `TRUE`"
+versions: "Depuis R 4.1.0, qui introduit |>"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+a <- c(TRUE, FALSE)
+!a |> any()
+quote(!a |> any())
+```
+:::
+
+## Pourquoi
+
+L'opérateur `!` a une priorité plus faible que `|>`, et même que les comparaisons et `%in%`. R lit donc d'abord tout le pipe, `a |> any()`, puis applique la négation au résultat : `!any(a)`, et non `any(!a)`.
+
+`quote()` montre l'expression telle que R l'a comprise. Le même phénomène joue avec `%>%` de {magrittr}, et avec `!x %in% y`, qui vaut `!(x %in% y)`.
+
+## La parade
+
+Mettre la négation entre parenthèses, ou ne pas la mélanger au pipe.
+
+::: {.piege}
+```{r}
+(!a) |> any()
+any(!a)
+```
+:::

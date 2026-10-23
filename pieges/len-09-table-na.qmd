@@ -1,0 +1,36 @@
+---
+title: "table() ne compte pas les NA"
+ref: LEN-09
+categories: [Vides et NA]
+impact: silencieux
+extrait: 'sum(table(c("a", NA, "a")))'
+reponse: '2'
+attendu: "`3`, le nombre de valeurs"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+reponses <- c("oui", "non", NA, "oui", NA)
+table(reponses)
+sum(table(reponses))
+length(reponses)
+```
+:::
+
+## Pourquoi
+
+Par défaut, `table()` écarte les valeurs manquantes avant de compter, sans le signaler. Le tableau a l'air complet, mais ses effectifs ne totalisent pas le nombre d'observations.
+
+Les proportions calculées ensuite avec `prop.table()` portent alors sur les seules réponses connues. Ce peut être voulu, mais c'est rarement une décision consciente.
+
+## La parade
+
+Demander les `NA` explicitement avec `useNA = "ifany"`, qui ajoute une colonne `<NA>` seulement quand il y en a.
+
+::: {.piege}
+```{r}
+table(reponses, useNA = "ifany")
+```
+:::

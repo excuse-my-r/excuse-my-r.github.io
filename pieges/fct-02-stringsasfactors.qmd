@@ -1,0 +1,43 @@
+---
+title: "stringsAsFactors a changé de valeur par défaut en R 4.0"
+ref: FCT-02
+categories: [Facteurs]
+impact: silencieux
+extrait: 'class(data.frame(x = "a")$x)'
+reponse: '"character"'
+attendu: "le même résultat quelle que soit la version de R"
+versions: "Facteurs par défaut avant R 4.0.0, texte depuis"
+source: "safer-r, NEWS de R 4.0.0"
+---
+
+::: {.piege}
+```{r}
+clients <- data.frame(ville = c("Lyon", "Paris", "Lyon"))
+class(clients$ville)
+levels(clients$ville)
+as.numeric(clients$ville)
+```
+:::
+
+Toutes les versions proposées dans le menu sont postérieures à R 4.0.0 : le bloc ci-dessus montre le comportement actuel. Avant R 4.0.0, `clients$ville` était un facteur, `levels()` renvoyait `"Lyon" "Paris"` et `as.numeric()` renvoyait `1 2 1`.
+
+## Pourquoi
+
+Jusqu'à R 3.6, `data.frame()` et `read.table()` (donc `read.csv()`) transformaient par défaut le texte en facteurs. R 4.0.0 a changé ce défaut : `stringsAsFactors = FALSE`.
+
+Un script écrit avant 4.0 qui s'appuie sur `levels()`, `nlevels()` ou sur les codes du facteur continue de tourner, mais reçoit maintenant `NULL`, 0 ou des `NA`. Seule la conversion numérique laisse un avertissement.
+
+## La parade
+
+Écrire l'argument explicitement, quelle que soit la valeur voulue : le script se comporte alors de la même façon sur toutes les versions.
+
+::: {.piege}
+```{r}
+clients <- data.frame(
+  ville = c("Lyon", "Paris", "Lyon"),
+  stringsAsFactors = TRUE
+)
+levels(clients$ville)
+as.numeric(clients$ville)
+```
+:::

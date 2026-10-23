@@ -1,0 +1,39 @@
+---
+title: "T et F sont des variables qu'on peut écraser"
+ref: FCT-05
+categories: [Facteurs]
+impact: silencieux
+attendu: "`T` vaut toujours `TRUE`"
+versions: "Toutes"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+T <- 0
+isTRUE(T)
+if (T) {
+  "oui"
+} else {
+  "non"
+}
+```
+:::
+
+## Pourquoi
+
+`TRUE` et `FALSE` sont des mots réservés du langage. `T` et `F` ne sont que des variables du paquet {base}, qui valent `TRUE` et `FALSE` par commodité. Une affectation `T <- 0`, ou une colonne nommée `T` dans un `with()`, les masque.
+
+Le code qui écrit `na.rm = T` ou `if (F)` change alors de sens sans erreur.
+
+## La parade
+
+Toujours écrire `TRUE` et `FALSE` en entier. Impossible de les écraser : R refuse.
+
+::: {.piege}
+```{r}
+rm(T)
+isTRUE(T)
+TRUE <- 0
+```
+:::

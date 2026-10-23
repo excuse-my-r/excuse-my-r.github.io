@@ -1,0 +1,39 @@
+---
+title: "unnest() supprime les lignes dont la liste est vide"
+ref: TDY-09
+categories: [tidyverse]
+impact: silencieux
+attendu: "les groupes b et c gardés, avec NA"
+versions: "Toutes les versions de {tidyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+commandes <- tibble(
+  client = c("a", "b", "c"),
+  articles = list(1:2, NULL, integer())
+)
+unnest(commandes, cols = articles)
+```
+:::
+
+## Pourquoi
+
+`unnest()` crée une ligne par élément de chaque liste. Une liste `NULL` ou de longueur nulle ne contient aucun élément : elle ne produit aucune ligne, et le client disparaît du résultat. Rien ne signale la perte.
+
+Les comptages faits ensuite (nombre de clients, taux de clients sans commande) sont alors faux, puisque les clients sans article n'existent plus.
+
+## La parade
+
+`keep_empty = TRUE` garde une ligne avec `NA` pour chaque liste vide.
+
+::: {.piege packages="tidyr"}
+```{r}
+suppressPackageStartupMessages(library(tidyr))
+
+unnest(commandes, cols = articles, keep_empty = TRUE)
+```
+:::

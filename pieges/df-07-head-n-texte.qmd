@@ -1,0 +1,38 @@
+---
+title: "head() et tail() avec un n en texte renvoyaient tout le vecteur"
+ref: DF-07
+categories: [Data frames et listes]
+impact: silencieux
+attendu: "les 3 premiers ou les 3 derniers éléments"
+versions: "Résultat faux sans erreur jusqu'à R 4.2, erreur depuis R 4.3.0"
+source: "Slack ThinkR (2022), NEWS de R 4.3.0"
+---
+
+::: {.piege}
+```{r}
+n <- "3"
+head(1:10, n)
+head(1:5, n)
+tail(letters, n)
+```
+:::
+
+Choisissez **R 4.1.3** dans le menu, puis exécutez à nouveau : sans erreur, `head(1:10, n)` renvoie les dix valeurs, `head(1:5, n)` les trois premières, et `tail(letters, n)` tout l'alphabet.
+
+## Pourquoi
+
+Un `n` en texte arrive facilement, par exemple lu dans un fichier de paramètres ou dans un `input` Shiny. Jusqu'à R 4.2, `head()` ne vérifiait pas son type et calculait `min(n, length(x))`. Avec un texte, `min()` compare des chaînes dans l'ordre alphabétique : `min("3", "10")` vaut `"10"`, car `"1"` est avant `"3"`. Le résultat dépendait donc de la longueur du vecteur : juste pour 5 éléments, faux pour 10. Un data.frame subissait le même sort, `head(iris, "2")` renvoyant ses 150 lignes.
+
+R 4.3.0 a transformé ce cas en erreur. Un vieux script qui « marchait » peut donc s'arrêter après une mise à jour, et c'est tant mieux.
+
+## La parade
+
+Convertir le paramètre en nombre dès qu'il entre dans le code.
+
+::: {.piege}
+```{r}
+n <- as.integer("3")
+head(1:10, n = n)
+tail(letters, n = n)
+```
+:::

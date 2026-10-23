@@ -1,0 +1,52 @@
+---
+title: "sapply() ne garantit pas le type de ce qu'il renvoie"
+ref: DF-01
+categories: [Data frames et listes]
+impact: silencieux
+extrait: 'class(sapply(list(), length))'
+reponse: '"list"'
+attendu: "un vecteur d'entiers, éventuellement vide"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+longueurs <- function(l) {
+  sapply(l, length)
+}
+longueurs(list(1:3, 1:5))
+longueurs(list())
+
+sapply(1:3, function(i) {
+  seq_len(i)
+})
+sapply(1:3, function(i) {
+  c(min = i, max = i^2)
+})
+```
+:::
+
+## Pourquoi
+
+`sapply()` applique la fonction, puis essaie de simplifier le résultat. Si chaque appel renvoie une seule valeur, on obtient un vecteur. Si tous renvoient le même nombre de valeurs, une matrice. Sinon, une liste. Et sur une entrée vide, il n'y a rien à simplifier : `sapply()` renvoie `list()`.
+
+Le type du résultat dépend donc des données, pas du code. Une fonction qui marche sur l'exemple casse plus loin, le jour où l'entrée est vide ou irrégulière.
+
+## La parade
+
+`vapply()` oblige à déclarer la forme de chaque résultat, et s'arrête si elle n'est pas respectée.
+
+::: {.piege}
+```{r}
+longueurs <- function(l) {
+  vapply(l, FUN = length, FUN.VALUE = integer(1))
+}
+longueurs(list(1:3, 1:5))
+longueurs(list())
+
+vapply(1:3, FUN = function(i) {
+  seq_len(i)
+}, FUN.VALUE = integer(1))
+```
+:::

@@ -1,0 +1,37 @@
+---
+title: "Des nombres stockés en texte se comparent comme des mots"
+ref: FCT-04
+categories: [Facteurs]
+impact: silencieux
+extrait: 'max(c("10", "9"))'
+reponse: '"9"'
+attendu: "`\"10\"`"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+max(c("10", "9"))
+sort(c("10", "9", "100"))
+"10" < "9"
+```
+:::
+
+## Pourquoi
+
+Sur du texte, `max()`, `sort()` et `<` suivent l'ordre alphabétique, caractère par caractère. `"10"` commence par `"1"`, qui vient avant `"9"` : il est donc « plus petit ». La longueur de la chaîne n'intervient qu'à égalité.
+
+Ce texte vient souvent d'une lecture de fichier où une seule cellule non numérique a fait basculer toute la colonne en caractères.
+
+## La parade
+
+Convertir en nombre avant de comparer ou de trier, et vérifier les `NA` produits par la conversion.
+
+::: {.piege}
+```{r}
+valeurs <- as.numeric(c("10", "9", "100"))
+max(valeurs)
+sort(valeurs)
+```
+:::

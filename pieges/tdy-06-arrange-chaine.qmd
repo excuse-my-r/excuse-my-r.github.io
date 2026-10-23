@@ -1,0 +1,39 @@
+---
+title: "arrange() avec un nom de colonne en texte ne trie rien"
+ref: TDY-06
+categories: [tidyverse]
+impact: silencieux
+attendu: "les élèves triés par note"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+notes <- data.frame(eleve = c("Hugo", "Nina", "Paul"), note = c(12, 8, 15))
+tri <- "note"
+arrange(notes, tri)
+arrange(notes, "note")
+```
+:::
+
+## Pourquoi
+
+`arrange()` trie selon la valeur des expressions qu'on lui donne. `tri` n'est pas une colonne : c'est une variable qui vaut la chaîne `"note"`, la même pour toutes les lignes. Trier selon une constante ne change rien, et aucune erreur ne vient le signaler.
+
+Le cas typique est Shiny : `arrange(donnees, input$colonne)` reçoit le nom choisi par l'utilisateur sous forme de texte, et le tableau affiché n'est jamais trié.
+
+## La parade
+
+Transformer le texte en colonne avec `.data[[ ]]`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+arrange(notes, .data[[tri]])
+arrange(notes, desc(.data[[tri]]))
+```
+:::

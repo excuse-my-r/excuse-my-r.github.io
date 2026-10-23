@@ -1,0 +1,42 @@
+---
+title: "Des octets UTF-8 lus comme du latin1 corrompent les accents"
+ref: ENV-07
+categories: [OS et CI]
+impact: silencieux
+extrait: 'x <- "é"; Encoding(x) <- "latin1"; x'
+reponse: '"Ã©"'
+attendu: "`\"Prévalence\"`"
+versions: "Toutes, plus fréquent sous Windows avant R 4.2.0"
+source: "Slack ThinkR (2020), Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+texte <- "Prévalence"
+charToRaw("é")
+
+lu_de_travers <- texte
+Encoding(lu_de_travers) <- "latin1"
+lu_de_travers
+```
+:::
+
+## Pourquoi
+
+Une chaîne n'est qu'une suite d'octets. En UTF-8, « é » occupe deux octets, `c3` et `a9`. Lus avec la table latin1, où chaque octet est un caractère, ils deviennent « Ã » et « © ». Rien ne signale l'erreur : le texte reste lisible, juste faux.
+
+C'est ce qui arrive quand un fichier écrit sur un système est relu sur un autre sans préciser l'encodage. Jusqu'à R 4.1, R sous Windows utilisait l'encodage local (souvent latin1 ou CP1252) alors que Linux et macOS étaient en UTF-8. Depuis R 4.2.0, R sous Windows fonctionne nativement en UTF-8, ce qui supprime une grande partie de ces décalages, mais pas ceux des fichiers anciens ou produits par d'autres logiciels.
+
+## La parade
+
+Toujours déclarer l'encodage à la lecture et à l'écriture, et convertir explicitement quand une source est en latin1.
+
+::: {.piege}
+```{r}
+chemin <- tempfile(fileext = ".csv")
+writeLines(iconv("Prévalence", from = "UTF-8", to = "latin1"), con = chemin, useBytes = TRUE)
+
+readLines(chemin, encoding = "latin1")
+iconv(readLines(chemin), from = "latin1", to = "UTF-8")
+```
+:::

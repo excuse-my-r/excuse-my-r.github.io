@@ -1,0 +1,43 @@
+---
+title: "group_split() range les groupes dans l'ordre alphabétique"
+ref: TDY-10
+categories: [tidyverse]
+impact: silencieux
+attendu: "la ligne de la Suisse"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+ventes <- data.frame(pays = c("Suisse", "Allemagne", "France"), n = 1:3)
+morceaux <- group_split(ventes, pays)
+names(morceaux) <- unique(ventes$pays)
+morceaux$Suisse
+```
+:::
+
+## Pourquoi
+
+`group_split()` renvoie une liste sans noms, dans l'ordre des groupes, c'est-à-dire trié selon la clé : Allemagne, France, Suisse. Ce n'est pas l'ordre d'apparition dans les données. Nommer la liste avec `unique()`, qui suit l'ordre d'apparition, décale tous les noms, et chaque morceau porte le nom d'un autre pays.
+
+Pour une colonne facteur, l'ordre est celui des niveaux, ce qui ne simplifie pas les choses.
+
+## La parade
+
+Prendre les noms dans `group_keys()`, qui suit le même ordre que `group_split()`, ou utiliser `split()` de base R, qui nomme lui-même la liste.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+groupes <- group_by(ventes, pays)
+morceaux <- group_split(groupes)
+names(morceaux) <- group_keys(groupes)$pays
+morceaux$Suisse
+
+split(ventes, f = ventes$pays)$Suisse
+```
+:::

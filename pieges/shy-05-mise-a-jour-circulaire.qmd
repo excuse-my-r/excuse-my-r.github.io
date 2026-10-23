@@ -1,0 +1,53 @@
+---
+title: "Deux inputs qui se mettent à jour l'un l'autre tournent en boucle"
+ref: SHY-05
+categories: [Shiny]
+impact: incoherent
+attendu: "chaque champ suit l'autre, une seule fois par saisie"
+versions: "Toutes les versions de {shiny}"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$celsius, {
+    updateNumericInput(session, "fahrenheit", value = input$celsius * 9 / 5 + 32)
+  })
+  observeEvent(input$fahrenheit, {
+    updateNumericInput(session, "celsius", value = (input$fahrenheit - 32) * 5 / 9)
+  })
+}
+```
+:::
+
+Ce piège dépend d'une application Shiny en cours d'exécution dans un navigateur, il ne peut pas se rejouer ici.
+
+## Pourquoi
+
+`updateNumericInput()` ne change pas la valeur côté serveur : il envoie un message au navigateur, qui modifie le champ puis renvoie la nouvelle valeur au serveur. Cette valeur déclenche l'autre observateur, qui met à jour le premier champ, et ainsi de suite.
+
+Avec les arrondis des conversions, la valeur renvoyée n'est jamais tout à fait la même. Les champs clignotent, la saisie de l'utilisateur est écrasée pendant qu'il tape, et l'application peut ne jamais se stabiliser.
+
+## La parade
+
+Ne mettre à jour l'autre champ que si sa valeur change vraiment, ou garder une seule source de vérité (par exemple une valeur réactive en Celsius) dont les deux champs dérivent.
+
+::: {.piege .piege-statique}
+```r
+server <- function(input, output, session) {
+  observeEvent(input$celsius, {
+    cible <- round(input$celsius * 9 / 5 + 32, digits = 1)
+    if (!isTRUE(all.equal(cible, input$fahrenheit))) {
+      updateNumericInput(session, inputId = "fahrenheit", value = cible)
+    }
+  })
+  observeEvent(input$fahrenheit, {
+    cible <- round((input$fahrenheit - 32) * 5 / 9, digits = 1)
+    if (!isTRUE(all.equal(cible, input$celsius))) {
+      updateNumericInput(session, inputId = "celsius", value = cible)
+    }
+  })
+}
+```
+:::

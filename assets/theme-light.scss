@@ -1,0 +1,32 @@
+/*-- scss:defaults --*/
+$body-bg: #F4F6F9;
+$body-color: #18233A;
+$link-color: #2165B6;
+$primary: #2165B6;
+$font-family-sans-serif: "Source Serif 4", Georgia, serif;
+$font-family-monospace: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+$headings-font-family: "Bricolage Grotesque", system-ui, sans-serif;
+$navbar-bg: #F4F6F9;
+$navbar-fg: #18233A;
+$navbar-hl: #2165B6;
+$footer-bg: #F4F6F9;
+$footer-fg: #4A5670;
+$code-color: #18233A;
+$border-radius: 6px;
+
+/*-- scss:rules --*/
+:root {
+  --papier: #F4F6F9;
+  --surface: #FFFFFF;
+  --encre: #18233A;
+  --encre-douce: #4A5670;
+  --trait: #D5DCE6;
+  --bleu: #2165B6;
+  --bleu-actif: #184F8F;
+  --sur-bleu: #FFFFFF;
+  --framboise: #C0265E;
+  --ambre: #9A5208;
+  --ardoise: #56637F;
+  --sortie-fond: #EBEFF5;
+  --focus: #2165B6;
+}

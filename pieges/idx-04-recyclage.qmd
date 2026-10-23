@@ -1,0 +1,41 @@
+---
+title: "Le recyclage complète le vecteur court sans prévenir"
+ref: IDX-04
+categories: [Indexation]
+impact: silencieux
+extrait: 'c(2, 1, 1, 2) == c(1, 2)'
+reponse: 'FALSE FALSE  TRUE  TRUE'
+attendu: "`TRUE TRUE TRUE TRUE`, chaque valeur valant 1 ou 2"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+valeurs <- c(2, 1, 1, 2)
+valeurs == c(1, 2)
+
+1:6 + 1:2
+1:5 + 1:2
+```
+:::
+
+## Pourquoi
+
+Quand deux vecteurs de longueurs différentes se rencontrent, R répète le plus court jusqu'à atteindre la longueur du plus long. `valeurs == c(1, 2)` compare donc élément par élément avec `1, 2, 1, 2`, ce qui n'a rien à voir avec « appartient à ».
+
+R ne prévient que si la longueur longue n'est pas un multiple de la courte, comme pour `1:5 + 1:2`. Dans tous les autres cas, le recyclage passe inaperçu.
+
+## La parade
+
+Pour tester l'appartenance, utiliser `%in%`. Pour un calcul, vérifier que les longueurs sont égales avant de combiner : `stopifnot()` arrête alors le script au lieu de recycler.
+
+::: {.piege}
+```{r}
+valeurs %in% c(1, 2)
+
+a <- 1:6
+b <- 1:2
+stopifnot(length(a) == length(b))
+```
+:::

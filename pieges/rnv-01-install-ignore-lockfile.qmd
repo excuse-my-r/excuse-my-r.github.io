@@ -1,0 +1,51 @@
+---
+title: "renv::install() ignore le dépôt écrit dans le lockfile"
+ref: RNV-01
+categories: [renv et installation]
+impact: silencieux
+attendu: "des paquets pris sur le dépôt daté du lockfile"
+versions: "Observé avec {renv} 1.2.4"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv.lock :
+  "R": {
+    "Version": "4.6.1",
+    "Repositories": [
+      { "Name": "CRAN", "URL": "https://p3m.dev/cran/2026-09-01" }
+    ]
+  }
+
+> getOption("repos")
+                       CRAN
+"https://cran.rstudio.com"
+```
+
+```r
+renv::install("xfun")
+renv::snapshot()
+```
+:::
+
+Ce piège dépend d'un projet {renv}, de dépôts distants et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Le dépôt inscrit dans le lockfile n'est pas celui qu'utilise `renv::install()` : celui-ci prend `getOption("repos")`. Au chargement du projet, {renv} remplace normalement cette option par les dépôts du lockfile, sauf si elle est redéfinie ailleurs, par exemple dans un `Rprofile.site`, un `.Rprofile` ou une option posée à la main.
+
+Le paquet est alors installé depuis CRAN courant, et non depuis l'instantané daté. Au `snapshot()` suivant, le lockfile enregistre le dépôt actif : l'adresse datée disparaît du fichier, et avec elle la reproductibilité qu'elle garantissait.
+
+## La parade
+
+Vérifier `getOption("repos")` avant d'installer, et ne pas redéfinir les dépôts dans un projet {renv} sans le vouloir.
+
+::: {.piege .piege-statique}
+```r
+getOption("repos")
+options(repos = c(CRAN = "https://p3m.dev/cran/2026-09-01"))
+renv::install("xfun")
+renv::snapshot()
+```
+:::

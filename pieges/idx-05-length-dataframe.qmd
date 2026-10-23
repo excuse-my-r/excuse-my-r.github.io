@@ -1,0 +1,38 @@
+---
+title: "length() d'un data frame compte les colonnes"
+ref: IDX-05
+categories: [Indexation]
+impact: incoherent
+extrait: 'length(iris)'
+reponse: '5'
+attendu: "`150`, le nombre de lignes"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+length(iris)
+nrow(iris)
+nrow(1:10)
+NROW(1:10)
+```
+:::
+
+## Pourquoi
+
+Un data frame est une liste de colonnes. `length()` compte les éléments de cette liste, donc les colonnes, et non les lignes.
+
+À l'inverse, `nrow()` ne lit que l'attribut de dimension. Un vecteur n'en a pas, d'où `NULL`. `NROW()` et `NCOL()`, en majuscules, traitent un vecteur comme une colonne unique.
+
+## La parade
+
+Dire ce que l'on compte : `nrow()` pour les lignes, `ncol()` pour les colonnes, et `NROW()` quand l'objet peut être un vecteur ou un tableau.
+
+::: {.piege}
+```{r}
+nrow(iris)
+ncol(iris)
+NROW(1:10)
+```
+:::

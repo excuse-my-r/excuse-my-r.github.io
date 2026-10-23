@@ -1,0 +1,34 @@
+---
+title: "Sous Windows, install_github() peut échouer à cause de tar"
+ref: ENV-05
+categories: [OS et CI]
+impact: cryptique
+attendu: "le paquet installé depuis GitHub"
+versions: "Windows, selon le tar trouvé dans le PATH"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege .piege-statique}
+```r
+remotes::install_github("ThinkR-open/golem")
+```
+:::
+
+Ce piège dépend du système Windows, des outils installés dans le PATH et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+`install_github()` télécharge une archive `.tar.gz` puis la décompresse avec `utils::untar()`. Celle-ci utilise le programme désigné par la variable d'environnement `TAR`, ou un `tar` trouvé dans le PATH. Sous Windows, plusieurs `tar` peuvent cohabiter (celui de Windows, de Git, de Rtools) et ils ne comprennent pas tous les chemins Windows de la même façon.
+
+L'extraction échoue alors, avec une erreur de décompression ou de dossier introuvable qui ne parle ni de GitHub ni du paquet.
+
+## La parade
+
+Demander à R d'utiliser son implémentation interne de tar, qui ne dépend d'aucun programme externe.
+
+::: {.piege .piege-statique}
+```r
+Sys.setenv(TAR = "internal")
+remotes::install_github("ThinkR-open/golem")
+```
+:::

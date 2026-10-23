@@ -1,0 +1,37 @@
+---
+title: "all() d'un vecteur vide vaut TRUE"
+ref: LEN-01
+categories: [Vides et NA]
+impact: silencieux
+extrait: 'all(logical(0))'
+reponse: 'TRUE'
+attendu: "`FALSE`, puisque aucune note ne dépasse 20"
+versions: "Toutes"
+source: "Slack ThinkR (2023), safer-r"
+---
+
+::: {.piege}
+```{r}
+all(logical(0))
+
+notes <- c(12, 15, 9)
+all(notes[notes > 20] >= 10)
+```
+:::
+
+## Pourquoi
+
+C'est la convention mathématique : une propriété est vraie pour tous les éléments d'un ensemble vide, puisqu'aucun élément ne la contredit. `any()` suit la convention inverse et renvoie `FALSE`.
+
+Le danger vient du filtre en amont. Quand `notes[notes > 20]` ne garde rien, le test `all(...)` passe, et le `if` qui en dépend s'exécute comme si tout allait bien. Même chose avec `all(c(NA, NA), na.rm = TRUE)`, qui vaut `TRUE`.
+
+## La parade
+
+Tester la longueur avant de conclure.
+
+::: {.piege}
+```{r}
+selection <- notes[notes > 20]
+length(selection) > 0 && all(selection >= 10)
+```
+:::

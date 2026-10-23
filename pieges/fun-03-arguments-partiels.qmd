@@ -1,0 +1,45 @@
+---
+title: "Un argument abrégé marche jusqu'au jour où il devient ambigu"
+ref: FUN-03
+categories: [Fonctions]
+impact: incoherent
+extrait: 'seq(1, 10, len = 3)'
+reponse: ' 1.0  5.5 10.0'
+attendu: "une erreur, `len` n'est pas un argument de `seq()`"
+versions: "Toutes"
+source: "The R Inferno, Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+seq(1, 10, len = 3)
+
+repeter <- function(x, longueur = 1) {
+  rep(x, times = longueur)
+}
+repeter("a", long = 3)
+
+repeter <- function(x, longueur = 1, longitude = 0) {
+  rep(x, times = longueur)
+}
+repeter("a", long = 3)
+```
+:::
+
+## Pourquoi
+
+Quand un nom d'argument ne correspond exactement à aucun argument, R cherche un argument qui commence par ce nom. `len` devient ainsi `length.out`, et `long` devient `longueur`, sans aucun message.
+
+Le jour où la fonction gagne un argument au même début, ici `longitude`, l'abréviation désigne deux arguments à la fois et l'appel échoue. Le code appelant, lui, n'a pas changé.
+
+## La parade
+
+Écrire les noms d'arguments en entier, et demander à R de signaler chaque abréviation.
+
+::: {.piege}
+```{r}
+options(warnPartialMatchArgs = TRUE)
+seq(1, 10, len = 3)
+seq(1, 10, length.out = 3)
+```
+:::

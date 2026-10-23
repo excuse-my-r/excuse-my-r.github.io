@@ -1,0 +1,49 @@
+---
+title: "{stringr} refuse le motif vide que grepl() accepte"
+ref: STR-05
+categories: [Chaînes]
+impact: incoherent
+extrait: 'grepl("", c("pomme", "poire"))'
+reponse: 'TRUE TRUE'
+attendu: "le même résultat avec `str_detect()`"
+versions: "Depuis {stringr} 1.5.0 ; avant, `str_subset(x, \"\")` renvoyait tout"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+fruits <- c("pomme", "poire")
+motif <- ""
+grepl(motif, x = fruits)
+str_detect(fruits, pattern = motif)
+str_subset(fruits, pattern = motif)
+str_split(fruits, pattern = motif)
+```
+:::
+
+## Pourquoi
+
+Le motif vide correspond partout. Base R en tire la conséquence : `grepl("", x)` vaut `TRUE` pour toutes les chaînes. {stringr} faisait de même jusqu'à sa version 1.4. Depuis la 1.5.0, `str_detect()`, `str_subset()`, `str_starts()` et `str_ends()` s'arrêtent avec une erreur, jugeant qu'un motif vide est presque toujours un bug.
+
+Le piège naît quand le motif vient d'une variable, par exemple un champ de recherche laissé vide : un filtre qui gardait tout se met à planter après une mise à jour. Et toutes les fonctions ne suivent pas la règle : `str_split()` accepte toujours le motif vide et découpe en caractères.
+
+## La parade
+
+Traiter le motif vide explicitement, selon ce qu'il doit signifier.
+
+::: {.piege packages="stringr"}
+```{r}
+suppressPackageStartupMessages(library(stringr))
+
+filtre <- function(x, motif) {
+  if (motif == "") {
+    return(x)
+  }
+  str_subset(x, pattern = motif)
+}
+filtre(fruits, motif = "")
+filtre(fruits, motif = "mm")
+```
+:::

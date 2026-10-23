@@ -1,0 +1,42 @@
+---
+title: "Lire et réécrire un fichier dans un pipe le vide"
+ref: PIP-05
+categories: [Pipes]
+impact: silencieux
+extrait: 'readLines(f) |> gsub(...) |> write(file = f)'
+reponse: '""'
+attendu: "`\"something\"`"
+versions: "Toutes"
+source: "Slack ThinkR (2025)"
+---
+
+::: {.piege}
+```{r}
+f <- tempfile()
+write("temp", file = f)
+
+readLines(f) |>
+  gsub(pattern = "temp", replacement = "something", x = _) |>
+  write(file = f)
+
+readLines(f)
+```
+:::
+
+## Pourquoi
+
+Le pipe ne lit pas le fichier avant de l'écrire : il construit l'appel `write(gsub(..., readLines(f)), file = f)`. À cause de l'évaluation paresseuse, `write()` commence par ouvrir son fichier de destination, ce qui le vide, et n'évalue son premier argument qu'au moment d'écrire. `readLines()` lit alors un fichier déjà vide.
+
+## La parade
+
+Forcer la lecture avant l'écriture, en passant par une variable.
+
+::: {.piege}
+```{r}
+write("temp", file = f)
+contenu <- readLines(f)
+contenu <- gsub(pattern = "temp", replacement = "something", x = contenu)
+write(contenu, file = f)
+readLines(f)
+```
+:::

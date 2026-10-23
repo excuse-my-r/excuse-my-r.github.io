@@ -1,0 +1,35 @@
+---
+title: "as.numeric() sur un facteur renvoie les codes"
+ref: FCT-01
+categories: [Facteurs]
+impact: silencieux
+extrait: 'as.numeric(factor("2024"))'
+reponse: '1'
+attendu: "`2024 2026 2024`"
+versions: "Toutes, plus fréquent avant R 4.0 où read.csv() créait des facteurs"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+annee <- factor(c("2024", "2026", "2024"))
+as.numeric(annee)
+```
+:::
+
+## Pourquoi
+
+Un facteur est un vecteur d'entiers accompagné d'une table de niveaux. `as.numeric()` lit les entiers, c'est-à-dire la position de chaque valeur dans les niveaux triés, pas le texte affiché.
+
+Avant R 4.0, `read.csv()` transformait par défaut les colonnes de texte en facteurs. Une colonne d'années mal lue donnait ainsi des « années » 1, 2 et 1, plausibles dans un modèle.
+
+## La parade
+
+Repasser par le texte, ou indexer les niveaux.
+
+::: {.piege}
+```{r}
+as.numeric(as.character(annee))
+as.numeric(levels(annee))[annee]
+```
+:::

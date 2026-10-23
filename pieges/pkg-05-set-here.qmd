@@ -1,0 +1,43 @@
+---
+title: "here::set_here() ne change pas here() dans la session en cours"
+ref: PKG-05
+categories: [Packages]
+impact: incoherent
+attendu: "`here()` pointe aussitôt sur le dossier marqué"
+versions: "Toutes les versions de {here}"
+source: "Slack ThinkR (2022, 2023)"
+---
+
+::: {.piege packages="here"}
+```{r}
+projet <- file.path(tempfile(), "projet")
+dir.create(file.path(projet, "analyses"), recursive = TRUE)
+writeLines("1 + 1", file.path(projet, "analyses", "script.R"))
+
+ancien <- setwd(file.path(projet, "analyses"))
+suppressPackageStartupMessages(library(here))
+basename(here())
+
+suppressMessages(set_here(path = projet))
+file.exists(file.path(projet, ".here"))
+basename(here())
+setwd(ancien)
+```
+:::
+
+## Pourquoi
+
+{here} cherche la racine une seule fois, au chargement du paquet, et la garde en mémoire. `set_here()` crée bien le fichier `.here`, mais ne relance pas la recherche : son message demande d'ailleurs de démarrer une nouvelle session. Jusque-là, `here()` continue de renvoyer l'ancienne racine.
+
+## La parade
+
+Déclarer l'emplacement du script avec `here::i_am()`, qui fixe la racine immédiatement et vérifie que le fichier existe bien à cet endroit.
+
+::: {.piege packages="here"}
+```{r}
+ancien <- setwd(file.path(projet, "analyses"))
+suppressMessages(here::i_am("analyses/script.R"))
+basename(here::here())
+setwd(ancien)
+```
+:::

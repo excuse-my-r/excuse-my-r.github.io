@@ -1,0 +1,56 @@
+---
+title: "units::set_units() prend le nom de la variable pour l'unité"
+ref: TDY-16
+categories: [tidyverse]
+impact: silencieux
+attendu: "des valeurs en kilomètres"
+versions: "Toutes les versions de {units}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(units)
+x <- 1:3
+u <- "km"
+set_units(x, u)
+set_units(set_units(x, u), value = "g", mode = "standard")
+
+unite <- "km"
+set_units(x, unite)
+```
+
+```text
+Units: [u]
+[1] 1 2 3
+Units: [g]
+[1] 1.660540e-24 3.321080e-24 4.981621e-24
+Error: In 'unite', 'unite' is not recognized by udunits.
+```
+:::
+
+Ce piège dépend du paquet {units}, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+`set_units()` lit son deuxième argument sans l'évaluer, pour qu'on puisse écrire `set_units(x, m)` ou `set_units(x, km/h)` sans guillemets. Le symbole `u` n'est donc jamais remplacé par sa valeur `"km"` : il est pris tel quel comme nom d'unité. Or `u` existe, c'est l'unité de masse atomique. Les valeurs deviennent des masses, et se convertissent sans broncher en grammes.
+
+Avec un nom de variable qui n'est pas une unité, comme `unite`, on a au moins une erreur. Le piège ne se referme que sur les noms courts qui sont aussi des unités : `u`, `m`, `g`, `s`, `h`...
+
+## La parade
+
+Passer l'unité en texte, avec `mode = "standard"`, qui évalue l'argument normalement.
+
+::: {.piege .piege-statique}
+```r
+set_units(x, value = u, mode = "standard")
+set_units(x, value = "km", mode = "standard")
+```
+
+```text
+Units: [km]
+[1] 1 2 3
+Units: [km]
+[1] 1 2 3
+```
+:::

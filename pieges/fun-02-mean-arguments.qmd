@@ -1,0 +1,37 @@
+---
+title: "mean() ne prend pas plusieurs nombres comme max()"
+ref: FUN-02
+categories: [Fonctions]
+impact: silencieux
+extrait: 'mean(1, 5, 3)'
+reponse: '1'
+attendu: "`3`, la moyenne de 1, 5 et 3"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+max(1, 5, 3)
+sum(1, 5, 3)
+mean(1, 5, 3)
+median(1, 5, 3)
+```
+:::
+
+## Pourquoi
+
+`max()` et `sum()` rassemblent tout ce qu'on leur passe via `...`. `mean()` et `median()` n'attendent qu'un seul vecteur `x` : les nombres suivants remplissent d'autres arguments. Dans `mean(1, 5, 3)`, `x` vaut 1, `trim` vaut 5 et `na.rm` vaut 3.
+
+La moyenne d'une seule valeur est cette valeur, d'où 1. Aucun argument n'est refusé, donc aucune erreur.
+
+## La parade
+
+Regrouper les valeurs dans un vecteur avec `c()`.
+
+::: {.piege}
+```{r}
+mean(c(1, 5, 3))
+median(c(1, 5, 3))
+```
+:::

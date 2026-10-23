@@ -1,0 +1,45 @@
+---
+title: "Un else en début de ligne est une erreur de syntaxe"
+ref: FLW-07
+categories: [Contrôle de flux]
+impact: cryptique
+attendu: "`\"négatif\"`, comme dans n'importe quel autre langage"
+versions: "Toutes"
+source: "safer-r, The R Inferno"
+---
+
+::: {.piege}
+```{r}
+#| eval: false
+x <- -5
+if (x > 0) {
+  "positif"
+}
+else {
+  "négatif"
+}
+```
+:::
+
+Exécutez ce bloc : R affiche « Error: unexpected 'else' in "else" », puis évalue `"négatif"` comme une instruction isolée et l'affiche, puis se plaint du `}` final avec « unexpected '}' ». Le bon résultat apparaît, noyé entre deux erreurs.
+
+## Pourquoi
+
+À la console, et dans un script exécuté ligne à ligne, R évalue une instruction dès qu'elle est complète. Après le `}` de la troisième ligne, `if (x > 0) { "positif" }` est une instruction complète, sans `else`. La ligne suivante commence par `else`, qui ne peut pas commencer une instruction : erreur de syntaxe.
+
+Le même code passe sans problème à l'intérieur d'une fonction ou de tout autre bloc entre accolades, car R ne termine l'instruction qu'à l'accolade fermante du bloc. Un code copié d'une fonction vers la console casse donc sans raison apparente.
+
+## La parade
+
+Toujours écrire `} else {` sur la même ligne.
+
+::: {.piege}
+```{r}
+x <- -5
+if (x > 0) {
+  "positif"
+} else {
+  "négatif"
+}
+```
+:::

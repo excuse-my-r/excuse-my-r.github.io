@@ -1,0 +1,49 @@
+---
+title: "!! évalue l'argument là où {{ }} le transmet tel quel"
+ref: TDY-02
+categories: [tidyverse]
+impact: silencieux
+attendu: "`2`, la moyenne de la colonne x"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+moyenne <- function(df, col) {
+  summarise(df, m = mean(!!col))
+}
+x <- 100
+mesures <- data.frame(x = 1:3)
+moyenne(mesures, x)
+```
+:::
+
+## Pourquoi
+
+`!!col` injecte la **valeur** de `col`. Pour l'obtenir, R évalue l'argument là où la fonction a été appelée, comme pour n'importe quel argument. Le `x` de l'appel désigne alors la variable globale `x`, qui vaut 100, et non la colonne. Sans variable `x` dans l'environnement, on obtiendrait une erreur `object 'x' not found`, plus facile à repérer.
+
+`{{ col }}` fait autre chose : il capture l'expression `x` sans l'évaluer, avec son environnement, et la transmet à `summarise()`, qui la cherche d'abord parmi les colonnes. C'est ce qu'on attend presque toujours d'un argument de colonne.
+
+## La parade
+
+Utiliser `{{ }}` pour transmettre un argument, et réserver `!!` aux expressions déjà capturées, comme le résultat d'`enquo()`.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+moyenne <- function(df, col) {
+  summarise(df, m = mean({{ col }}))
+}
+moyenne(mesures, x)
+
+moyenne_enquo <- function(df, col) {
+  col <- enquo(col)
+  summarise(df, m = mean(!!col))
+}
+moyenne_enquo(mesures, x)
+```
+:::

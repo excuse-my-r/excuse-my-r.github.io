@@ -1,0 +1,39 @@
+---
+title: "{cli} évalue tout ce qui est entre accolades"
+ref: STR-06
+categories: [Chaînes]
+impact: cryptique
+attendu: "le message `Please install {packacode}` tel quel"
+versions: "Toutes les versions de {cli}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="cli"}
+```{r}
+suppressPackageStartupMessages(library(cli))
+
+cli_alert_danger("Please install {packacode}")
+cli_text("Format attendu : {\"a\": 1}")
+```
+:::
+
+## Pourquoi
+
+Les fonctions de {cli} interprètent leur texte comme {glue} : ce qui est entre accolades est du code R, évalué au moment d'afficher le message. `{packacode}` cherche une variable `packacode`, qui n'existe pas. Un exemple de JSON entre accolades devient l'expression `"a": 1`, une séquence de `"a"` à `1`, qui échoue avec « NA/NaN argument ».
+
+Le piège frappe surtout les messages d'erreur : le code qui devait signaler un problème plante lui-même, avec un message sans rapport.
+
+## La parade
+
+Doubler les accolades pour les afficher, ou passer le texte par une variable.
+
+::: {.piege packages="cli"}
+```{r}
+suppressPackageStartupMessages(library(cli))
+
+cli_alert_danger("Please install {{packacode}}")
+
+paquet <- "packacode"
+cli_alert_danger("Please install {.pkg {paquet}}")
+```
+:::

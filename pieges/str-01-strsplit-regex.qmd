@@ -1,0 +1,36 @@
+---
+title: "strsplit() lit le séparateur comme une expression régulière"
+ref: STR-01
+categories: [Chaînes]
+impact: silencieux
+extrait: 'strsplit("a.b", ".")[[1]]'
+reponse: '"" "" ""'
+attendu: "`\"a\" \"b\"`"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+strsplit("a.b", split = ".")
+strsplit("2026.10.23", split = ".")
+strsplit("a|b", split = "|")
+```
+:::
+
+## Pourquoi
+
+L'argument `split` est une expression régulière, et dans une expression régulière le point veut dire « n'importe quel caractère ». Chaque caractère de la chaîne est donc un séparateur, et il ne reste que des morceaux vides entre eux.
+
+La barre verticale `|` signifie « ou » : `"|"` est l'alternative entre deux motifs vides, qui correspond à la chaîne vide. `strsplit()` coupe alors entre chaque caractère, et la barre se retrouve dans le résultat au lieu de disparaître.
+
+## La parade
+
+Demander une recherche littérale avec `fixed = TRUE`, ou échapper le caractère spécial.
+
+::: {.piege}
+```{r}
+strsplit("a.b", split = ".", fixed = TRUE)
+strsplit("a|b", split = "\\|")
+```
+:::

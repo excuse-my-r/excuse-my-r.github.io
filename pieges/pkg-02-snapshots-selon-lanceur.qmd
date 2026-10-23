@@ -1,0 +1,45 @@
+---
+title: "Les snapshots testthat changent selon la façon de lancer les tests"
+ref: PKG-02
+categories: [Packages]
+impact: silencieux
+attendu: "un snapshot identique, quel que soit le bouton utilisé"
+versions: "Toutes les versions de {testthat} 3"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+# Dans RStudio, bouton « Run Tests » du fichier
+testthat::test_file("tests/testthat/test-affichage.R")
+
+# Puis depuis la console
+devtools::test()
+```
+
+```text
+── Failure ('test-affichage.R:3:3'): affichage du résumé ──
+Snapshot of code has changed:
+```
+:::
+
+Ce piège dépend de l'IDE et du lanceur de tests, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+`expect_snapshot()` enregistre la sortie texte telle qu'elle est produite. Cette sortie dépend de réglages qui ne sont pas les mêmes selon le lanceur : largeur de la console, couleurs et caractères Unicode de {cli}, langue, chargement du paquet par `load_all()` ou non.
+
+Un snapshot créé avec un lanceur peut donc échouer avec l'autre, ou pire, être réécrit en silence par celui qui accepte les changements sans les relire.
+
+## La parade
+
+Créer et valider les snapshots toujours de la même façon, avec `devtools::test()` ou `devtools::check()`, et fixer dans le test les réglages qui changent l'affichage.
+
+::: {.piege .piege-statique}
+```r
+test_that("affichage du résumé", {
+  local_reproducible_output(width = 80, unicode = FALSE, crayon = FALSE)
+  expect_snapshot(print(resume(donnees)))
+})
+```
+:::

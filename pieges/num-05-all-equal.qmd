@@ -1,0 +1,41 @@
+---
+title: "all.equal() ne renvoie jamais FALSE"
+ref: NUM-05
+categories: [Numérique]
+impact: cryptique
+extrait: 'all.equal(1, 1.1)'
+reponse: '"Mean relative difference: 0.1"'
+attendu: "`FALSE`"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+all.equal(1, 1.1)
+if (all.equal(1, 1.1)) {
+  "égaux"
+}
+```
+:::
+
+## Pourquoi
+
+`all.equal()` sert à décrire des différences, pas à répondre oui ou non. Quand les objets sont égaux à la tolérance près, il renvoie `TRUE`. Sinon, il renvoie un texte qui explique l'écart.
+
+`if` ne sait pas quoi faire d'une chaîne de caractères et s'arrête sur une erreur qui ne parle pas du tout de comparaison. Le code ne plante donc que le jour où les valeurs diffèrent, c'est-à-dire précisément quand le test devait servir.
+
+## La parade
+
+Envelopper l'appel dans `isTRUE()`, qui transforme tout ce qui n'est pas exactement `TRUE` en `FALSE`.
+
+::: {.piege}
+```{r}
+isTRUE(all.equal(1, 1.1))
+if (isTRUE(all.equal(1, 1.1))) {
+  "égaux"
+} else {
+  "différents"
+}
+```
+:::

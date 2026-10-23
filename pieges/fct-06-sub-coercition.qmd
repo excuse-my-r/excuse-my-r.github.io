@@ -1,0 +1,38 @@
+---
+title: "sub() transforme silencieusement son entrée en texte"
+ref: FCT-06
+categories: [Facteurs]
+impact: incoherent
+extrait: 'sub("T", "", T)'
+reponse: '"RUE"'
+attendu: "une erreur, `T` n'est pas du texte"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+sub("T", "", T)
+sub("0", "", 100000)
+sub("_.*", "", factor(c("a_1", "b_2")))
+```
+:::
+
+## Pourquoi
+
+`sub()` et `gsub()` appliquent d'abord `as.character()` à ce qu'on leur donne, sans prévenir. `TRUE` devient `"TRUE"`, et le remplacement s'applique à ce texte.
+
+Pour un nombre, c'est l'écriture choisie par R qui sert : `100000` s'écrit `"1e+05"`, si bien qu'enlever le premier zéro donne `"1e+5"`. Un facteur ressort, lui, en vecteur de texte.
+
+## La parade
+
+Convertir soi-même en texte, avec le format voulu, avant de faire un remplacement.
+
+::: {.piege}
+```{r}
+sub("0", "", format(100000, scientific = FALSE))
+x <- factor(c("a_1", "b_2"))
+levels(x) <- sub("_.*", "", levels(x))
+x
+```
+:::

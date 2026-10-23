@@ -1,0 +1,33 @@
+---
+title: "shinyapps.io refuse un nom d'application qui contient un point"
+ref: SHY-07
+categories: [Shiny]
+impact: cryptique
+attendu: "une application publiée sous le nom `mon.app`"
+versions: "Toutes les versions de {rsconnect}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+rsconnect::deployApp(appDir = ".", appName = "mon.app")
+```
+:::
+
+Ce piège dépend d'un compte shinyapps.io et du réseau, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Un nom d'application shinyapps.io ne peut contenir que des lettres, des chiffres, des tirets et des tirets bas. Le point, courant dans les noms de paquets R et de dossiers, en est exclu.
+
+Le refus n'arrive qu'au moment du déploiement, une fois le paquet d'application préparé, avec un message qui porte sur le nom et non sur le code. Le piège revient quand le nom est construit automatiquement à partir du nom du paquet ou du dossier.
+
+## La parade
+
+Donner explicitement un nom conforme, sans point, indépendant du nom du dossier.
+
+::: {.piege .piege-statique}
+```r
+rsconnect::deployApp(appDir = ".", appName = "mon-app")
+```
+:::

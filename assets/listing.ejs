@@ -1,0 +1,32 @@
+<%
+const ordre = ["Numérique", "Vides et NA", "Indexation", "Facteurs", "Fonctions", "Contrôle de flux", "Chaînes", "Dates", "Data frames et listes", "Pipes", "Erreurs et fichiers", "tidyverse", "data.table", "Shiny", "Packages", "renv et installation", "OS et CI"];
+const rang = c => (ordre.indexOf(c) === -1 ? ordre.length : ordre.indexOf(c));
+const groupes = {};
+for (const item of items) {
+  const c = (item.categories || ["Autres"])[0];
+  (groupes[c] = groupes[c] || []).push(item);
+}
+const categories = Object.keys(groupes).sort((a, b) => rang(a) - rang(b) || a.localeCompare(b));
+%>
+```{=html}
+<div class="catalogue">
+<% for (const c of categories) { %>
+  <section class="catalogue-groupe" data-categorie="<%= c %>">
+    <h3 class="catalogue-groupe-titre"><%= c %></h3>
+    <ul class="catalogue-liste" role="list">
+    <% for (const item of groupes[c].sort((a, b) => String(a.ref).localeCompare(String(b.ref)))) { %>
+      <li class="catalogue-ligne" data-impact="<%= item.impact %>" data-categorie="<%= c %>">
+        <a class="catalogue-lien" href="<%- item.path %>">
+          <span class="catalogue-titre"><%= item.title %></span>
+          <% if (item.extrait) { %>
+          <span class="catalogue-extrait"><span class="catalogue-invite" aria-hidden="true">&gt; </span><code><%= item.extrait %></code><% if (item.reponse) { %> <span class="catalogue-reponse">[1] <%= item.reponse %></span><% } %></span>
+          <% } %>
+        </a>
+        <span class="impact impact-<%= item.impact %>"></span>
+      </li>
+    <% } %>
+    </ul>
+  </section>
+<% } %>
+</div>
+```

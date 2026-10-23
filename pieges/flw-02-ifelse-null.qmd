@@ -1,0 +1,38 @@
+---
+title: "ifelse() plante sur une branche NULL, mais seulement quand elle sert"
+ref: FLW-02
+categories: [Contrôle de flux]
+impact: cryptique
+extrait: 'ifelse(FALSE, 1, NULL)'
+attendu: "`NULL` ou `NA` pour la valeur absente"
+versions: "Toutes"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege}
+```{r}
+params <- list(seuil = 10)
+ifelse(TRUE, yes = params$seuil, no = params$defaut)
+ifelse(c(TRUE, FALSE), yes = params$seuil, no = params$defaut)
+```
+:::
+
+## Pourquoi
+
+`params$defaut` n'existe pas : `$` renvoie alors `NULL` sans rien dire. Tant que le test ne contient que des `TRUE`, `ifelse()` n'a jamais besoin de la branche `no` et ne l'évalue même pas, d'où le 10 sans erreur.
+
+Dès qu'un `FALSE` apparaît, `ifelse()` recycle `no` à la longueur du test avec `rep()`, qui renvoie `NULL` (premier avertissement), puis tente de l'affecter dans le résultat : « replacement has length zero ». Le message parle de remplacement et de longueur zéro, sans jamais citer la variable fautive, et le bug n'apparaît qu'avec certaines données.
+
+## La parade
+
+Vérifier la valeur avant de s'en servir, et lui donner une valeur de repli explicite.
+
+::: {.piege}
+```{r}
+defaut <- params$defaut
+if (is.null(defaut)) {
+  defaut <- NA
+}
+ifelse(c(TRUE, FALSE), yes = params$seuil, no = defaut)
+```
+:::

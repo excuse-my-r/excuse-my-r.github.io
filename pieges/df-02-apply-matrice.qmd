@@ -1,0 +1,45 @@
+---
+title: "apply() sur un data.frame transforme tout en texte"
+ref: DF-02
+categories: [Data frames et listes]
+impact: silencieux
+attendu: "`FALSE TRUE` : seul le prix de 12 dépasse 9"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+ventes <- data.frame(
+  produit = c("A", "B"),
+  prix = c(5, 12),
+  quantite = c(10, 3)
+)
+apply(ventes, MARGIN = 1, FUN = function(ligne) {
+  ligne[["prix"]]
+})
+apply(ventes, MARGIN = 1, FUN = function(ligne) {
+  ligne[["prix"]] > 9
+})
+apply(ventes, MARGIN = 1, FUN = function(ligne) {
+  ligne[["prix"]] * ligne[["quantite"]]
+})
+```
+:::
+
+## Pourquoi
+
+`apply()` travaille sur une matrice. Il commence donc par convertir le data.frame avec `as.matrix()`, et une matrice n'a qu'un seul type. Comme la colonne `produit` est du texte, tout devient du texte, les nombres compris, et ils sont même complétés par des espaces pour avoir la même largeur : `" 5"` et `"12"`.
+
+La comparaison `" 5" > 9` se fait alors entre chaînes, dans l'ordre alphabétique, et `"12"` est avant `"9"`. Le résultat est faux sans avertissement. Seule la multiplication finit par une erreur.
+
+## La parade
+
+Travailler colonne par colonne, ce que R fait nativement, au lieu de ligne par ligne.
+
+::: {.piege}
+```{r}
+ventes$prix > 9
+ventes$prix * ventes$quantite
+```
+:::

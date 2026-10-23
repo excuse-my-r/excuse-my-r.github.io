@@ -1,0 +1,43 @@
+---
+title: "renv::snapshot() peut rétrograder la version de R du lockfile"
+ref: RNV-03
+categories: [renv et installation]
+impact: silencieux
+attendu: "la version de R de la session, 4.5.1"
+versions: "Observé avec {renv} 1.2.x"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege .piege-statique}
+```r
+R.version.string
+renv::snapshot()
+```
+
+```text
+[1] "R version 4.5.1 (2025-06-13)"
+
+The version of R recorded in the lockfile will be updated:
+- R             [4.5.1 -> 4.4.2]
+```
+:::
+
+Ce piège dépend des réglages d'un projet {renv}, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+{renv} permet de fixer dans les réglages du projet la version de R à inscrire dans le lockfile (`renv::settings$r.version()`). Quand ce réglage existe, `snapshot()` l'écrit à la place de la version réellement utilisée. Ici, la session tourne en R 4.5.1, mais le lockfile repasse en 4.4.2, la valeur oubliée dans les réglages.
+
+Le message s'affiche, mais au milieu de la liste des paquets mis à jour, où on ne le lit pas.
+
+## La parade
+
+Vérifier ce réglage, et le vider s'il n'est pas voulu, avant de prendre un instantané.
+
+::: {.piege .piege-statique}
+```r
+renv::settings$r.version()
+renv::settings$r.version(NULL)
+renv::snapshot()
+```
+:::

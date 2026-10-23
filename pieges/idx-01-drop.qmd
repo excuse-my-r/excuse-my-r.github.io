@@ -1,0 +1,39 @@
+---
+title: "Extraire une ligne ou une colonne fait perdre une dimension"
+ref: IDX-01
+categories: [Indexation]
+impact: silencieux
+extrait: 'is.matrix(matrix(1:6, nrow = 2)[1, ])'
+reponse: 'FALSE'
+attendu: "une matrice d'une ligne, et un data frame d'une colonne"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+m <- matrix(1:6, nrow = 2)
+m[1, ]
+dim(m[1, ])
+
+df <- data.frame(a = 1:3, b = 4:6)
+df[, "a"]
+```
+:::
+
+## Pourquoi
+
+Avec `[`, l'argument `drop` vaut `TRUE` par défaut : dès que le résultat n'a plus qu'une ligne ou qu'une colonne, R supprime la dimension devenue inutile. La ligne de la matrice devient un simple vecteur, sans `dim()`, et la colonne du data frame devient un vecteur.
+
+Le piège apparaît dans une fonction écrite pour plusieurs colonnes : le jour où le filtre n'en garde qu'une, `nrow()`, `colnames()` ou `apply()` reçoivent un vecteur et échouent, ou renvoient autre chose.
+
+## La parade
+
+Écrire `drop = FALSE` dès que le nombre de lignes ou de colonnes sélectionnées peut tomber à un.
+
+::: {.piege}
+```{r}
+m[1, , drop = FALSE]
+df[, "a", drop = FALSE]
+```
+:::

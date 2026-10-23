@@ -1,0 +1,41 @@
+---
+title: "read.table() prend les apostrophes pour des guillemets et # pour un commentaire"
+ref: DF-05
+categories: [Data frames et listes]
+impact: silencieux
+attendu: "un tableau de 4 lignes"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+texte <- "nom;n
+Jeanne d'Arc;12
+Martin;5
+O'Neil;7
+Dupont;3"
+personnes <- read.table(text = texte, sep = ";", header = TRUE)
+personnes
+nrow(personnes)
+
+read.table(text = "ref;n\nA#3;12\nB;5", sep = ";", header = TRUE)
+```
+:::
+
+## Pourquoi
+
+Par défaut, `read.table()` utilise `quote = "\"'"` : l'apostrophe ouvre une chaîne entre guillemets, qui ne se ferme qu'à l'apostrophe suivante, plusieurs lignes plus bas. Tout ce qui est entre les deux devient une seule valeur. Ici, trois personnes sont fusionnées en une, et le tableau perd deux lignes sans le moindre avertissement.
+
+De même, `comment.char = "#"` coupe chaque ligne au premier `#`. Une référence `A#3` tronque la ligne, et R s'arrête sur une erreur de nombre de colonnes qui ne désigne pas le vrai coupable.
+
+## La parade
+
+Dire explicitement quels guillemets et quels commentaires le fichier utilise, ou passer par `read.csv()` et `read.csv2()`, qui n'acceptent que les guillemets doubles et ignorent `#`.
+
+::: {.piege}
+```{r}
+read.table(text = texte, sep = ";", header = TRUE, quote = "\"", comment.char = "")
+read.csv2(text = "ref;n\nA#3;12\nB;5")
+```
+:::

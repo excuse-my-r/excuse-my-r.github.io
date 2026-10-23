@@ -1,0 +1,38 @@
+---
+title: "median() d'entiers renvoie un entier ou un double selon le nombre de valeurs"
+ref: NUM-06
+categories: [Numérique]
+impact: incoherent
+extrait: 'typeof(median(c(1L, 1L)))'
+reponse: '"double"'
+attendu: "le même type quel que soit le nombre de valeurs"
+versions: "Toutes"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+typeof(median(c(1L, 1L, 1L)))
+typeof(median(c(1L, 1L)))
+
+identical(median(c(1L, 3L, 5L)), 3L)
+identical(median(c(1L, 3L, 5L, 7L)), 4L)
+```
+:::
+
+## Pourquoi
+
+Avec un nombre impair de valeurs, la médiane est la valeur du milieu : R la renvoie telle quelle, donc en entier. Avec un nombre pair, elle est la moyenne des deux valeurs centrales, et `mean()` renvoie toujours un double, même quand le résultat tombe juste.
+
+Le type dépend donc des données, pas du code. Un code strict sur les types (`identical()`, `vapply(..., FUN.VALUE = integer(1))`, une colonne typée en base de données) passe sur un échantillon et casse sur le suivant.
+
+## La parade
+
+Fixer le type du résultat explicitement.
+
+::: {.piege}
+```{r}
+typeof(as.numeric(median(c(1L, 1L, 1L))))
+typeof(as.numeric(median(c(1L, 1L))))
+```
+:::

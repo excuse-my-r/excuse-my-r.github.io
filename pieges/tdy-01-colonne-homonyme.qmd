@@ -1,0 +1,44 @@
+---
+title: "Une colonne masque l'argument du même nom"
+ref: TDY-01
+categories: [tidyverse]
+impact: silencieux
+extrait: 'nrow(filter(df, espece == espece))'
+reponse: '3'
+attendu: "une seule ligne, celle du chien"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2023, 2026)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+animaux <- data.frame(espece = c("chat", "chien", "chat"))
+garder <- function(df, espece) {
+  filter(df, espece == espece)
+}
+garder(animaux, espece = "chien")
+```
+:::
+
+## Pourquoi
+
+Dans `filter()`, les noms sont d'abord cherchés parmi les colonnes du tableau, puis seulement dans l'environnement de la fonction. Les deux `espece` désignent donc la colonne, comparée à elle-même : toutes les lignes passent le filtre.
+
+Le piège apparaît souvent après coup, quand on ajoute au tableau une colonne qui porte le nom d'un argument.
+
+## La parade
+
+Dire explicitement d'où vient chaque nom : `.data` pour les colonnes, `.env` pour les variables.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+garder <- function(df, espece) {
+  filter(df, .data$espece == .env$espece)
+}
+garder(animaux, espece = "chien")
+```
+:::

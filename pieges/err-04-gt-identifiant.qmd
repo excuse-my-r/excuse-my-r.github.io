@@ -1,0 +1,57 @@
+---
+title: "Un tableau {gt} change d'identifiant à chaque rendu"
+ref: ERR-04
+categories: [Erreurs et fichiers]
+impact: incoherent
+attendu: "le même HTML pour le même tableau"
+versions: "Toutes les versions de {gt}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(gt)
+tab <- data.frame(x = 1)
+html_1 <- as.character(as_raw_html(gt(tab), inline_css = FALSE))
+html_2 <- as.character(as_raw_html(gt(tab), inline_css = FALSE))
+identical(html_1, y = html_2)
+regmatches(html_1, m = regexpr('id="[^"]*"', text = html_1))
+regmatches(html_2, m = regexpr('id="[^"]*"', text = html_2))
+```
+
+```text
+[1] FALSE
+[1] "id=\"fsqsscaaxf\""
+[1] "id=\"eyncbpbvfg\""
+```
+:::
+
+Ce piège dépend du paquet {gt}, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Pour que le style d'un tableau ne déborde pas sur les autres tableaux de la page, {gt} enveloppe chaque tableau dans un bloc qui porte un identifiant, et préfixe toutes ses règles CSS par cet identifiant. Faute d'identifiant fourni, il en tire un au hasard, au moment du rendu.
+
+Deux rendus du même tableau diffèrent donc. Un test « snapshot » échoue à chaque exécution, et un rapport versionné dans git change à chaque compilation. Au passage, ce tirage fait avancer le générateur aléatoire : les nombres tirés ensuite dans le script ne sont plus les mêmes.
+
+## La parade
+
+Donner un identifiant fixe avec l'argument `id`. À défaut, `withr::with_seed()` fige le tirage sans toucher au générateur du reste du script.
+
+::: {.piege .piege-statique}
+```r
+html_1 <- as.character(as_raw_html(gt(tab, id = "ventes"), inline_css = FALSE))
+html_2 <- as.character(as_raw_html(gt(tab, id = "ventes"), inline_css = FALSE))
+identical(html_1, y = html_2)
+
+rendu <- function() {
+  withr::with_seed(seed = 1, code = as.character(as_raw_html(gt(tab), inline_css = FALSE)))
+}
+identical(rendu(), y = rendu())
+```
+
+```text
+[1] TRUE
+[1] TRUE
+```
+:::

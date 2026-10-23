@@ -1,0 +1,34 @@
+---
+title: "En CI, un nom de fichier trop long peut produire une erreur qui parle de fins de ligne"
+ref: ENV-08
+categories: [OS et CI]
+impact: cryptique
+attendu: "une erreur qui désigne le fichier trop long"
+versions: "Toutes, surtout sous Windows"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```text
+tests/testthat/_snaps/fonction_qui_genere_un_rapport_complet_avec_graphiques/rapport_complet_pour_l_etablissement_numero_un.html
+```
+:::
+
+Ce piège dépend du système de fichiers et des outils de la CI, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Les systèmes et les outils imposent des limites à la longueur d'un chemin : 260 caractères par défaut sous Windows, 100 octets pour le format tar classique utilisé par `R CMD build`, auxquels s'ajoute la longueur du dossier de travail de la CI, souvent profond.
+
+Quand la limite est atteinte, c'est l'outil qui échoue qui écrit le message, et il ne dit pas toujours la vraie raison. Dans l'incident d'origine, l'erreur évoquait les fins de ligne, ce qui a orienté la recherche dans la mauvaise direction.
+
+## La parade
+
+Garder des noms courts pour les fichiers de tests, de snapshots et de données, et vérifier la longueur des chemins avant de pousser.
+
+::: {.piege}
+```{r}
+chemin <- "tests/testthat/_snaps/fonction_qui_genere_un_rapport_complet_avec_graphiques/rapport_complet_pour_l_etablissement_numero_un.html"
+nchar(chemin, type = "bytes")
+```
+:::

@@ -1,0 +1,35 @@
+---
+title: "x[-which(...)] vide tout quand rien ne correspond"
+ref: LEN-04
+categories: [Vides et NA]
+impact: silencieux
+extrait: '(1:3)[-which(1:3 > 10)]'
+attendu: "`x` entier, puisqu'il n'y a rien à retirer"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c(a = 1, b = 2, c = 3)
+x[-which(x > 2)]
+x[-which(x > 10)]
+```
+:::
+
+## Pourquoi
+
+`which()` renvoie les positions où la condition est vraie. Quand aucune valeur ne la vérifie, il renvoie `integer(0)`. Or `-integer(0)` est encore `integer(0)`, et indexer par un vecteur vide ne sélectionne rien.
+
+Le code marche tant qu'il y a quelque chose à retirer. Le jour où les données sont propres, il supprime tout.
+
+## La parade
+
+Indexer avec le vecteur logique inversé, qui garde tout quand aucune valeur n'est à exclure.
+
+::: {.piege}
+```{r}
+x[!(x > 10)]
+x[!(x > 2)]
+```
+:::

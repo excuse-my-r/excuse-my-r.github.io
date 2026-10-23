@@ -1,0 +1,40 @@
+---
+title: "Sous macOS et Windows, deux fichiers qui ne diffèrent que par la casse s'écrasent"
+ref: ENV-06
+categories: [OS et CI]
+impact: silencieux
+attendu: "deux fichiers distincts, `Resultats.csv` et `resultats.csv`"
+versions: "Toutes, sur un système de fichiers insensible à la casse"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```r
+write.csv(brut, "sorties/Resultats.csv")
+write.csv(nettoye, "sorties/resultats.csv")
+list.files("sorties")
+```
+
+```text
+[1] "Resultats.csv"
+```
+:::
+
+Ce piège dépend du système de fichiers de la machine, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Par défaut, les disques de macOS et de Windows ignorent la casse : `Resultats.csv` et `resultats.csv` désignent le même fichier. Le second `write.csv()` écrase donc le premier, sans erreur, et le fichier garde le nom de sa première création.
+
+Sous Linux, en CI ou sur un serveur, les deux fichiers coexistent. Le même script produit un résultat différent selon la machine, et un dépôt git qui contient les deux noms devient impossible à extraire proprement sur un Mac.
+
+## La parade
+
+Choisir une convention de nommage (tout en minuscules, par exemple) et n'avoir jamais deux noms qui ne diffèrent que par la casse.
+
+::: {.piege .piege-statique}
+```r
+write.csv(brut, "sorties/resultats_bruts.csv")
+write.csv(nettoye, "sorties/resultats_nettoyes.csv")
+```
+:::

@@ -1,0 +1,41 @@
+---
+title: "Une image Docker sans la commande which empêche R de démarrer"
+ref: ENV-03
+categories: [OS et CI]
+impact: cryptique
+attendu: "R qui démarre normalement dans l'image rocker/verse"
+versions: "Images rocker/verse basées sur Ubuntu Jammy, en octobre 2023"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```yaml
+# .gitlab-ci.yml
+image: rocker/verse:latest
+
+check:
+  script:
+    - R -e 'devtools::check()'
+```
+:::
+
+Ce piège dépend du contenu d'une image Docker à une date donnée, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Le script de lancement `R` est un script shell, qui utilise des commandes système pour trouver ses propres composants. En octobre 2023, la dernière image `rocker/verse`, basée sur Ubuntu Jammy, ne contenait plus la commande `which`, fournie par le paquet système `debianutils`.
+
+R ne trouvait alors plus ses paquets de base, `base`, `utils`, `stats`, et le pipeline s'arrêtait sur des erreurs de démarrage qui ne mentionnaient pas `which`. Les images basées sur Ubuntu Focal, comme `rocker/verse:4.1`, fonctionnaient.
+
+## La parade
+
+Figer une version d'image testée plutôt que `latest`, comme l'équipe l'a fait en revenant à une image basée sur Focal, et vérifier la présence de `which` avant de lancer R.
+
+::: {.piege .piege-statique}
+```yaml
+image: rocker/verse:4.1.2
+
+before_script:
+  - command -v which
+```
+:::

@@ -1,0 +1,42 @@
+---
+title: "devtools::test() passe alors que le check échoue"
+ref: PKG-01
+categories: [Packages]
+impact: cryptique
+attendu: "les mêmes tests, le même résultat"
+versions: "Toutes"
+source: "Slack ThinkR (2020, 2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+devtools::test()
+# [ FAIL 0 | WARN 0 | SKIP 0 | PASS 42 ]
+
+devtools::check()
+# checking tests ... ERROR
+```
+:::
+
+Ce piège dépend d'un paquet complet, de sa bibliothèque et de `R CMD check`, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+`devtools::test()` charge le paquet depuis ses sources avec `load_all()`, dans votre session : toutes les fonctions internes sont visibles, `system.file()` est redirigé vers `inst/`, vos variables d'environnement et vos options sont là, et les paquets que vous avez installés aussi.
+
+`check()` construit d'abord le paquet, l'installe dans une bibliothèque temporaire, puis lance les tests dans un processus R neuf. Un paquet de `Suggests` absent de la machine, un fichier exclu par `.Rbuildignore`, un fichier lu hors de `inst/`, ou une variable définie dans votre `.Renviron` suffisent à faire échouer les tests à cet endroit seulement.
+
+## La parade
+
+Rendre les tests indépendants de la session : sauter proprement ce qui dépend d'un paquet facultatif ou d'un secret, et ne lire que des fichiers installés avec le paquet.
+
+::: {.piege .piege-statique}
+```r
+test_that("l'export Excel fonctionne", {
+  skip_if_not_installed("openxlsx")
+  skip_if(Sys.getenv("API_TOKEN") == "", message = "pas de jeton")
+  chemin <- testthat::test_path("fixtures", "entree.csv")
+  expect_true(file.exists(chemin))
+})
+```
+:::

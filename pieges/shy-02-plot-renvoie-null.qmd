@@ -1,0 +1,38 @@
+---
+title: "plot() dessine mais renvoie NULL"
+ref: SHY-02
+categories: [Shiny]
+impact: incoherent
+extrait: 'is.null(plot(1:3))'
+reponse: 'TRUE'
+attendu: "un objet graphique à stocker et réafficher, comme avec {ggplot2}"
+versions: "Toutes"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+graphique <- plot(1:10)
+graphique
+```
+:::
+
+## Pourquoi
+
+Les graphiques de base sont un effet de bord : `plot()` dessine sur le périphérique graphique ouvert et renvoie `NULL` de façon invisible. Il n'y a rien à stocker.
+
+Avec {ggplot2}, `p <- ggplot(...)` crée un objet que l'on affiche plus tard. Le réflexe ne se transpose pas : dans Shiny, un `reactive()` qui « contient » un `plot()` ne contient que `NULL`, et un `renderPlot()` qui renvoie cet objet n'affiche rien.
+
+## La parade
+
+Stocker la recette du graphique dans une fonction, et l'appeler là où il doit être dessiné, par exemple dans `renderPlot()`.
+
+::: {.piege}
+```{r}
+dessiner <- function() {
+  plot(1:10)
+}
+
+dessiner()
+```
+:::

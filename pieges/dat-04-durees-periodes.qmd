@@ -1,0 +1,42 @@
+---
+title: "Dans {lubridate}, m veut dire mois et M minutes"
+ref: DAT-04
+categories: [Dates]
+impact: cryptique
+extrait: 'lubridate::duration("1h 32m 6s")'
+reponse: '"84157206s (~2.67 years)"'
+attendu: "`\"5526s (~1.53 hours)\"`"
+versions: "Toutes les versions de {lubridate}"
+source: "Slack ThinkR (2021, 2023)"
+---
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+duration("1h 32m 6s")
+period("1h 32m 6s")
+duration("01:32:06")
+hours(4.7)
+```
+:::
+
+## Pourquoi
+
+Quand {lubridate} lit une durée écrite en texte, `m` minuscule désigne les mois et `M` majuscule les minutes. `"1h 32m 6s"` vaut donc une heure, 32 mois et 6 secondes : plus de deux ans et demi. L'affichage de la période le dit d'ailleurs à sa façon, `32m 0d 1H 0M 6S`, mais il faut savoir le lire.
+
+Les autres écritures ne valent pas mieux : `duration()` ne comprend pas le format horloge `"01:32:06"` et renvoie `NA` sans avertissement. Enfin, une période (`hours()`, `minutes()`...) compte des unités du calendrier et refuse les décimales, avec un message de validation d'objet S4 peu parlant.
+
+## La parade
+
+Écrire `min` pour les minutes, lire le format horloge avec `hms()`, et passer par les durées (`dhours()`, en secondes exactes) pour les quantités décimales.
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+duration("1h 32min 6s")
+as.duration(hms("01:32:06"))
+dhours(4.7)
+```
+:::

@@ -1,0 +1,44 @@
+---
+title: "Un paquet r-universe du lockfile peut disparaître sans archive"
+ref: RNV-05
+categories: [renv et installation]
+impact: silencieux
+attendu: "la version enregistrée, réinstallable à tout moment"
+versions: "Toutes"
+source: "Slack ThinkR (2022, 2023)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv.lock :
+  "monpaquet": {
+    "Package": "monpaquet",
+    "Version": "0.3.1",
+    "Source": "Repository",
+    "Repository": "https://monorga.r-universe.dev"
+  }
+```
+
+```r
+renv::restore()
+```
+:::
+
+Ce piège dépend d'un dépôt distant qui évolue, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Un dépôt r-universe se reconstruit à partir de la branche par défaut des dépôts git. Il ne sert que la dernière version de chaque paquet, sans dossier d'archive comme celui de CRAN. Dès que `0.3.2` est publiée, `0.3.1` n'est plus téléchargeable depuis r-universe.
+
+Le lockfile désigne pourtant toujours cette version. `restore()` ne la trouve plus, alors que rien n'a changé dans le projet.
+
+## La parade
+
+Enregistrer les paquets hors CRAN par leur source git et leur commit, que {renv} sait retrouver, plutôt que par un dépôt r-universe.
+
+::: {.piege .piege-statique}
+```r
+renv::install("monorga/monpaquet@v0.3.1")
+renv::snapshot()
+```
+:::

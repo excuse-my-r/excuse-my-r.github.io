@@ -1,0 +1,39 @@
+---
+title: "Un NA peut encore compter pour deux caractères"
+ref: LEN-10
+categories: [Vides et NA]
+impact: incoherent
+extrait: 'nzchar(NA)'
+reponse: 'TRUE'
+attendu: "`NA`, la longueur d'une valeur inconnue est inconnue"
+versions: "nchar(NA) valait 2 jusqu'à R 3.2, il vaut NA depuis R 3.3.0 sauf pour type = \"width\""
+source: "The R Inferno, NEWS de R 3.3.0"
+---
+
+::: {.piege}
+```{r}
+nchar(NA)
+nchar(NA, type = "width")
+nzchar(NA)
+
+prenom <- c("Ana", NA)
+nchar(paste(prenom, "Martin"))
+```
+:::
+
+## Pourquoi
+
+Jusqu'à R 3.2, `nchar(NA)` valait 2 : R comptait les caractères de l'affichage « NA ». R 3.3.0 a changé le défaut, et `nchar(NA)` vaut désormais `NA`. Mais la correction n'est pas complète : avec `type = "width"`, la largeur d'affichage, le `NA` compte toujours pour 2, et `nzchar()` considère toujours qu'un `NA` n'est pas une chaîne vide.
+
+Le piège le plus courant aujourd'hui vient de `paste()`, qui transforme un `NA` en texte `"NA"`. Après lui, plus rien ne le distingue d'un vrai nom de deux lettres.
+
+## La parade
+
+Demander explicitement de garder les `NA`, et les traiter avant de coller du texte.
+
+::: {.piege}
+```{r}
+nzchar(NA, keepNA = TRUE)
+ifelse(is.na(prenom), NA, nchar(paste(prenom, "Martin")))
+```
+:::

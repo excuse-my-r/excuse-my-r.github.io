@@ -1,0 +1,42 @@
+---
+title: "anytime() donne une heure différente selon la machine"
+ref: DAT-02
+categories: [Dates]
+impact: silencieux
+attendu: "minuit à Paris, sur toutes les machines"
+versions: "Toutes les versions de {anytime}"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege .piege-statique}
+```r
+library(anytime)
+anytime("2022-11-01", tz = "Europe/Paris")
+```
+
+```text
+# poste de travail réglé sur Europe/Paris
+[1] "2022-11-01 CET"
+
+# serveur ou conteneur réglé sur UTC
+[1] "2022-11-01 01:00:00 CET"
+```
+:::
+
+Ce piège dépend du fuseau horaire de la machine, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+`anytime()` lit le texte comme une heure locale, dans le fuseau du système (variable `TZ` ou réglage de l'OS). L'argument `tz` ne sert qu'ensuite, pour l'affichage. Sur un poste réglé sur Paris, la chaîne est lue comme minuit à Paris. Sur un serveur Linux ou un conteneur Docker, presque toujours réglés sur UTC, elle est lue comme minuit UTC, soit une heure du matin à Paris.
+
+Le même script donne donc des heures différentes en local et en production, sans erreur ni avertissement. L'écart ressemble à une différence entre Windows et Linux, mais c'est le fuseau du système qui compte.
+
+## La parade
+
+Indiquer le fuseau au moment de la lecture, avec une fonction qui l'utilise pour interpréter le texte.
+
+::: {.piege}
+```{r}
+as.POSIXct("2022-11-01", tz = "Europe/Paris")
+```
+:::

@@ -1,0 +1,41 @@
+---
+title: "tribble() accepte une colonne de fonctions que tibble() refuse"
+ref: TDY-12
+categories: [tidyverse]
+impact: incoherent
+attendu: "le même tableau, ou la même erreur, avec les deux constructeurs"
+versions: "Toutes les versions de {tibble}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege packages="tibble"}
+```{r}
+suppressPackageStartupMessages(library(tibble))
+
+tibble(nom = "moyenne", f = mean)
+tribble(
+  ~nom,      ~f,
+  "moyenne", mean
+)
+```
+:::
+
+## Pourquoi
+
+Une colonne de tibble doit être un vecteur, et une fonction n'en est pas un : `tibble()` le refuse. `tribble()` lit ses valeurs cellule par cellule et, quand une cellule n'est pas une valeur simple, il range la colonne dans une liste. La fonction devient alors l'élément d'une colonne-liste, ce qui est autorisé.
+
+Les deux constructeurs du même paquet donnent donc des réponses opposées pour la même donnée.
+
+## La parade
+
+Construire explicitement la colonne-liste avec `list()`, ce qui marche partout, puis appeler la fonction avec `[[ ]]`.
+
+::: {.piege packages="tibble"}
+```{r}
+suppressPackageStartupMessages(library(tibble))
+
+outils <- tibble(nom = c("moyenne", "médiane"), f = list(mean, median))
+outils
+outils$f[[2]](c(1, 2, 10))
+```
+:::

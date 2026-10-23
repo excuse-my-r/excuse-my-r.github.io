@@ -1,0 +1,42 @@
+---
+title: "match.arg() refuse la chaîne vide même quand elle fait partie des choix"
+ref: FUN-06
+categories: [Fonctions]
+impact: cryptique
+extrait: 'match.arg("", choices = c("", "a"))'
+attendu: "`\"\"`, puisque c'est l'un des choix proposés"
+versions: "Toutes, le message d'erreur a changé en R 4.2.0"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege}
+```{r}
+extension <- function(ext = c("", "a")) {
+  match.arg(ext)
+}
+extension()
+extension("a")
+extension("")
+```
+:::
+
+Choisissez **R 4.1.3** dans le menu, puis exécutez à nouveau : l'erreur est la même, avec un message différent.
+
+## Pourquoi
+
+`match.arg()` compare la valeur reçue aux choix avec `pmatch()`, qui accepte les débuts de mots. Or `pmatch()` ne fait jamais correspondre la chaîne vide, à rien. `match.arg()` conclut que la valeur n'est pas autorisée.
+
+Sans argument, la fonction renvoie bien `""`, le premier choix par défaut. C'est seulement quand on passe `""` explicitement que tout casse, et le message ne cite même pas la chaîne vide parmi les choix possibles.
+
+## La parade
+
+Ne pas proposer la chaîne vide comme choix : la remplacer par un mot.
+
+::: {.piege}
+```{r}
+extension <- function(ext = c("aucune", "a")) {
+  match.arg(ext)
+}
+extension("aucune")
+```
+:::

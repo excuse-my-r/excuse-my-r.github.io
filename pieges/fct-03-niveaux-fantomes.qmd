@@ -1,0 +1,38 @@
+---
+title: "Un facteur garde ses niveaux après filtrage"
+ref: FCT-03
+categories: [Facteurs]
+impact: incoherent
+extrait: 'nlevels(factor(c("a", "b"))[1])'
+reponse: '2'
+attendu: "`1`, il ne reste que la valeur a"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+f <- factor(c("a", "b"))[1]
+f
+levels(f)
+table(f)
+```
+:::
+
+## Pourquoi
+
+Extraire une partie d'un facteur ne touche pas à sa table de niveaux. Le niveau `b` n'a plus aucune valeur, mais il reste déclaré.
+
+Il réapparaît ensuite partout où les niveaux comptent : une case à 0 dans `table()`, une barre vide dans un graphique, une modalité sans observation dans un modèle, ou un groupe vide dans `split()`.
+
+## La parade
+
+Retirer les niveaux inutilisés avec `droplevels()` après un filtrage.
+
+::: {.piege}
+```{r}
+f <- droplevels(f)
+levels(f)
+table(f)
+```
+:::

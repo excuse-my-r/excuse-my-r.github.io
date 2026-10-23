@@ -1,0 +1,38 @@
+---
+title: "Dans un projet renv, votre ~/.Rprofile n'est plus lu"
+ref: RNV-09
+categories: [renv et installation]
+impact: incoherent
+attendu: "les options personnelles de `~/.Rprofile`, en plus de {renv}"
+versions: "Toutes"
+source: "Slack ThinkR (2020)"
+---
+
+::: {.piege .piege-statique}
+```r
+# ~/.Rprofile
+options(width = 120, digits = 4)
+
+# .Rprofile du projet, créé par renv::init()
+source("renv/activate.R")
+```
+:::
+
+Ce piège dépend des fichiers de démarrage de R sur le poste, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Ce n'est pas {renv} qui choisit : au démarrage, R lit un seul `.Rprofile`, celui du dossier de travail s'il existe, sinon celui du répertoire personnel. `renv::init()` crée un `.Rprofile` dans le projet, qui prend donc la place du vôtre. Vos options, vos raccourcis et vos dépôts personnels disparaissent sans message.
+
+{renv} ne charge pas non plus le profil utilisateur par défaut, pour éviter qu'un code personnel casse l'isolation du projet.
+
+## La parade
+
+Activer le chargement du profil utilisateur par {renv}, ou mettre les variables d'environnement dans `~/.Renviron`, qui reste lu.
+
+::: {.piege .piege-statique}
+```bash
+# ~/.Renviron
+RENV_CONFIG_USER_PROFILE=TRUE
+```
+:::

@@ -1,0 +1,37 @@
+---
+title: "for (i in 1:length(x)) tourne même quand x est vide"
+ref: LEN-03
+categories: [Vides et NA]
+impact: silencieux
+extrait: '1:length(c())'
+reponse: '1 0'
+attendu: "rien, la boucle ne devrait pas tourner"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- c()
+for (i in 1:length(x)) {
+  print(i)
+}
+```
+:::
+
+## Pourquoi
+
+`length(x)` vaut 0, et `1:0` n'est pas une séquence vide : c'est le vecteur `c(1, 0)`, qui descend de 1 à 0. La boucle tourne donc deux fois, avec des indices qui n'existent pas dans `x`.
+
+## La parade
+
+`seq_along()` et `seq_len()` renvoient une séquence vide quand il le faut.
+
+::: {.piege}
+```{r}
+for (i in seq_along(x)) {
+  print(i)
+}
+seq_len(0)
+```
+:::

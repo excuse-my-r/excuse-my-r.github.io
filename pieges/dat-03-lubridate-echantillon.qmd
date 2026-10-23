@@ -1,0 +1,41 @@
+---
+title: "{lubridate} choisit le format sur un échantillon des données"
+ref: DAT-03
+categories: [Dates]
+impact: silencieux
+attendu: "le 3 avril dans les deux cas"
+versions: "Observé avec {lubridate} 1.9.5"
+source: "Slack ThinkR (2022)"
+---
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+dates <- rep("03/04/2026", times = 99)
+dates[4] <- "13/04/2026"
+parse_date_time(dates, orders = c("mdy", "dmy"))[1]
+
+dates <- c(dates, "03/04/2026")
+parse_date_time(dates, orders = c("mdy", "dmy"))[1]
+```
+:::
+
+## Pourquoi
+
+Quand plusieurs formats sont possibles, `parse_date_time()` les essaie sur les données et garde celui qui en lit le plus. Pour aller vite, cet essai ne porte sur tout le vecteur que s'il a moins de 100 éléments. Au-delà, {lubridate} ne teste que les éléments placés à une position qui est un nombre premier (2, 3, 5, 7, 11...).
+
+Avec 99 dates, le `"13/04/2026"` en quatrième position fait partie de l'essai : seul le format jour/mois le lit, il l'emporte, et `03/04` devient le 3 avril. Avec une date de plus, la position 4 n'est plus testée, les deux formats font jeu égal, le premier de la liste gagne, et les mêmes 99 dates deviennent des 4 mars. Ajouter une ligne a changé le sens de toutes les autres, sans un avertissement.
+
+## La parade
+
+Ne pas laisser deviner : donner le format exact quand on le connaît, avec la fonction dédiée.
+
+::: {.piege packages="lubridate"}
+```{r}
+suppressPackageStartupMessages(library(lubridate))
+
+dmy(dates)[1]
+parse_date_time(dates, orders = "dmy")[1]
+```
+:::

@@ -1,0 +1,36 @@
+---
+title: "La virgule décimale française donne NA"
+ref: NUM-11
+categories: [Numérique]
+impact: silencieux
+extrait: 'as.numeric("1,5")'
+reponse: 'NA'
+attendu: "`1.5`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+prix <- c("1,5", "2", "3,25")
+as.numeric(prix)
+mean(as.numeric(prix), na.rm = TRUE)
+```
+:::
+
+## Pourquoi
+
+R n'accepte que le point comme séparateur décimal, quelle que soit la langue du système. Une chaîne qui contient une virgule n'est pas un nombre pour lui : elle devient `NA`, avec un simple avertissement.
+
+Les valeurs entières, elles, passent. Le résultat a donc l'air plausible : ici la « moyenne » vaut 2, calculée sur la seule valeur sans virgule.
+
+## La parade
+
+Remplacer la virgule avant la conversion, ou lire le fichier avec `read.csv2()`, qui attend le format français.
+
+::: {.piege}
+```{r}
+as.numeric(sub(",", ".", prix, fixed = TRUE))
+read.csv2(text = "prix\n1,5\n2\n3,25")
+```
+:::

@@ -1,0 +1,43 @@
+---
+title: "Un même projet renv peut cumuler plusieurs bibliothèques selon R et la plateforme"
+ref: RNV-07
+categories: [renv et installation]
+impact: cryptique
+attendu: "une seule bibliothèque, celle du projet"
+versions: "Toutes les versions de {renv}"
+source: "Slack ThinkR (2021)"
+---
+
+::: {.piege .piege-statique}
+```text
+renv/library/
+├── R-4.0/
+│   └── x86_64-w64-mingw32/
+└── R-4.1/
+    └── x86_64-pc-linux-gnu/
+```
+:::
+
+Ce piège dépend de plusieurs installations de R et d'un conteneur Docker, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+{renv} range la bibliothèque du projet dans un sous-dossier propre à la version mineure de R et à la plateforme. C'est voulu : un paquet compilé pour R 4.0 sous Windows ne fonctionne pas sous Linux.
+
+Quand le même dossier sert en local puis dans un conteneur Docker monté en volume, ou après une mise à jour de R, chaque environnement trouve ou crée sa propre bibliothèque. L'un a les paquets, l'autre non, et `library()` échoue d'un côté seulement, alors que le lockfile est le même.
+
+## La parade
+
+Exclure `renv/library` des volumes et des images, et restaurer dans chaque environnement depuis le lockfile.
+
+::: {.piege .piege-statique}
+```text
+# .dockerignore
+renv/library
+renv/staging
+```
+
+```bash
+R -e 'renv::restore()'
+```
+:::

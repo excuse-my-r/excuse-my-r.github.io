@@ -1,0 +1,38 @@
+---
+title: "summarise() réutilise les colonnes qu'il vient de créer"
+ref: TDY-08
+categories: [tidyverse]
+impact: silencieux
+extrait: 'summarise(df, x = mean(x), s = sd(x))$s'
+reponse: 'NA'
+attendu: "la moyenne et l'écart-type de x"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2026)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+mesures <- data.frame(x = c(1, 2, 3, 10))
+summarise(mesures, x = mean(x), s = sd(x))
+```
+:::
+
+## Pourquoi
+
+`summarise()` et `mutate()` évaluent leurs expressions dans l'ordre, et chaque nouvelle colonne est visible par les suivantes. Ici, `x` est d'abord remplacé par sa moyenne, une seule valeur. `sd()` est ensuite calculé sur cette valeur unique, et l'écart-type d'une seule valeur est `NA`.
+
+C'est voulu, et souvent pratique. Le piège naît quand on réutilise le nom d'une colonne existante.
+
+## La parade
+
+Donner un nouveau nom au résultat, ou calculer l'écart-type en premier.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+summarise(mesures, moyenne = mean(x), s = sd(x))
+```
+:::

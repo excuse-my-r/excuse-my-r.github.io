@@ -1,0 +1,44 @@
+---
+title: "DT[, v] ne sélectionne pas les colonnes dont v contient les noms"
+ref: DT-01
+categories: [data.table]
+impact: cryptique
+attendu: "les colonnes a et b"
+versions: "Toutes les versions de {data.table}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2, b = 3:4, v = c("x", "y"))
+v <- c("a", "b")
+dt[, v]
+
+colonnes <- function() {
+  c("a", "b")
+}
+dt[, colonnes()]
+dt[, c(colonnes())]
+```
+:::
+
+## Pourquoi
+
+Dans `dt[, j]`, `j` est une expression évaluée **dans** la table, comme dans `with()`. `v` y désigne d'abord la colonne `v`, et `dt[, v]` renvoie son contenu. `colonnes()` renvoie un vecteur de texte, que {data.table} rend tel quel : c'est un résultat calculé, pas une sélection.
+
+{data.table} ajoute des règles de commodité qui rendent le tout imprévisible : `j` réduit à un symbole sans colonne de ce nom donne une erreur qui suggère `..v`, et un `c()` autour d'un appel de fonction suffit à déclencher une sélection de colonnes.
+
+## La parade
+
+Dire explicitement que `j` contient des noms de colonnes, avec le préfixe `..` ou `with = FALSE`.
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt[, ..v]
+dt[, colonnes(), with = FALSE]
+```
+:::

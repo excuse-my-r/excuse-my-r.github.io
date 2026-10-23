@@ -1,0 +1,38 @@
+---
+title: "x[NA] renvoie autant de NA que x a d'éléments"
+ref: LEN-08
+categories: [Vides et NA]
+impact: silencieux
+extrait: '(1:5)[NA]'
+reponse: 'NA NA NA NA NA'
+attendu: "un seul `NA`"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+x <- 1:5
+x[NA]
+x[NA_integer_]
+
+notes <- c(5, 3, NA, 8)
+notes[notes > 4]
+```
+:::
+
+## Pourquoi
+
+`NA` tout court est un logique. Un indice logique est recyclé sur toute la longueur du vecteur : `x[NA]` revient à `x[c(NA, NA, NA, NA, NA)]`, et chaque position inconnue donne un `NA`. `NA_integer_`, lui, est un indice numérique : une seule position, inconnue, donc un seul `NA`.
+
+Le même mécanisme agit dans tout filtre logique. Quand la condition vaut `NA` pour une ligne, R ne sait pas s'il faut la garder et renvoie un `NA` à sa place. Le résultat contient alors une valeur fantôme qui n'existe pas dans les données.
+
+## La parade
+
+Passer par `which()`, qui ne garde que les positions où la condition est vraie.
+
+::: {.piege}
+```{r}
+notes[which(notes > 4)]
+```
+:::

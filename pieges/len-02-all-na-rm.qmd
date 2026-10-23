@@ -1,0 +1,41 @@
+---
+title: "all() sur des NA retirés vaut TRUE"
+ref: LEN-02
+categories: [Vides et NA]
+impact: silencieux
+extrait: 'all(c(NA, NA), na.rm = TRUE)'
+reponse: 'TRUE'
+attendu: "`NA`, puisqu'aucune valeur n'est connue"
+versions: "Toutes"
+source: "safer-r"
+---
+
+::: {.piege}
+```{r}
+controle <- c(NA, NA, NA)
+all(controle, na.rm = TRUE)
+any(controle, na.rm = TRUE)
+sum(controle, na.rm = TRUE)
+mean(controle, na.rm = TRUE)
+```
+:::
+
+## Pourquoi
+
+`na.rm = TRUE` retire les `NA` avant le calcul. Quand il n'y a que des `NA`, il ne reste rien, et chaque fonction renvoie sa valeur pour un vecteur vide : `TRUE` pour `all()`, `FALSE` pour `any()`, 0 pour `sum()`, `NaN` pour `mean()`.
+
+Un contrôle qui n'a porté sur aucune donnée connue se transforme ainsi en « tout est conforme ». Rien ne signale que la colonne était entièrement manquante.
+
+## La parade
+
+Traiter à part le cas où toutes les valeurs manquent.
+
+::: {.piege}
+```{r}
+if (all(is.na(controle))) {
+  NA
+} else {
+  all(controle, na.rm = TRUE)
+}
+```
+:::

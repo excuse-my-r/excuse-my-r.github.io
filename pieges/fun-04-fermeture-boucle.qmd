@@ -1,0 +1,41 @@
+---
+title: "Une fonction créée dans une boucle oublie sa valeur"
+ref: FUN-04
+categories: [Fonctions]
+impact: silencieux
+extrait: 'f_1()'
+reponse: '2'
+attendu: "`1`"
+versions: "Toutes"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege}
+```{r}
+for (i in 1:2) {
+  assign(sprintf("f_%s", i), value = function() {
+    i
+  })
+}
+f_1()
+```
+:::
+
+## Pourquoi
+
+Une fonction ne copie pas les variables qu'elle utilise : elle garde un lien vers l'environnement où elle a été créée, et y cherche `i` au moment où on l'appelle. Une boucle `for` n'a pas d'environnement à elle. Les deux fonctions partagent donc le même `i`, qui vaut 2 à la fin de la boucle.
+
+## La parade
+
+Créer chaque fonction dans son propre environnement, par exemple avec `lapply()`, qui appelle une nouvelle fonction à chaque tour.
+
+::: {.piege}
+```{r}
+fonctions <- lapply(1:2, function(i) {
+  function() {
+    i
+  }
+})
+fonctions[[1]]()
+```
+:::

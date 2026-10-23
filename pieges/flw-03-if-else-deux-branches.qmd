@@ -1,0 +1,39 @@
+---
+title: "if_else() calcule toujours ses deux branches, ifelse() non"
+ref: FLW-03
+categories: [Contrôle de flux]
+impact: incoherent
+attendu: "aucun avertissement, puisque la branche `false` ne sert pas"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2019)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+x <- c(0, 0)
+if_else(all(x == 0), true = NA_real_, false = max(x[x != 0]))
+ifelse(all(x == 0), yes = NA_real_, no = max(x[x != 0]))
+```
+:::
+
+## Pourquoi
+
+`if_else()` est une fonction ordinaire : elle reçoit ses arguments `true` et `false`, les évalue en entier, puis choisit élément par élément. Ici, `max()` d'un vecteur vide est calculé alors que la condition est vraie, et son avertissement « returning -Inf » s'affiche pour une valeur qui ne sera jamais utilisée.
+
+`ifelse()` de base R se comporte autrement : il n'évalue `no` que si le test contient au moins un `FALSE`. Les deux fonctions donnent le même résultat, mais pas les mêmes avertissements ni les mêmes erreurs. Si la branche inutile appelle `stop()`, `if_else()` s'arrête, `ifelse()` non.
+
+## La parade
+
+Pour une condition unique, `if` n'évalue que la branche choisie.
+
+::: {.piege}
+```{r}
+if (all(x == 0)) {
+  NA_real_
+} else {
+  max(x[x != 0])
+}
+```
+:::

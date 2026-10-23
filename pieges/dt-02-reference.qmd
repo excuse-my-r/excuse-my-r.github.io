@@ -1,0 +1,48 @@
+---
+title: "Copier une data.table avec <- ne la copie pas"
+ref: DT-02
+categories: [data.table]
+impact: silencieux
+attendu: "`sauvegarde` inchangée, avec la seule colonne a"
+versions: "Toutes les versions de {data.table}"
+source: "Connaissance générale de R"
+---
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2)
+sauvegarde <- dt
+dt[, b := a * 10]
+sauvegarde
+
+ajouter_total <- function(d) {
+  d[, total := 0]
+  nrow(d)
+}
+ajouter_total(sauvegarde)
+names(dt)
+```
+:::
+
+## Pourquoi
+
+En R, `sauvegarde <- dt` ne copie rien tout de suite : les deux noms désignent le même objet, et R ne fait la copie qu'au moment où l'un des deux est modifié. Mais `:=` modifie la table **sur place**, sans passer par ce mécanisme. Les deux noms voient donc la nouvelle colonne.
+
+Il en va de même dans une fonction : l'argument `d` désigne la table de l'appelant, et `:=` la modifie, même si la fonction ne renvoie qu'un nombre.
+
+## La parade
+
+Faire une vraie copie avec `copy()` quand on veut garder l'original.
+
+::: {.piege packages="data.table"}
+```{r}
+suppressPackageStartupMessages(library(data.table))
+
+dt <- data.table(a = 1:2)
+sauvegarde <- copy(dt)
+dt[, b := a * 10]
+sauvegarde
+```
+:::

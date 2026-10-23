@@ -1,0 +1,38 @@
+---
+title: "select() ne garde pas deux fois la même colonne"
+ref: TDY-04
+categories: [tidyverse]
+impact: silencieux
+extrait: 'names(select(mtcars, pouet = mpg, mpg))'
+reponse: '"pouet"'
+attendu: "`\"pouet\" \"mpg\"`"
+versions: "Toutes les versions de {dplyr}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+voitures <- head(mtcars, n = 2)
+select(voitures, pouet = mpg, mpg)
+```
+:::
+
+## Pourquoi
+
+`select()` choisit des colonnes, il ne les copie pas. `pouet = mpg` sélectionne `mpg` en la renommant, et la seconde mention de `mpg` désigne la même colonne, déjà prise : elle n'est pas dupliquée. Il ne reste qu'une colonne, sous le premier nom donné, sans avertissement.
+
+## La parade
+
+Pour obtenir une copie, la créer avec `mutate()`, puis sélectionner.
+
+::: {.piege packages="dplyr"}
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+
+voitures |>
+  mutate(pouet = mpg) |>
+  select(pouet, mpg)
+```
+:::

@@ -1,0 +1,37 @@
+---
+title: "matrix() se remplit colonne par colonne"
+ref: IDX-06
+categories: [Indexation]
+impact: incoherent
+extrait: 'matrix(1:6, nrow = 2)[1, ]'
+reponse: '1 3 5'
+attendu: "`1 2 3`, la première ligne remplie en lisant de gauche à droite"
+versions: "Toutes"
+source: "The R Inferno"
+---
+
+::: {.piege}
+```{r}
+m <- matrix(1:6, nrow = 2)
+m
+m[1, ]
+```
+:::
+
+## Pourquoi
+
+R stocke une matrice comme un seul vecteur, colonne après colonne. `matrix()` remplit donc d'abord la première colonne, puis la deuxième. C'est l'inverse du sens de lecture, et de la façon dont on recopie souvent un tableau saisi ligne à ligne.
+
+Le même ordre s'applique dans l'autre sens : `as.vector(m)` relit les valeurs colonne par colonne.
+
+## La parade
+
+Indiquer `byrow = TRUE` quand les valeurs sont données ligne par ligne.
+
+::: {.piege}
+```{r}
+m <- matrix(1:6, nrow = 2, byrow = TRUE)
+m
+m[1, ]
+```
+:::

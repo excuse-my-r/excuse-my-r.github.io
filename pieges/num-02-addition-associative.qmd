@@ -1,0 +1,36 @@
+---
+title: "L'ordre des additions change le résultat"
+ref: NUM-02
+categories: [Numérique]
+impact: silencieux
+extrait: '(0.1 + 0.2) + 0.3 == 0.1 + (0.2 + 0.3)'
+reponse: 'FALSE'
+attendu: "`TRUE`, l'addition est associative"
+versions: "Toutes"
+source: "Slack ThinkR (2026), The R Inferno"
+---
+
+::: {.piege}
+```{r}
+(0.1 + 0.2) + 0.3 == 0.1 + (0.2 + 0.3)
+
+sum(c(1e40, 1, -1e40))
+sum(c(1e40, -1e40, 1))
+```
+:::
+
+## Pourquoi
+
+Chaque addition entre décimaux arrondit son résultat au nombre binaire le plus proche. Changer l'ordre des opérations change les arrondis intermédiaires, donc parfois le dernier bit du total.
+
+Avec des ordres de grandeur très différents, l'écart devient visible : `1e40 + 1` ne peut pas être représenté, le 1 est absorbé, et il disparaît du total. Trier, filtrer ou fusionner les données avant un `sum()` peut ainsi changer le résultat d'un calcul pourtant identique.
+
+## La parade
+
+Ne jamais comparer deux totaux au bit près : comparer avec une tolérance.
+
+::: {.piege}
+```{r}
+isTRUE(all.equal((0.1 + 0.2) + 0.3, 0.1 + (0.2 + 0.3)))
+```
+:::

@@ -1,0 +1,42 @@
+---
+title: "R sait lire := mais ne sait pas l'exécuter"
+ref: PKG-07
+categories: [Packages]
+impact: incoherent
+extrait: 'exists(":=")'
+reponse: 'FALSE'
+attendu: "un opérateur disponible, puisque le code est accepté"
+versions: "Toutes"
+source: "Slack ThinkR (2022, 2024)"
+---
+
+::: {.piege}
+```{r}
+quote(total := 1)
+exists(":=")
+total := 1
+```
+:::
+
+Dans un paquet, `R CMD check` le signale par une note du type `no visible global function definition for ':='`.
+
+## Pourquoi
+
+L'analyseur de R connaît `:=` et le transforme en appel de fonction, `` `:=`(total, 1) ``. Mais R de base ne définit aucune fonction de ce nom : ce sont {data.table} et {rlang} qui l'utilisent, chacun à sa manière, dans `dt[, x := 1]` ou `mutate(!!nom := 1)`.
+
+Dans un paquet, le code passe à l'exécution car la fonction est interprétée par {data.table} ou {rlang}. L'analyse statique du check, elle, voit un appel à une fonction qu'aucun paquet importé ne fournit, et le signale.
+
+## La parade
+
+Importer `:=` depuis le paquet qui l'interprète, dans le fichier `NAMESPACE` du paquet.
+
+::: {.piege .piege-statique}
+```r
+#' @importFrom data.table :=
+NULL
+
+# ou, pour un code {dplyr} ou {rlang}
+#' @importFrom rlang :=
+NULL
+```
+:::

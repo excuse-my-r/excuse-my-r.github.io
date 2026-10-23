@@ -1,0 +1,45 @@
+---
+title: "Le modèle de cran-comments.md annonce déjà une note"
+ref: PKG-09
+categories: [Packages]
+impact: incoherent
+attendu: "un modèle neutre, à remplir avec les résultats réels du check"
+versions: "Toutes les versions récentes de {usethis}"
+source: "Slack ThinkR (2024)"
+---
+
+::: {.piege .piege-statique}
+```r
+usethis::use_cran_comments()
+```
+
+```text
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+* This is a new release.
+```
+:::
+
+Ce piège dépend des fichiers d'un paquet et de {usethis}, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Le modèle part du cas le plus courant, une première soumission : CRAN signale alors toujours une note « New submission ». Le fichier est pré-rempli avec cette note, et rien ne rappelle de le corriger.
+
+Pour une mise à jour sans aucune note, ou avec deux notes, le fichier envoyé à CRAN décrit un check qui n'est pas le vôtre. Les relecteurs le lisent, et une incohérence de ce genre peut coûter un aller-retour.
+
+## La parade
+
+Relancer le check, puis réécrire le résumé avec les chiffres réels et expliquer chaque note restante.
+
+::: {.piege .piege-statique}
+```text
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
+
+* This is a minor update fixing a bug in summarise_data().
+```
+:::

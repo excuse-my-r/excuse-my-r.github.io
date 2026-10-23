@@ -1,0 +1,38 @@
+---
+title: "Entre guillemets doubles, le shell remplace le $ d'un appel R"
+ref: ENV-01
+categories: [OS et CI]
+impact: cryptique
+attendu: "le chemin du cache de {renv}"
+versions: "Toutes, dans bash, zsh et les shells de CI"
+source: "Slack ThinkR (2023)"
+---
+
+::: {.piege .piege-statique}
+```bash
+Rscript -e "renv::paths$cache()"
+```
+
+```text
+Error: attempt to apply non-function
+Execution halted
+```
+:::
+
+Ce piège dépend du shell qui lance R, il ne peut pas se rejouer dans le navigateur.
+
+## Pourquoi
+
+Entre guillemets doubles, le shell remplace `$cache` par la valeur de la variable d'environnement `cache`, vide le plus souvent. R reçoit donc `renv::paths()`. Or `renv::paths` n'est pas une fonction mais une liste de fonctions : l'appeler échoue, avec un message qui ne dit rien du `$` disparu.
+
+Le même piège frappe `df$colonne`, `x$y` ou une expression régulière qui finit par `$` dans un script de CI.
+
+## La parade
+
+Mettre le code R entre guillemets simples, que le shell ne touche pas, et réserver les guillemets doubles au code R.
+
+::: {.piege .piege-statique}
+```bash
+Rscript -e 'renv::paths$cache()'
+```
+:::
