@@ -59,18 +59,25 @@ const RUNNER = `
   paste0("Error: ", position[4], " in \\"", extrait, "\\"")
 }
 
+# À la console, dt[, x := ...] ne s'affiche pas ; {data.table} le détecte par la
+# profondeur de pile, que ce runner fausse
+.batard_affectation_dt <- function(e) {
+  is.call(e) && identical(e[[1]], as.name("[")) &&
+    grepl(":=", paste(deparse(e), collapse = " "), fixed = TRUE)
+}
+
 .batard_run <- function(code, prelude = "") {
   options_avant <- options()
   # Avant R 4.2, ces options absentes de options() gardent leur effet si on les remet à NULL
   drapeaux <- c("warnPartialMatchDollar", "warnPartialMatchArgs", "warnPartialMatchAttr")
   drapeaux_avant <- lapply(drapeaux, getOption, default = FALSE)
   on.exit({
-    nouvelles <- setdiff(names(options()), names(options_avant))
-    options(stats::setNames(vector("list", length(nouvelles)), nouvelles))
     options(options_avant)
     options(stats::setNames(drapeaux_avant, drapeaux))
   }, add = TRUE)
-  env <- new.env(parent = globalenv())
+  # Chaque exécution repart d'un environnement global vide, comme au build
+  env <- globalenv()
+  rm(list = grep("^\\\\.batard_", ls(env, all.names = TRUE), value = TRUE, invert = TRUE), envir = env)
   invisible(utils::capture.output({
     for (morceau in .batard_decouper(prelude)) {
       if (!inherits(morceau$exprs, "error")) {
@@ -80,50 +87,85 @@ const RUNNER = `
       }
     }
   }))
+  # L'appel fautif tel que la console l'affiche : rien pour une erreur au niveau
+  # supérieur, le seul nom de fonction pour une erreur {rlang}
+  decrire_appel <- function(condition) {
+    appel <- conditionCall(condition)
+    if (!is.call(appel) || identical(appel, quote(eval(e, envir = env)))) {
+      return(NULL)
+    }
+    if (inherits(condition, "rlang_error") && is.name(appel[[1]])) {
+      return(paste0(as.character(appel[[1]]), "()"))
+    }
+    deparse(appel, nlines = 1L)
+  }
   afficher_erreur <- function(err) {
-    appel <- conditionCall(err)
+    appel <- decrire_appel(err)
     if (is.null(appel)) {
-      cat("Error: ", conditionMessage(err), "\\n", sep = "")
+      cat("Error: ", conditionMessage(err), "\\n", sep = "", file = stderr())
     } else {
-      cat("Error in ", deparse(appel, nlines = 1L), " : ", conditionMessage(err), "\\n", sep = "")
+      cat("Error in ", appel, " : ", conditionMessage(err), "\\n", sep = "", file = stderr())
     }
   }
-  sortie <- utils::capture.output({
+  # Sortie et messages vont dans la même transcription, mais les messages
+  # restent sur leur propre flux : capture.output() ne les voit pas, comme dans R
+  transcription <- character()
+  connexion <- textConnection("transcription", open = "w", local = TRUE)
+  sink(connexion)
+  sink(connexion, type = "message")
+  on.exit({
+    sink(type = "message")
+    sink()
+    close(connexion)
+  }, add = TRUE, after = FALSE)
+  local({
     for (morceau in .batard_decouper(code)) {
       lignes <- morceau$lignes
       invites <- c("> ", rep("+ ", length(lignes) - 1L))
       cat(paste0("\\001", invites, lignes, "\\n"), sep = "")
       if (inherits(morceau$exprs, "error")) {
-        cat(.batard_erreur_syntaxe(morceau$exprs, lignes = lignes), "\\n", sep = "")
+        cat(.batard_erreur_syntaxe(morceau$exprs, lignes = lignes), "\\n", sep = "", file = stderr())
         next
       }
       for (e in morceau$exprs) {
         withCallingHandlers(
           tryCatch({
             v <- withVisible(eval(e, envir = env))
-            if (v$visible) {
+            if (v$visible && !.batard_affectation_dt(e)) {
               print(v$value)
             }
           }, error = afficher_erreur),
           warning = function(w) {
-            appel <- conditionCall(w)
+            appel <- decrire_appel(w)
             if (is.null(appel)) {
-              cat("Warning message:\\n", conditionMessage(w), "\\n", sep = "")
+              cat("Warning message:\\n", conditionMessage(w), "\\n", sep = "", file = stderr())
             } else {
-              cat("Warning message:\\nIn ", deparse(appel, nlines = 1L), " : ", conditionMessage(w), "\\n", sep = "")
+              cat("Warning message:\\nIn ", appel, " : ", conditionMessage(w), "\\n", sep = "", file = stderr())
             }
             invokeRestart("muffleWarning")
           },
+          # webR intercepte les messages avant le flux d'erreur : on les écrit
+          # nous-mêmes dans la transcription, hors de portée de capture.output()
           message = function(m) {
-            cat(conditionMessage(m), sep = "")
+            cat(conditionMessage(m), sep = "", file = connexion)
             invokeRestart("muffleMessage")
           }
         )
       }
     }
-  }, type = "output")
-  paste(sortie, collapse = "\\n")
+  })
+  sink(type = "message")
+  sink()
+  close(connexion)
+  on.exit({
+    options(options_avant)
+    options(stats::setNames(drapeaux_avant, drapeaux))
+  })
+  paste(transcription, collapse = "\\n")
 }
+
+# Guillemets droits, comme dans la sortie du build
+options(useFancyQuotes = FALSE)
 `;
 
 function lireVersion() {
@@ -202,12 +244,12 @@ function el(tag, attrs = {}, texte) {
 function avecInvites(code) {
   let profondeur = 0;
   let ouvert = false;
+  let chaine = null;
   return code.split("\n").flatMap(ligne => {
     if (!ouvert && ligne.trim() === "") {
       return [];
     }
     const invite = ouvert ? "+ " : "> ";
-    let chaine = null;
     let finCode = ligne.length;
     for (let i = 0; i < ligne.length; i++) {
       const c = ligne[i];
@@ -244,11 +286,13 @@ function transcriptBuild(cell) {
       // knitr écrit les erreurs en style moderne ; la console R les affiche « Error in appel : message »
       const texte = enfant.textContent
         .replace(/^\n+|\n+$/g, "")
-        .replace(/^Error in `([\s\S]*?)`:\n! /gm, "Error in $1 : ")
+        .replace(/^Error in `([^`\n]*)`:\n(! )?/gm, "Error in $1 : ")
         .replace(/^Error:\n! /gm, "Error: ")
         .replace(/^Warning in (.*?): /gm, "Warning message:\nIn $1 : ")
         .replace(/^Warning: /gm, "Warning message:\n");
-      segments.push({ type: "sortie", texte });
+      if (texte.trim() !== "") {
+        segments.push({ type: "sortie", texte });
+      }
     }
   }
   return segments;
