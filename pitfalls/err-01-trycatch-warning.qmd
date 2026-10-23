@@ -17,7 +17,7 @@ total <- function(x) {
 tryCatch(
   total(c("1", "two", "3")),
   warning = function(w) {
-    message("Warning: ", conditionMessage(w))
+    message("Caught: ", conditionMessage(w))
     NA
   }
 )
@@ -39,7 +39,7 @@ You think you are merely intercepting the warning to display it differently, and
 withCallingHandlers(
   total(c("1", "two", "3")),
   warning = function(w) {
-    message("Warning: ", conditionMessage(w))
+    message("Caught: ", conditionMessage(w))
     invokeRestart("muffleWarning")
   }
 )
