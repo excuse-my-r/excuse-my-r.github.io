@@ -29,7 +29,7 @@ Les fonctions de la famille `apply` cachent une boucle : `sapply()` appelle la f
 
 À l'inverse, vectoriser à tout prix a aussi un coût. `ifelse()` calcule ses deux branches en entier, puis choisit élément par élément. `log(x)` est donc calculé aussi pour -1, d'où l'avertissement, alors que la condition écartait justement ce cas. Sur des calculs lourds, on paie toutes les branches pour toutes les valeurs.
 
-## La parade
+## Le remède
 
 Appeler directement les fonctions vectorisées, et réserver le calcul aux éléments qui en ont besoin.
 

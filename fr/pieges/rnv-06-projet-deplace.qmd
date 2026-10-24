@@ -24,7 +24,7 @@ La bibliothèque d'un projet {renv} ne contient pas vraiment les paquets : ce so
 
 Quand la bibliothèque est rangée hors du projet (variable `RENV_PATHS_LIBRARY_ROOT`), son emplacement dépend en plus du nom et du chemin du projet : après un renommage, {renv} cherche une autre bibliothèque, vide. Dans les deux cas, les erreurs parlent de paquets introuvables, pas du déplacement.
 
-## La parade
+## Le remède
 
 Ne pas compter sur la bibliothèque après un déplacement : la reconstruire depuis le lockfile, qui suffit à décrire le projet.
 

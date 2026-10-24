@@ -29,7 +29,7 @@ t_large > 4 * t_small
 
 The trap is the same with `rbind()` in a loop to stack data.frames, and even slower, since each added row copies the whole table.
 
-## The fix
+## The remedy
 
 Reserve the space once and for all, then fill it. Better still, when possible, compute in one go on the whole vector, and for data.frames, stack only once at the end.
 

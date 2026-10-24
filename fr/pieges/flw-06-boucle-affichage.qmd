@@ -30,7 +30,7 @@ calcule(5)
 
 Une fonction ne fait pas mieux : seule sa dernière valeur est renvoyée, et donc affichée. `x + 1` est calculé puis perdu. Le même piège touche les graphiques {ggplot2} créés dans une boucle, qui ne s'affichent pas sans `print()`.
 
-## La parade
+## Le remède
 
 Demander l'affichage explicitement avec `print()`, ou ranger les résultats dans un vecteur.
 

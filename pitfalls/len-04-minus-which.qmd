@@ -23,7 +23,7 @@ x[-which(x > 10)]
 
 The code works as long as there is something to remove. The day the data is clean, it deletes everything.
 
-## The fix
+## The remedy
 
 Index with the negated logical vector, which keeps everything when no value needs excluding.
 

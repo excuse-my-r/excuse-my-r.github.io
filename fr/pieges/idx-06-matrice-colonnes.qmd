@@ -24,7 +24,7 @@ R stocke une matrice comme un seul vecteur, colonne après colonne. `matrix()` r
 
 Le même ordre s'applique dans l'autre sens : `as.vector(m)` relit les valeurs colonne par colonne.
 
-## La parade
+## Le remède
 
 Indiquer `byrow = TRUE` quand les valeurs sont données ligne par ligne.
 

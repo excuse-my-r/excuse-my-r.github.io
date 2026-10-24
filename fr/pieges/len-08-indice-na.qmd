@@ -27,7 +27,7 @@ notes[notes > 4]
 
 Le même mécanisme agit dans tout filtre logique. Quand la condition vaut `NA` pour une ligne, R ne sait pas s'il faut la garder et renvoie un `NA` à sa place. Le résultat contient alors une valeur fantôme qui n'existe pas dans les données.
 
-## La parade
+## Le remède
 
 Passer par `which()`, qui ne garde que les positions où la condition est vraie.
 

@@ -24,7 +24,7 @@ L'option `cache = TRUE` est lue par {knitr}, pendant le rendu du document. Quand
 
 À l'inverse, le cache créé au rendu n'est pas chargé dans la session de l'IDE. Les objets ne sont donc pas disponibles en console tant qu'on n'a pas relancé les chunks.
 
-## La parade
+## Le remède
 
 Pour un calcul long utilisé aussi en dehors du rendu, gérer soi-même la sauvegarde du résultat.
 

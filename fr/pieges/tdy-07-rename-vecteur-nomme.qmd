@@ -22,7 +22,7 @@ rename(ventes, identifiant = config["id"])
 
 `config["id"]` renvoie `"code"` sous la forme d'un vecteur qui garde son nom, `id`. Quand une sélection nommée reçoit un vecteur lui-même nommé, {tidyselect} combine les deux noms pour ne rien perdre, et la colonne devient `identifiant...id`. Le code qui cherche ensuite `identifiant` ne la trouve pas.
 
-## La parade
+## Le remède
 
 Extraire la valeur seule avec `[[ ]]`, ou retirer les noms avec `unname()`.
 

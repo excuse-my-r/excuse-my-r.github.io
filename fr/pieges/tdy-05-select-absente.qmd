@@ -24,7 +24,7 @@ Un nom nu doit désigner une colonne existante : `select()` s'arrête s'il ne la
 
 Une faute de frappe dans un `matches()` passe ainsi inaperçue : la colonne qu'on croyait retirer est toujours là.
 
-## La parade
+## Le remède
 
 Dire ce qu'on veut : `all_of()` quand les colonnes doivent exister, `any_of()` quand elles sont facultatives.
 

@@ -25,7 +25,7 @@ summarise(measures, x = mean(x), s = sd(x))
 
 This is by design, and often handy. The trap appears when you reuse the name of an existing column.
 
-## The fix
+## The remedy
 
 Give the result a new name, or compute the standard deviation first.
 

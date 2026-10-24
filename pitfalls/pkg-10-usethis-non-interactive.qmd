@@ -29,7 +29,7 @@ This pitfall depends on a non-interactive R session and on writing a project to 
 
 When the new project sits inside another one (a folder that already contains a `.Rproj`, a `DESCRIPTION` or a `.git`), {usethis} asks for confirmation. In an interactive session, you answer yes. In an `Rscript`, a CI job or a call from another function, nobody can answer: depending on the version, the call used to hang on the question, or now stops with this error.
 
-## The fix
+## The remedy
 
 Explicitly allow the nested project through the option designed for it, or create the package outside the parent project.
 

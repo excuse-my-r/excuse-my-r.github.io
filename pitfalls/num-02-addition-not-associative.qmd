@@ -25,7 +25,7 @@ Every addition between decimals rounds its result to the nearest binary number. 
 
 With very different orders of magnitude, the gap becomes visible: `1e40 + 1` cannot be represented, the 1 is absorbed, and it vanishes from the total. Sorting, filtering or merging the data before a `sum()` can thus change the result of what is otherwise the same calculation.
 
-## The fix
+## The remedy
 
 Never compare two totals down to the bit: compare with a tolerance.
 

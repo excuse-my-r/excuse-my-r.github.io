@@ -29,7 +29,7 @@ Par défaut, `read.table()` utilise `quote = "\"'"` : l'apostrophe ouvre une cha
 
 De même, `comment.char = "#"` coupe chaque ligne au premier `#`. Une référence `A#3` tronque la ligne, et R s'arrête sur une erreur de nombre de colonnes qui ne désigne pas le vrai coupable.
 
-## La parade
+## Le remède
 
 Dire explicitement quels guillemets et quels commentaires le fichier utilise, ou passer par `read.csv()` et `read.csv2()`, qui n'acceptent que les guillemets doubles et ignorent `#`.
 

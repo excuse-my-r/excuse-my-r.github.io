@@ -32,7 +32,7 @@ En R, `sauvegarde <- dt` ne copie rien tout de suite : les deux noms désignent 
 
 Il en va de même dans une fonction : l'argument `d` désigne la table de l'appelant, et `:=` la modifie, même si la fonction ne renvoie qu'un nombre.
 
-## La parade
+## Le remède
 
 Faire une vraie copie avec `copy()` quand on veut garder l'original.
 

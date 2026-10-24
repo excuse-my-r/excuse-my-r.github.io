@@ -31,7 +31,7 @@ Ce piège dépend du fuseau horaire de la machine, il ne peut pas se rejouer dan
 
 Le même script donne donc des heures différentes en local et en production, sans erreur ni avertissement. L'écart ressemble à une différence entre Windows et Linux, mais c'est le fuseau du système qui compte.
 
-## La parade
+## Le remède
 
 Indiquer le fuseau au moment de la lecture, avec une fonction qui l'utilise pour interpréter le texte.
 

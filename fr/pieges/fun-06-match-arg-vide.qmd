@@ -28,7 +28,7 @@ Choisissez **R 4.1.3** dans le menu, puis exécutez à nouveau : l'erreur est la
 
 Sans argument, la fonction renvoie bien `""`, le premier choix par défaut. C'est seulement quand on passe `""` explicitement que tout casse, et le message ne cite même pas la chaîne vide parmi les choix possibles.
 
-## La parade
+## Le remède
 
 Ne pas proposer la chaîne vide comme choix : la remplacer par un mot.
 

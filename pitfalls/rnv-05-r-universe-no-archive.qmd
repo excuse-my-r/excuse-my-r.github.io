@@ -32,7 +32,7 @@ An r-universe repository is rebuilt from the default branch of the git repositor
 
 Yet the lockfile still points to that version. `restore()` cannot find it any more, although nothing has changed in the project.
 
-## The fix
+## The remedy
 
 Record non-CRAN packages by their git source and commit, which {renv} knows how to retrieve, rather than by an r-universe repository.
 

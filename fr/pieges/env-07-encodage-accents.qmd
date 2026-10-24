@@ -27,7 +27,7 @@ Une chaîne n'est qu'une suite d'octets. En UTF-8, « é » occupe deux octets, 
 
 C'est ce qui arrive quand un fichier écrit sur un système est relu sur un autre sans préciser l'encodage. Jusqu'à R 4.1, R sous Windows utilisait l'encodage local (souvent latin1 ou CP1252) alors que Linux et macOS étaient en UTF-8. Depuis R 4.2.0, R sous Windows fonctionne nativement en UTF-8, ce qui supprime une grande partie de ces décalages, mais pas ceux des fichiers anciens ou produits par d'autres logiciels.
 
-## La parade
+## Le remède
 
 Toujours déclarer l'encodage à la lecture et à l'écriture, et convertir explicitement quand une source est en latin1.
 

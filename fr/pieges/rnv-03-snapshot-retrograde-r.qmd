@@ -30,7 +30,7 @@ Ce piège dépend des réglages d'un projet {renv}, il ne peut pas se rejouer da
 
 Le message s'affiche, mais au milieu de la liste des paquets mis à jour, où on ne le lit pas.
 
-## La parade
+## Le remède
 
 Vérifier ce réglage, et le vider s'il n'est pas voulu, avant de prendre un instantané.
 

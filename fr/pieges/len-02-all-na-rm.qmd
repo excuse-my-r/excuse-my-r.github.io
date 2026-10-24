@@ -26,7 +26,7 @@ mean(controle, na.rm = TRUE)
 
 Un contrôle qui n'a porté sur aucune donnée connue se transforme ainsi en « tout est conforme ». Rien ne signale que la colonne était entièrement manquante.
 
-## La parade
+## Le remède
 
 Traiter à part le cas où toutes les valeurs manquent.
 

@@ -25,7 +25,7 @@ pieces$Switzerland
 
 For a factor column, the order is that of the levels, which does not make things simpler.
 
-## The fix
+## The remedy
 
 Take the names from `group_keys()`, which follows the same order as `group_split()`, or use base R's `split()`, which names the list itself.
 

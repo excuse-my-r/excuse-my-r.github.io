@@ -21,7 +21,7 @@ lapply(valeurs, try(log))
 
 La boucle s'arrête au premier élément fautif, alors que le `try()` semble promettre le contraire.
 
-## La parade
+## Le remède
 
 Placer `try()` dans une fonction anonyme, autour de l'appel lui-même.
 

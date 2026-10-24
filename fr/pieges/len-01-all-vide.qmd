@@ -25,7 +25,7 @@ C'est la convention mathématique : une propriété est vraie pour tous les él�
 
 Le danger vient du filtre en amont. Quand `notes[notes > 20]` ne garde rien, le test `all(...)` passe, et le `if` qui en dépend s'exécute comme si tout allait bien. Même chose avec `all(c(NA, NA), na.rm = TRUE)`, qui vaut `TRUE`.
 
-## La parade
+## Le remède
 
 Tester la longueur avant de conclure.
 

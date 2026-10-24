@@ -23,7 +23,7 @@ MRAN était l'instantané quotidien de CRAN tenu par Microsoft. Sous Windows et 
 
 Un projet resté sur une ancienne version de {renv} tente donc encore de joindre MRAN pendant `restore()`. Les erreurs de téléchargement qui en résultent parlent d'adresses ou de connexions, pas de MRAN fermé. {renv} 1.0.0 a désactivé cette intégration par défaut, et l'option est aujourd'hui marquée comme obsolète.
 
-## La parade
+## Le remède
 
 Désactiver MRAN avant la restauration, puis mettre {renv} à jour dans le projet.
 

@@ -42,4 +42,4 @@ versions: "All"
 source: "Slack ThinkR (2026)"
 ```
 
-Then write the pitfall block, a `## Why` section, and a `## The fix` section with a second block. Each block must run on its own after the blocks above it, without randomness that is not seeded, and without output that depends on the machine or the date.
+Then write the pitfall block, a `## Why` section, and a `## The remedy` section with a second block. Each block must run on its own after the blocks above it, without randomness that is not seeded, and without output that depends on the machine or the date.

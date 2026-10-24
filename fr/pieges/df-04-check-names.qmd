@@ -24,7 +24,7 @@ tab$`ma colonne`
 
 Le code qui cherche ensuite la colonne sous son vrai nom obtient `NULL`, sans erreur.
 
-## La parade
+## Le remède
 
 Désactiver la correction quand on tient aux noms d'origine, et les écrire entre backticks.
 

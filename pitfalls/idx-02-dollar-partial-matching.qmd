@@ -27,7 +27,7 @@ On a list, `$` accepts a prefix: if only one name starts with `a`, that element 
 
 The day someone adds an `amplitude` element to the list, `settings$a` starts returning `NULL`, and the code that depends on it changes behaviour although nobody touched it.
 
-## The fix
+## The remedy
 
 Use `[[` in production code, or ask R to flag every partial match.
 

@@ -25,7 +25,7 @@ diag(variances)
 
 Une fonction qui construit une matrice de covariance à partir d'un vecteur de variances marche donc jusqu'au jour où le vecteur ne contient plus qu'une valeur. Elle renvoie alors une identité 4 x 4, sans avertissement.
 
-## La parade
+## Le remède
 
 Donner la taille explicitement avec `nrow` : le résultat est la matrice diagonale attendue, quelle que soit la longueur du vecteur.
 

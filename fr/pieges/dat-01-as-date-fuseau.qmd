@@ -24,7 +24,7 @@ Un `POSIXct` est un nombre de secondes depuis le 1er janvier 1970 en temps unive
 
 Toutes les heures entre minuit et une heure du matin (deux heures en été) changent donc de jour. Sur un jeu de données horodaté, l'erreur ne touche qu'une petite partie des lignes, ce qui la rend difficile à repérer. {lubridate}, lui, utilise le fuseau de l'objet : `as_date(h)` et `as.Date(h)` ne donnent pas le même jour.
 
-## La parade
+## Le remède
 
 Passer le fuseau explicitement.
 

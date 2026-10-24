@@ -30,7 +30,7 @@ if (trouve) {
 
 Ces deux cas arrivent avec des données réelles : une valeur manquante dans un fichier, un filtre qui ne garde aucune ligne. Le code a tourné cent fois, puis s'arrête le jour où une donnée manque.
 
-## La parade
+## Le remède
 
 `isTRUE()` et `isFALSE()` renvoient toujours une seule valeur, `FALSE` pour `NA` ou pour un vecteur vide. Quand ces cas méritent un traitement à part, les tester d'abord.
 

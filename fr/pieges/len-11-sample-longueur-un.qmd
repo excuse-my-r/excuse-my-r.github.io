@@ -26,7 +26,7 @@ sample(x[x > 10])
 
 Tant que le filtre garde plusieurs valeurs, tout va bien. Le jour où il n'en garde qu'une, ici 12, `sample()` renvoie une permutation des entiers de 1 à 12, qui n'ont rien à voir avec les données.
 
-## La parade
+## Le remède
 
 Tirer des positions avec `sample.int()`, puis indexer le vecteur.
 

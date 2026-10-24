@@ -39,7 +39,7 @@ The classic `sapply(df, class)` falls into it too. A single column with two clas
 
 So the type of the result depends on the data, not on the code. A function that works on the example breaks further down the line, the day the input is empty or irregular.
 
-## The fix
+## The remedy
 
 `vapply()` makes you declare the shape of each result, and stops if it is not respected.
 

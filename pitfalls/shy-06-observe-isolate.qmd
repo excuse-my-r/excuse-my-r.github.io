@@ -29,7 +29,7 @@ An `observe()` runs once at startup, to discover its dependencies. Here, `save_e
 
 The real dependency hangs on a lone `input$save` line, easy to delete by mistake during a cleanup. And if someone later adds an `input$...` outside the `isolate()`, the action also fires when that field changes.
 
-## The fix
+## The remedy
 
 `observeEvent()` states explicitly which event triggers the action, isolates the rest of the code, and by default ignores a button that was never clicked.
 

@@ -27,7 +27,7 @@ req(0)
 
 Le nombre 0 n'en fait pas partie. Un `numericInput()` laissé à 0 passe donc `req()`, et le calcul tourne avec une quantité nulle. Seul le bouton d'action fait exception : sa valeur 0 porte une classe spéciale que `isTruthy()` reconnaît.
 
-## La parade
+## Le remède
 
 Donner à `req()` la condition métier elle-même, sous forme d'un test logique.
 

@@ -27,7 +27,7 @@ Le script de lancement `R` est un script shell, qui utilise des commandes systè
 
 R ne trouvait alors plus ses paquets de base, `base`, `utils`, `stats`, et le pipeline s'arrêtait sur des erreurs de démarrage qui ne mentionnaient pas `which`. Les images basées sur Ubuntu Focal, comme `rocker/verse:4.1`, fonctionnaient.
 
-## La parade
+## Le remède
 
 Figer une version d'image testée plutôt que `latest`, comme l'équipe l'a fait en revenant à une image basée sur Focal, et vérifier la présence de `which` avant de lancer R.
 

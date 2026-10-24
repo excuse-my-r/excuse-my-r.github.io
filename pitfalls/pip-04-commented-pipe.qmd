@@ -24,7 +24,7 @@ R ignores the comment and the blank line. What it reads is a chain ending with `
 
 `result` does not exist yet when `print()` evaluates its second argument, hence "object 'result' not found" on a line that seems to merely print a variable just created. If the next statement did not use `result`, the code would run silently, with an absurd result. {magrittr} has the same problem with a trailing `%>%`.
 
-## The fix
+## The remedy
 
 Comment out a step in the middle, never the last one, or end every chain with a neutral step such as `identity()` so that everything before it can be commented out.
 

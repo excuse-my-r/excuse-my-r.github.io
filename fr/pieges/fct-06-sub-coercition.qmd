@@ -24,7 +24,7 @@ sub("_.*", "", factor(c("a_1", "b_2")))
 
 Pour un nombre, c'est l'écriture choisie par R qui sert : `100000` s'écrit `"1e+05"`, si bien qu'enlever le premier zéro donne `"1e+5"`. Un facteur ressort, lui, en vecteur de texte.
 
-## La parade
+## Le remède
 
 Convertir soi-même en texte, avec le format voulu, avant de faire un remplacement.
 

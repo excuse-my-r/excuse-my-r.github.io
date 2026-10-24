@@ -31,7 +31,7 @@ This pitfall depends on the IDE and the test runner, so it cannot be replayed in
 
 A snapshot created with one runner can therefore fail with the other, or worse, be silently rewritten by whoever accepts the changes without reading them.
 
-## The fix
+## The remedy
 
 Always create and validate snapshots the same way, with `devtools::test()` or `devtools::check()`, and pin inside the test the settings that change the display.
 

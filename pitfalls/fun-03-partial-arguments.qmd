@@ -32,7 +32,7 @@ When an argument name matches no argument exactly, R looks for an argument that 
 
 The day the function gains an argument with the same beginning, here `numeric`, the abbreviation points to two arguments at once and the call fails. The calling code, though, has not changed.
 
-## The fix
+## The remedy
 
 Write argument names in full, and ask R to flag every abbreviation.
 

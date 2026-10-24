@@ -25,7 +25,7 @@ Un data frame est une liste de colonnes. `length()` compte les éléments de cet
 
 À l'inverse, `nrow()` ne lit que l'attribut de dimension. Un vecteur n'en a pas, d'où `NULL`. `NROW()` et `NCOL()`, en majuscules, traitent un vecteur comme une colonne unique.
 
-## La parade
+## Le remède
 
 Dire ce que l'on compte : `nrow()` pour les lignes, `ncol()` pour les colonnes, et `NROW()` quand l'objet peut être un vecteur ou un tableau.
 

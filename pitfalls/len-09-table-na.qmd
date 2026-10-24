@@ -25,7 +25,7 @@ By default, `table()` drops missing values before counting, without saying so. T
 
 Proportions computed afterwards with `prop.table()` then only cover the known answers. That may be intended, but it is rarely a conscious decision.
 
-## The fix
+## The remedy
 
 Ask for the `NA`s explicitly with `useNA = "ifany"`, which adds an `<NA>` column only when there are some.
 

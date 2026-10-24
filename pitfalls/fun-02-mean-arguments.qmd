@@ -25,7 +25,7 @@ median(1, 5, 3)
 
 The mean of a single value is that value, hence 1. No argument is refused, so no error.
 
-## The fix
+## The remedy
 
 Group the values into a vector with `c()`.
 

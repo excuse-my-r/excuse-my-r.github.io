@@ -24,7 +24,7 @@ pivot_wider(long, cle, val)
 
 L'erreur parle d'une colonne `name` que l'on n'a jamais écrite, ce qui ne met pas sur la piste.
 
-## La parade
+## Le remède
 
 Nommer `names_from` et `values_from`.
 

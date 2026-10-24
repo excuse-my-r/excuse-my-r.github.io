@@ -24,7 +24,7 @@ R looks for a function first in the current environment, then in the attached pa
 
 The same mechanism applies between packages. Loading {plyr} after {dplyr} replaces `summarise()` and `mutate()` with their {plyr} namesakes, which ignore `group_by()`. R does print a message when loading, but it is easy to miss, and `library(plyr, warn.conflicts = FALSE)` or `suppressPackageStartupMessages()` remove even that one.
 
-## The fix
+## The remedy
 
 Prefix with the package name whenever in doubt, remove the masking object, or use {conflicted}, which turns any ambiguity into an error.
 

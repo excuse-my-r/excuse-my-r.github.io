@@ -26,7 +26,7 @@ Quand deux vecteurs de longueurs différentes se rencontrent, R répète le plus
 
 R ne prévient que si la longueur longue n'est pas un multiple de la courte, comme pour `1:5 + 1:2`. Dans tous les autres cas, le recyclage passe inaperçu.
 
-## La parade
+## Le remède
 
 Pour tester l'appartenance, utiliser `%in%`. Pour un calcul, vérifier que les longueurs sont égales avant de combiner : `stopifnot()` arrête alors le script au lieu de recycler.
 

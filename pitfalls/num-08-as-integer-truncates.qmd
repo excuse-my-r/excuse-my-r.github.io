@@ -24,7 +24,7 @@ as.integer(0.29 * 100)
 
 Combined with binary representation, the result becomes plainly wrong. `0.29 * 100` prints as `29`, but is actually 28.999999999999996: truncation gives 28. A percentage converted to an integer thus loses one unit without a word.
 
-## The fix
+## The remedy
 
 Round first, convert second.
 

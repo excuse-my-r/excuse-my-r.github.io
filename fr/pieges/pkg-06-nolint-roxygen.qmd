@@ -37,7 +37,7 @@ Avec le markdown activé dans roxygen, une ligne qui commence par `#` suivi d'un
 
 Avec {roxygen2} 8.1.0, il n'y a plus d'erreur, mais le fichier `.Rd` contient une section vide nommée « nolint ».
 
-## La parade
+## Le remède
 
 Coller le dièse, `#nolint` n'étant pas un titre markdown, ou placer l'exclusion {lintr} sur la ligne de code concernée plutôt que dans la documentation.
 

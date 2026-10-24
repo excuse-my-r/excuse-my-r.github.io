@@ -27,7 +27,7 @@ Quand plusieurs formats sont possibles, `parse_date_time()` les essaie sur les d
 
 Avec 99 dates, le `"13/04/2026"` en quatrième position fait partie de l'essai : seul le format jour/mois le lit, il l'emporte, et `03/04` devient le 3 avril. Avec une date de plus, la position 4 n'est plus testée, les deux formats font jeu égal, le premier de la liste gagne, et les mêmes 99 dates deviennent des 4 mars. Ajouter une ligne a changé le sens de toutes les autres, sans un avertissement.
 
-## La parade
+## Le remède
 
 Ne pas laisser deviner : donner le format exact quand on le connaît, avec la fonction dédiée.
 

@@ -27,7 +27,7 @@ Avant d'installer, {remotes} compare la version disponible (pour CRAN, le « SHA
 
 Si `glue` est déjà présent ailleurs, par exemple dans la bibliothèque système, l'installation est sautée. Le dossier `ci/lib` reste vide, et le script qui comptait y trouver le paquet échoue plus loin, ou utilise une autre version.
 
-## La parade
+## Le remède
 
 Forcer l'installation quand la bibliothèque cible compte, ou restreindre `.libPaths()` à cette bibliothèque le temps de l'installation.
 

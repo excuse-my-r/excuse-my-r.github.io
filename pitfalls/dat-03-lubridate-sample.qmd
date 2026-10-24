@@ -27,7 +27,7 @@ When several formats are possible, `parse_date_time()` tries them on the data an
 
 With 99 dates, the `"13/04/2026"` in fourth position is part of the trial: only the day/month format can read it, so it wins, and `03/04` becomes 3 April. With one more date, position 4 is no longer tested, both formats tie, the first one in the list wins, and the same 99 dates become 4 March. Adding one row changed the meaning of all the others, without a single warning.
 
-## The fix
+## The remedy
 
 Do not let it guess: give the exact format when you know it, with the dedicated function.
 

@@ -26,7 +26,7 @@ Up to {testthat} 3.2.3, `local_edition()` only checked that its argument was a s
 
 {testthat} 3.3.0 now requires a whole number between 2 and 3.
 
-## The fix
+## The remedy
 
 Set the edition in the package's `DESCRIPTION` file, and only use `local_edition()` with 2 or 3, inside a specific test.
 

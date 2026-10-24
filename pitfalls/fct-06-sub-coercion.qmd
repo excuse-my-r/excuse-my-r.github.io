@@ -24,7 +24,7 @@ sub("_.*", "", factor(c("a_1", "b_2")))
 
 For a number, the spelling R picks is what counts: `100000` is written `"1e+05"`, so removing the first zero gives `"1e+5"`. A factor, for its part, comes out as a character vector.
 
-## The fix
+## The remedy
 
 Convert to text yourself, in the format you want, before doing a replacement.
 

@@ -25,7 +25,7 @@ L'argument `exact` de `attr()` vaut `FALSE` par défaut : un préfixe suffit, ta
 
 Le jour où un autre attribut commence par les mêmes lettres, ici `usage` à côté de `unite`, le préfixe devient ambigu et `attr()` renvoie `NULL`. Le code qui lit l'attribut n'a pas changé.
 
-## La parade
+## Le remède
 
 Écrire le nom complet avec `exact = TRUE`, ou demander à R de signaler chaque correspondance partielle.
 

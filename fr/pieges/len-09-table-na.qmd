@@ -25,7 +25,7 @@ Par défaut, `table()` écarte les valeurs manquantes avant de compter, sans le 
 
 Les proportions calculées ensuite avec `prop.table()` portent alors sur les seules réponses connues. Ce peut être voulu, mais c'est rarement une décision consciente.
 
-## La parade
+## Le remède
 
 Demander les `NA` explicitement avec `useNA = "ifany"`, qui ajoute une colonne `<NA>` seulement quand il y en a.
 

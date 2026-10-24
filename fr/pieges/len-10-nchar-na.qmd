@@ -27,7 +27,7 @@ Jusqu'à R 3.2, `nchar(NA)` valait 2 : R comptait les caractères de l'affichage
 
 Le piège le plus courant aujourd'hui vient de `paste()`, qui transforme un `NA` en texte `"NA"`. Après lui, plus rien ne le distingue d'un vrai nom de deux lettres.
 
-## La parade
+## Le remède
 
 Demander explicitement de garder les `NA`, et les traiter avant de coller du texte.
 

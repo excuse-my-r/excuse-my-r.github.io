@@ -29,7 +29,7 @@ R ships several regular expression engines. By default, `gsub()`, `grepl()` or `
 
 Inside square brackets, TRE reads `\d` as two literal characters, the backslash and the letter `d`: it removes the `d` and keeps the digits. ICU sees "a digit". TRE does not know lookarounds such as `(?=1)` either and returns an error, where ICU accepts them. Other differences exist: the non-breaking space, for instance, is a `\s` for ICU but not for TRE.
 
-## The fix
+## The remedy
 
 Stick to a single engine within a project. In base R, `perl = TRUE` gives a behaviour close to ICU. POSIX classes such as `[0-9]` or `[[:digit:]]` read the same everywhere.
 

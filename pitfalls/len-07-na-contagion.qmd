@@ -26,7 +26,7 @@ NA & FALSE
 
 Conversely, `NA * 0` stays `NA`, because the unknown could be `Inf`, and `Inf * 0` is not 0. And `NA == NA` is `NA`: two unknowns are not necessarily equal. The rule is logical, but it means an `NA` can vanish from a calculation without leaving a trace.
 
-## The fix
+## The remedy
 
 Test for missing values explicitly with `is.na()`, rather than relying on their propagation.
 

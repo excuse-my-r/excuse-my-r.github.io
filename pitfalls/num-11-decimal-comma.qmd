@@ -24,7 +24,7 @@ R only accepts the dot as decimal separator, whatever the system language. A str
 
 Whole values, on the other hand, go through. The result therefore looks plausible: here the "mean" is 2, computed on the only value without a comma.
 
-## The fix
+## The remedy
 
 Replace the comma before converting, or read the file with `read.csv2()`, which expects the decimal comma used in France and much of Europe.
 

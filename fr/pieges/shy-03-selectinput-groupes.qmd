@@ -35,7 +35,7 @@ Dans `choices`, un élément nommé de longueur 1 dont la valeur n'a pas elle-m�
 
 Second piège : deux options de groupes différents peuvent porter la même valeur. `input$choix` vaut alors `"pomme"` dans les deux cas, et le serveur ne peut pas savoir lequel a été choisi.
 
-## La parade
+## Le remède
 
 Écrire chaque groupe comme une liste, et donner des valeurs uniques à toutes les options.
 

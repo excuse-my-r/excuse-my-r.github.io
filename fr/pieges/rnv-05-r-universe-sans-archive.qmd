@@ -32,7 +32,7 @@ Un dépôt r-universe se reconstruit à partir de la branche par défaut des dé
 
 Le lockfile désigne pourtant toujours cette version. `restore()` ne la trouve plus, alors que rien n'a changé dans le projet.
 
-## La parade
+## Le remède
 
 Enregistrer les paquets hors CRAN par leur source git et leur commit, que {renv} sait retrouver, plutôt que par un dépôt r-universe.
 

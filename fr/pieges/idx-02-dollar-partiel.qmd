@@ -27,7 +27,7 @@ Sur une liste, `$` accepte un préfixe : s'il n'existe qu'un seul nom qui commen
 
 Le jour où quelqu'un ajoute un élément `amplitude` à la liste, `reglages$a` se met à renvoyer `NULL`, et le code qui en dépend change de comportement sans que personne ne l'ait modifié.
 
-## La parade
+## Le remède
 
 Utiliser `[[` dans le code de production, ou demander à R de signaler chaque correspondance partielle.
 

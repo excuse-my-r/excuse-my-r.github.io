@@ -28,7 +28,7 @@ Par défaut, les disques de macOS et de Windows ignorent la casse : `Resultats.c
 
 Sous Linux, en CI ou sur un serveur, les deux fichiers coexistent. Le même script produit un résultat différent selon la machine, et un dépôt git qui contient les deux noms devient impossible à extraire proprement sur un Mac.
 
-## La parade
+## Le remède
 
 Choisir une convention de nommage (tout en minuscules, par exemple) et n'avoir jamais deux noms qui ne diffèrent que par la casse.
 

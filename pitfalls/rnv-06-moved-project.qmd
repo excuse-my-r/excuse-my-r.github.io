@@ -24,7 +24,7 @@ The library of a {renv} project does not really contain the packages: they are l
 
 When the library is stored outside the project (the `RENV_PATHS_LIBRARY_ROOT` variable), its location also depends on the project's name and path: after a rename, {renv} looks for another library, an empty one. Either way, the errors talk about packages that cannot be found, not about the move.
 
-## The fix
+## The remedy
 
 Do not rely on the library after a move: rebuild it from the lockfile, which is all it takes to describe the project.
 

@@ -21,7 +21,7 @@ lapply(values, try(log))
 
 The loop stops at the first faulty element, while the `try()` seems to promise the opposite.
 
-## The fix
+## The remedy
 
 Put `try()` inside an anonymous function, around the call itself.
 

@@ -23,7 +23,7 @@ Pour convertir un double en texte, R choisit l'écriture la plus courte. `100000
 
 Seuls les nombres « ronds » sont touchés, ce qui rend le piège rare et donc difficile à repérer. Des identifiants, des codes ou des noms de fichiers construits avec `paste0()` cassent une jointure pour quelques lignes seulement.
 
-## La parade
+## Le remède
 
 Formater explicitement le nombre avant de le coller.
 

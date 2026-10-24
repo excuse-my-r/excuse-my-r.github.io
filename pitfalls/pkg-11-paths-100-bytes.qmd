@@ -31,7 +31,7 @@ setwd(old)
 
 The original tar format sets aside 100 bytes for the path of each file. More recent formats can store longer paths, but not every tool that reads archives understands them. So R warns as soon as a path, counted from the package folder, exceeds 100 bytes. Bytes, not characters: an accented letter in UTF-8 counts for two.
 
-## The fix
+## The remedy
 
 Shorten folder and file names, and check the lengths before building.
 

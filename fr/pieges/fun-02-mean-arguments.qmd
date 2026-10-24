@@ -25,7 +25,7 @@ median(1, 5, 3)
 
 La moyenne d'une seule valeur est cette valeur, d'où 1. Aucun argument n'est refusé, donc aucune erreur.
 
-## La parade
+## Le remède
 
 Regrouper les valeurs dans un vecteur avec `c()`.
 

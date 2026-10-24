@@ -24,7 +24,7 @@ identical(length(1:3), 3)
 
 The pitfall is easy to miss because R does not show the type when printing. `length()` returns an integer, the literal `3` is a double: a test written with `identical()`, or with `expect_identical()` from {testthat}, fails even though both sides print 3.
 
-## The fix
+## The remedy
 
 Write the literal in the right type, or compare the values with a function that ignores the type.
 

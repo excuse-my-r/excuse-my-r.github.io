@@ -31,7 +31,7 @@ setwd(ancien)
 
 Le format tar d'origine réserve 100 octets au chemin de chaque fichier. Les formats plus récents savent stocker des chemins plus longs, mais pas tous les outils qui lisent les archives. R avertit donc dès qu'un chemin, compté depuis le dossier du paquet, dépasse 100 octets. En octets, pas en caractères : une lettre accentuée en UTF-8 en compte deux.
 
-## La parade
+## Le remède
 
 Raccourcir les noms de dossiers et de fichiers, et vérifier les longueurs avant de construire.
 

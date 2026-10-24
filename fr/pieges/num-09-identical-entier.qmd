@@ -24,7 +24,7 @@ identical(length(1:3), 3)
 
 Le piège est discret parce que R ne montre pas le type à l'affichage. `length()` renvoie un entier, le littéral `3` est un double : un test écrit avec `identical()`, ou avec `expect_identical()` de {testthat}, échoue alors que les deux côtés affichent 3.
 
-## La parade
+## Le remède
 
 Écrire le littéral dans le bon type, ou comparer les valeurs avec une fonction qui ignore le type.
 

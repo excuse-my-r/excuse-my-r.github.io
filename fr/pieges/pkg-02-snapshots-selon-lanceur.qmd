@@ -31,7 +31,7 @@ Ce piège dépend de l'IDE et du lanceur de tests, il ne peut pas se rejouer dan
 
 Un snapshot créé avec un lanceur peut donc échouer avec l'autre, ou pire, être réécrit en silence par celui qui accepte les changements sans les relire.
 
-## La parade
+## Le remède
 
 Créer et valider les snapshots toujours de la même façon, avec `devtools::test()` ou `devtools::check()`, et fixer dans le test les réglages qui changent l'affichage.
 

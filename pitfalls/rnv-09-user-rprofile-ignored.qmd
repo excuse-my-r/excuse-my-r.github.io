@@ -26,7 +26,7 @@ This pitfall depends on R's startup files on the machine, so it cannot be replay
 
 By default {renv} does not load the user profile either, to keep personal code from breaking the project's isolation.
 
-## The fix
+## The remedy
 
 Have {renv} load the user profile, or put environment variables in `~/.Renviron`, which is still read.
 

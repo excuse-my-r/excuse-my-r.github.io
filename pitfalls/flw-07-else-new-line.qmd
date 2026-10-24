@@ -29,7 +29,7 @@ At the console, and in a script run line by line, R evaluates a statement as soo
 
 The same code runs fine inside a function or any other block between braces, because R only ends the statement at the block's closing brace. Code copied from a function to the console therefore breaks for no apparent reason.
 
-## The fix
+## The remedy
 
 Always write `} else {` on the same line.
 

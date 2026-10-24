@@ -30,7 +30,7 @@ tryCatch(
 
 On croit seulement intercepter l'avertissement pour l'afficher autrement, et on remplace en réalité le résultat par `NA`.
 
-## La parade
+## Le remède
 
 `withCallingHandlers()` appelle le gestionnaire sans quitter le calcul. `invokeRestart("muffleWarning")` étouffe ensuite l'avertissement d'origine, et l'exécution reprend là où elle était.
 

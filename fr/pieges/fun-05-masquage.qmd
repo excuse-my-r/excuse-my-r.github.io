@@ -24,7 +24,7 @@ R cherche une fonction d'abord dans l'environnement courant, puis dans les paque
 
 Le même mécanisme joue entre paquets. Charger {plyr} après {dplyr} remplace `summarise()` et `mutate()` par leurs homonymes de {plyr}, qui ignorent `group_by()`. R affiche bien un message au chargement, mais il est facile à manquer, et `library(plyr, warn.conflicts = FALSE)` ou `suppressPackageStartupMessages()` font disparaître même celui-là.
 
-## La parade
+## Le remède
 
 Préfixer par le nom du paquet quand le doute est permis, supprimer l'objet qui masque, ou utiliser {conflicted}, qui transforme toute ambiguïté en erreur.
 

@@ -29,7 +29,7 @@ Un `observe()` s'exécute une première fois au démarrage, pour découvrir ses 
 
 La dépendance réelle tient à une ligne `input$enregistrer` posée seule, facile à supprimer par erreur lors d'un nettoyage. Et si quelqu'un ajoute plus tard un `input$...` hors du `isolate()`, l'action se déclenche aussi quand ce champ change.
 
-## La parade
+## Le remède
 
 `observeEvent()` dit explicitement quel événement déclenche l'action, isole le reste du code, et ignore par défaut le bouton jamais cliqué.
 

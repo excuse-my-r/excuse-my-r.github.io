@@ -23,7 +23,7 @@ modify_url(base, path = "users")
 
 `modify_url()` découpe l'adresse en morceaux (schéma, hôte, chemin, paramètres), remplace ceux qu'on lui donne, puis recolle le tout. L'argument `path` remplace donc le chemin entier, et le `v1/` de l'adresse de base disparaît. La requête part vers une autre adresse, qui peut très bien exister et répondre autre chose.
 
-## La parade
+## Le remède
 
 Construire le chemin complet à partir de celui de l'adresse de base. Avec {httr2}, `req_url_path_append()` fait exactement cela.
 

@@ -24,7 +24,7 @@ The `!` operator has lower precedence than `|>` and `%in%`, and even lower than 
 
 `quote()` shows the expression as R understood it. The same thing happens with {magrittr}'s `%>%`, and with `!x %in% y`, which means `!(x %in% y)`.
 
-## The fix
+## The remedy
 
 Put the negation in parentheses, or keep it out of the pipe.
 

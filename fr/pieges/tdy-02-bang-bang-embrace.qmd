@@ -27,7 +27,7 @@ moyenne(mesures, x)
 
 `{{ col }}` fait autre chose : il capture l'expression `x` sans l'évaluer, avec son environnement, et la transmet à `summarise()`, qui la cherche d'abord parmi les colonnes. C'est ce qu'on attend presque toujours d'un argument de colonne.
 
-## La parade
+## Le remède
 
 Utiliser `{{ }}` pour transmettre un argument, et réserver `!!` aux expressions déjà capturées, comme le résultat d'`enquo()`.
 

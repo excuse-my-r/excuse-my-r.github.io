@@ -42,7 +42,7 @@ source: "Votre nom, ou là où vous l'avez trouvé"
 
 ### Le corps
 
-La fiche commence par le bloc du piège, puis une section `## Pourquoi` qui explique le mécanisme, puis une section `## La parade` avec un second bloc qui montre la bonne façon de faire.
+La fiche commence par le bloc du piège, puis une section `## Pourquoi` qui explique le mécanisme, puis une section `## Le remède` avec un second bloc qui montre la bonne façon de faire.
 
 ````markdown
 ::: {.piege}

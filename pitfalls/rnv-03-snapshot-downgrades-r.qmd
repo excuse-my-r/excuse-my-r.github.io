@@ -30,7 +30,7 @@ This pitfall depends on the settings of a {renv} project, so it cannot be replay
 
 The message is shown, but in the middle of the list of updated packages, where nobody reads it.
 
-## The fix
+## The remedy
 
 Check that setting, and clear it if it is not intended, before taking a snapshot.
 

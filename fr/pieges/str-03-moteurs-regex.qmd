@@ -29,7 +29,7 @@ R contient plusieurs moteurs d'expressions régulières. Par défaut, `gsub()`, 
 
 Entre crochets, TRE lit `\d` comme deux caractères littéraux, la barre oblique inverse et la lettre `d` : il retire le `d` et garde les chiffres. ICU y voit « un chiffre ». TRE ne connaît pas non plus les assertions comme `(?=1)` et renvoie une erreur, là où ICU les accepte. D'autres écarts existent : l'espace insécable, par exemple, est un `\s` pour ICU mais pas pour TRE.
 
-## La parade
+## Le remède
 
 Rester sur un seul moteur dans un projet. En base R, `perl = TRUE` donne un comportement proche d'ICU. Les classes POSIX comme `[0-9]` ou `[[:digit:]]` se lisent pareil partout.
 

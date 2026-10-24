@@ -23,7 +23,7 @@ Base graphics are a side effect: `plot()` draws on the open graphics device and 
 
 With {ggplot2}, `p <- ggplot(...)` creates an object you print later. The habit does not carry over: in Shiny, a `reactive()` that "holds" a `plot()` holds nothing but `NULL`, and a `renderPlot()` that returns that object displays nothing.
 
-## The fix
+## The remedy
 
 Store the recipe for the plot in a function, and call it where the plot must be drawn, for instance inside `renderPlot()`.
 

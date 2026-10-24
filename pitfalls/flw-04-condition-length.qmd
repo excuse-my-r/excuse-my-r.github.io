@@ -27,7 +27,7 @@ Pick **R 4.1.3** in the menu, then run it again: the same code answers "all posi
 
 `&&` and `||` were worse: they took the first element without any warning. R 4.2.0 turned the `if` case into an error and added a warning to `&&` and `||`, which became an error in R 4.3.0. An old script that "worked" can therefore stop dead after an R upgrade.
 
-## The fix
+## The remedy
 
 Say explicitly what you want to test across the whole vector.
 

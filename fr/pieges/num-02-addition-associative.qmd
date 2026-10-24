@@ -25,7 +25,7 @@ Chaque addition entre décimaux arrondit son résultat au nombre binaire le plus
 
 Avec des ordres de grandeur très différents, l'écart devient visible : `1e40 + 1` ne peut pas être représenté, le 1 est absorbé, et il disparaît du total. Trier, filtrer ou fusionner les données avant un `sum()` peut ainsi changer le résultat d'un calcul pourtant identique.
 
-## La parade
+## Le remède
 
 Ne jamais comparer deux totaux au bit près : comparer avec une tolérance.
 

@@ -25,7 +25,7 @@ arrange(notes, "note")
 
 Le cas typique est Shiny : `arrange(donnees, input$colonne)` reçoit le nom choisi par l'utilisateur sous forme de texte, et le tableau affiché n'est jamais trié.
 
-## La parade
+## Le remède
 
 Transformer le texte en colonne avec `.data[[ ]]`.
 

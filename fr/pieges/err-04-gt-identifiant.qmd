@@ -34,7 +34,7 @@ Pour que le style d'un tableau ne déborde pas sur les autres tableaux de la pag
 
 Deux rendus du même tableau diffèrent donc. Un test « snapshot » échoue à chaque exécution, et un rapport versionné dans git change à chaque compilation. Au passage, ce tirage fait avancer le générateur aléatoire : les nombres tirés ensuite dans le script ne sont plus les mêmes.
 
-## La parade
+## Le remède
 
 Donner un identifiant fixe avec l'argument `id`. À défaut, `withr::with_seed()` fige le tirage sans toucher au générateur du reste du script.
 

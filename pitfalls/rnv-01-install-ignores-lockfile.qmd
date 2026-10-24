@@ -37,7 +37,7 @@ The repository recorded in the lockfile is not the one `renv::install()` uses: i
 
 The package is then installed from current CRAN, not from the dated snapshot. At the next `snapshot()`, the lockfile records the active repository: the dated address disappears from the file, and with it the reproducibility it guaranteed.
 
-## The fix
+## The remedy
 
 Check `getOption("repos")` before installing, and do not redefine the repositories in a {renv} project unless you mean to.
 

@@ -24,7 +24,7 @@ L'opérateur `!` a une priorité plus faible que `|>` et `%in%`, et même que le
 
 `quote()` montre l'expression telle que R l'a comprise. Le même phénomène joue avec `%>%` de {magrittr}, et avec `!x %in% y`, qui vaut `!(x %in% y)`.
 
-## La parade
+## Le remède
 
 Mettre la négation entre parenthèses, ou ne pas la mélanger au pipe.
 

@@ -25,7 +25,7 @@ In `aes()`, `.data` is the pronoun that refers to the data table. But `facet_gri
 
 The formula form, `facet_grid(.data[[variable]] ~ .)`, does not fail, but the variable loses its name there: {ggplot2} stores it as `<unknown>`, which shows up for instance with `labeller = label_both`.
 
-## The fix
+## The remedy
 
 `vars()` delays evaluation, like `aes()`, until the data is available. The variable then keeps its name.
 

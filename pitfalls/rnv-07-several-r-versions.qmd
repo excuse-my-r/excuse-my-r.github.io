@@ -26,7 +26,7 @@ This pitfall depends on several R installations and a Docker container, so it ca
 
 When the same folder is used locally and then in a Docker container mounted as a volume, or after an R upgrade, each environment finds or creates its own library. One has the packages, the other does not, and `library()` fails on one side only, although the lockfile is the same.
 
-## The fix
+## The remedy
 
 Exclude `renv/library` from volumes and images, and restore from the lockfile in each environment.
 

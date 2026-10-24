@@ -28,7 +28,7 @@ R a deux flux de sortie. `print()` et `cat()` écrivent sur la sortie standard, 
 
 Une fonction qui « affiche » quelque chose peut donc renvoyer une capture presque vide, selon la façon dont son auteur a choisi d'écrire.
 
-## La parade
+## Le remède
 
 Pour récupérer les messages, les intercepter comme des conditions avec `withCallingHandlers()`. `capture.output(type = "message")` existe aussi, mais il détourne le flux lui-même : il ne voit plus rien dès qu'un autre outil intercepte déjà les messages, comme knitr qui a produit cette page.
 

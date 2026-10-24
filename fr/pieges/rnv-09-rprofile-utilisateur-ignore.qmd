@@ -26,7 +26,7 @@ Ce n'est pas {renv} qui choisit : au démarrage, R lit un seul `.Rprofile`, celu
 
 {renv} ne charge pas non plus le profil utilisateur par défaut, pour éviter qu'un code personnel casse l'isolation du projet.
 
-## La parade
+## Le remède
 
 Activer le chargement du profil utilisateur par {renv}, ou mettre les variables d'environnement dans `~/.Renviron`, qui reste lu.
 

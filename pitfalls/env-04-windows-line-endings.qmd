@@ -29,7 +29,7 @@ Windows ends lines with two characters, carriage return then line feed (`\r\n`),
 
 These invisible characters end up in `DESCRIPTION`, in data files or in the code, and make tools that read the text fail. The original incident ended with an error along the lines of "input string 1 is invalid in this locale", which hints at encoding rather than line endings.
 
-## The fix
+## The remedy
 
 Set the line endings in the repository itself, through a `.gitattributes` file, rather than in each machine's configuration.
 

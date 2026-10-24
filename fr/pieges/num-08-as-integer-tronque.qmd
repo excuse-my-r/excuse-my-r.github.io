@@ -24,7 +24,7 @@ as.integer(0.29 * 100)
 
 Combiné à la représentation binaire, le résultat devient franchement faux. `0.29 * 100` s'affiche `29`, mais vaut en réalité 28.999999999999996 : la troncature donne 28. Un pourcentage converti en entier perd ainsi une unité sans un mot.
 
-## La parade
+## Le remède
 
 Arrondir d'abord, convertir ensuite.
 

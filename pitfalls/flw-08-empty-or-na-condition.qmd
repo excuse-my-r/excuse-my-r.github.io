@@ -30,7 +30,7 @@ if (found) {
 
 Both cases happen with real data: a missing value in a file, a filter that keeps no rows. The code has run a hundred times, then stops the day a value is missing.
 
-## The fix
+## The remedy
 
 `isTRUE()` and `isFALSE()` always return a single value, `FALSE` for `NA` or for an empty vector. When these cases deserve their own handling, test for them first.
 

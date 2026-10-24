@@ -29,7 +29,7 @@ t_grand > 4 * t_petit
 
 Le piège est le même avec `rbind()` dans une boucle pour empiler des data.frames, en plus lent encore, puisque chaque ligne ajoutée recopie tout le tableau.
 
-## La parade
+## Le remède
 
 Réserver la place une fois pour toutes, puis remplir. Mieux encore, quand c'est possible, calculer d'un coup sur tout le vecteur, et pour des data.frames, empiler une seule fois à la fin.
 

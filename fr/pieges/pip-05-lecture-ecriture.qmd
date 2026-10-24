@@ -27,7 +27,7 @@ readLines(f)
 
 Le pipe ne lit pas le fichier avant de l'écrire : il construit l'appel `write(gsub(..., readLines(f)), file = f)`. À cause de l'évaluation paresseuse, `write()` commence par ouvrir son fichier de destination, ce qui le vide, et n'évalue son premier argument qu'au moment d'écrire. `readLines()` lit alors un fichier déjà vide.
 
-## La parade
+## Le remède
 
 Forcer la lecture avant l'écriture, en passant par une variable.
 

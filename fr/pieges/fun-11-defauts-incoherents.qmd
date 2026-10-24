@@ -30,7 +30,7 @@ names(formals(png))[1]
 
 De même, le fichier de sortie s'appelle `file` dans `pdf()` mais `filename` dans `png()`. Ces fonctions ont été écrites à des époques différentes, et leurs arguments n'ont jamais été harmonisés.
 
-## La parade
+## Le remède
 
 Écrire chaque argument dont on dépend, même quand on croit connaître sa valeur par défaut, et vérifier avec `args()` en cas de doute.
 

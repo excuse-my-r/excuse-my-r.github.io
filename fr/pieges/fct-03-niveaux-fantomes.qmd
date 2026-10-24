@@ -25,7 +25,7 @@ Extraire une partie d'un facteur ne touche pas à sa table de niveaux. Le niveau
 
 Il réapparaît ensuite partout où les niveaux comptent : une case à 0 dans `table()`, une barre vide dans un graphique, une modalité sans observation dans un modèle, ou un groupe vide dans `split()`.
 
-## La parade
+## Le remède
 
 Retirer les niveaux inutilisés avec `droplevels()` après un filtrage.
 

@@ -27,7 +27,7 @@ When {lubridate} parses a duration written as text, lowercase `m` stands for mon
 
 The other spellings fare no better: `duration()` does not understand the clock format `"01:32:06"` and returns `NA` without a warning. Finally, a period (`hours()`, `minutes()`...) counts calendar units and rejects decimals, with an unhelpful S4 object validation message.
 
-## The fix
+## The remedy
 
 Write `min` for minutes, parse the clock format with `hms()`, and go through durations (`dhours()`, in exact seconds) for decimal quantities.
 

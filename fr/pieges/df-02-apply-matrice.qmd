@@ -33,7 +33,7 @@ apply(ventes, MARGIN = 1, FUN = function(ligne) {
 
 La comparaison `" 5" > 9` se fait alors entre chaînes, dans l'ordre alphabétique, et `"12"` est avant `"9"`. Le résultat est faux sans avertissement. Seule la multiplication finit par une erreur.
 
-## La parade
+## Le remède
 
 Travailler colonne par colonne, ce que R fait nativement, au lieu de ligne par ligne.
 

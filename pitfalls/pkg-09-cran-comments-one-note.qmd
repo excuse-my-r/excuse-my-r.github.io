@@ -30,7 +30,7 @@ The template starts from the most common case, a first submission: CRAN then alw
 
 For an update with no note at all, or with two notes, the file sent to CRAN describes a check that is not yours. The reviewers read it, and an inconsistency like this can cost a round trip.
 
-## The fix
+## The remedy
 
 Rerun the check, then rewrite the summary with the actual figures and explain every remaining note.
 

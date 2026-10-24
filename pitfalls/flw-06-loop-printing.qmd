@@ -30,7 +30,7 @@ At the console, R prints the value of every statement typed at the top level: th
 
 A function does no better: only its last value is returned, and therefore printed. `x + 1` is computed, then lost. The same pitfall hits {ggplot2} plots created in a loop, which do not show up without `print()`.
 
-## The fix
+## The remedy
 
 Ask for printing explicitly with `print()`, or store the results in a vector.
 

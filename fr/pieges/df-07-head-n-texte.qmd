@@ -25,7 +25,7 @@ Un `n` en texte arrive facilement, par exemple lu dans un fichier de paramètres
 
 R 4.3.0 a transformé ce cas en erreur. Un vieux script qui « marchait » peut donc s'arrêter après une mise à jour, et c'est tant mieux.
 
-## La parade
+## Le remède
 
 Convertir le paramètre en nombre dès qu'il entre dans le code.
 

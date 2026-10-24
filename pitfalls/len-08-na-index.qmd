@@ -27,7 +27,7 @@ A bare `NA` is a logical. A logical index is recycled over the whole length of t
 
 The same mechanism is at work in every logical filter. When the condition is `NA` for a row, R does not know whether to keep it and returns an `NA` in its place. The result then contains a ghost value that does not exist in the data.
 
-## The fix
+## The remedy
 
 Go through `which()`, which only keeps the positions where the condition is true.
 

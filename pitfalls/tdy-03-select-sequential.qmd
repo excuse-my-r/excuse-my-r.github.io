@@ -24,7 +24,7 @@ names(select(flowers, !starts_with("Petal") | !starts_with("Sepal")))
 
 The operators follow set logic: `|` is a union. "Everything but Petal" union "everything but Sepal" contains every column, since each one escapes at least one of the two exclusions. Along the way, the columns get reordered.
 
-## The fix
+## The remedy
 
 Put the exclusion last, and write "neither one nor the other" with `&`, or by excluding a single set.
 

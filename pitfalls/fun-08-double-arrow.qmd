@@ -27,7 +27,7 @@ n_values
 
 The function then leaves a trace in the workspace. Worse, if a variable `n_values` already existed, it is overwritten without warning.
 
-## The fix
+## The remedy
 
 Return the value and assign it at the call site. Keep `<<-` for closures, where the variable already exists in the enclosing function.
 

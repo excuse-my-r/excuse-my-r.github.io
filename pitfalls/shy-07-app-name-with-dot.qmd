@@ -22,7 +22,7 @@ A shinyapps.io app name may only contain letters, digits, hyphens and underscore
 
 The rejection only comes at deployment time, once the app bundle has been prepared, with a message about the name rather than the code. The pitfall keeps coming back when the name is built automatically from the package or folder name.
 
-## The fix
+## The remedy
 
 Give an explicit, compliant name, without a dot, independent of the folder name.
 

@@ -20,7 +20,7 @@ ifelse(TRUE, as.Date("2026-10-22"), as.Date("2026-01-01"))
 
 `ifelse()` builds its result from the test, not from the values it returns. So it inherits the attributes of the test (none here) and loses those of the branches, including the `Date` class. What is left is the number of days since 1 January 1970. Factors suffer the same fate and become their integer codes.
 
-## The fix
+## The remedy
 
 For a single condition, `if` is enough. For a vector, `dplyr::if_else()` and `data.table::fifelse()` keep the type and check that both branches are compatible.
 

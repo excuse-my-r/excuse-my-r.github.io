@@ -24,7 +24,7 @@ tab$`my column`
 
 Code that then looks up the column under its real name gets `NULL`, with no error.
 
-## The fix
+## The remedy
 
 Turn the correction off when you care about the original names, and write them between backticks.
 

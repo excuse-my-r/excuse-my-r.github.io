@@ -26,7 +26,7 @@ Ce piège dépend d'un paquet complet, de sa bibliothèque et de `R CMD check`, 
 
 `check()` construit d'abord le paquet, l'installe dans une bibliothèque temporaire, puis lance les tests dans un processus R neuf. Un paquet de `Suggests` absent de la machine, un fichier exclu par `.Rbuildignore`, un fichier lu hors de `inst/`, ou une variable définie dans votre `.Renviron` suffisent à faire échouer les tests à cet endroit seulement.
 
-## La parade
+## Le remède
 
 Rendre les tests indépendants de la session : sauter proprement ce qui dépend d'un paquet facultatif ou d'un secret, et ne lire que des fichiers installés avec le paquet.
 

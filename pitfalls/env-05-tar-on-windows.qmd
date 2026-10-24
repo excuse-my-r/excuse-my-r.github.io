@@ -22,7 +22,7 @@ This pitfall depends on the Windows system, the tools installed in the PATH and 
 
 The extraction then fails, with an unpacking or missing-folder error that mentions neither GitHub nor the package.
 
-## The fix
+## The remedy
 
 Tell R to use its internal tar implementation, which does not depend on any external program.
 

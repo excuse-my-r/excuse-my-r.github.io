@@ -24,7 +24,7 @@ Les entiers de R (le suffixe `L`, mais aussi `length()`, `nrow()`, `1:n` ou les 
 
 Ce `NA` se propage ensuite dans les calculs, et l'avertissement se perd facilement au milieu d'un long traitement. On le découvre plus loin, sur un total manquant dont la cause est lointaine.
 
-## La parade
+## Le remède
 
 Passer en double avant le calcul, avec `as.numeric()` ou des littéraux sans `L`.
 

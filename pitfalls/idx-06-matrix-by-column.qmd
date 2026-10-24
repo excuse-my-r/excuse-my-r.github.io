@@ -24,7 +24,7 @@ R stores a matrix as a single vector, column after column. `matrix()` therefore 
 
 The same order applies the other way round: `as.vector(m)` reads the values back column by column.
 
-## The fix
+## The remedy
 
 Set `byrow = TRUE` when the values are given row by row.
 

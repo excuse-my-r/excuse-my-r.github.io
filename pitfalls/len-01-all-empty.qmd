@@ -25,7 +25,7 @@ It is the mathematical convention: a property holds for every element of an empt
 
 The danger comes from the filter upstream. When `grades[grades > 20]` keeps nothing, the `all(...)` test passes, and the `if` that depends on it runs as if everything were fine. Same thing with `all(c(NA, NA), na.rm = TRUE)`, which is `TRUE`.
 
-## The fix
+## The remedy
 
 Check the length before drawing a conclusion.
 

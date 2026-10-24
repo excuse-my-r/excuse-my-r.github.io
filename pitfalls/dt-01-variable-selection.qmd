@@ -30,7 +30,7 @@ In `dt[, j]`, `j` is an expression evaluated **inside** the table, as in `with()
 
 {data.table} adds convenience rules that make the whole thing unpredictable: a `j` reduced to a symbol with no column of that name gives an error suggesting `..v`, and a `c()` around a function call is enough to trigger a column selection.
 
-## The fix
+## The remedy
 
 Say explicitly that `j` holds column names, with the `..` prefix or `with = FALSE`.
 

@@ -22,7 +22,7 @@ By default, `merge()` sorts the result by the key (`sort = TRUE`). The original 
 
 Columns present on both sides that are not used as the key are both kept, with the suffixes `.x` and `.y`. Code that used `status` no longer finds the column. Even with `sort = FALSE`, the help page states that the row order is not guaranteed.
 
-## The fix
+## The remedy
 
 Pick meaningful suffixes, and restore the order you want explicitly.
 

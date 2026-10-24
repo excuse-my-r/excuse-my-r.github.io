@@ -29,7 +29,7 @@ By default, `read.table()` uses `quote = "\"'"`: the apostrophe opens a quoted s
 
 Likewise, `comment.char = "#"` cuts each line at the first `#`. A reference such as `A#3` truncates the line, and R stops on an error about the number of columns that does not point to the real culprit.
 
-## The fix
+## The remedy
 
 State explicitly which quotes and which comments the file uses, or go through `read.csv()` and `read.csv2()`, which only accept double quotes and ignore `#`.
 

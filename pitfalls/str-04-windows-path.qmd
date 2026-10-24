@@ -24,7 +24,7 @@ In an R string, the backslash starts an escape sequence: `\n` is a newline, `\t`
 
 The worst case is the one that does not fail: `"C:\temp\new"` is a valid string, which contains a tab and a newline. The file is simply never found.
 
-## The fix
+## The remedy
 
 Write paths with forward slashes, which Windows accepts, or double the backslashes. Since R 4.0.0, a raw string `r"(...)"` keeps the text as is.
 

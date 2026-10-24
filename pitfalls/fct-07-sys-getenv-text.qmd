@@ -28,7 +28,7 @@ To the operating system, an environment variable is a character string. `Sys.get
 
 The arithmetic fails loudly, but the comparison gives no warning: `"1" == TRUE` compares the text `"1"` with the text `"TRUE"`, and returns `FALSE`.
 
-## The fix
+## The remedy
 
 Convert the value you read explicitly, with a fallback given as text.
 

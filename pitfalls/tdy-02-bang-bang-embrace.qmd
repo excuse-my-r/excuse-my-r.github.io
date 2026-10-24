@@ -27,7 +27,7 @@ mean_of(measures, x)
 
 `{{ col }}` does something else: it captures the expression `x` without evaluating it, together with its environment, and passes it on to `summarise()`, which looks it up first among the columns. That is almost always what you want from a column argument.
 
-## The fix
+## The remedy
 
 Use `{{ }}` to pass an argument on, and keep `!!` for expressions that are already captured, such as the result of `enquo()`.
 

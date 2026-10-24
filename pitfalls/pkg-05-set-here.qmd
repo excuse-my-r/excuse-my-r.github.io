@@ -29,7 +29,7 @@ setwd(old)
 
 {here} looks for the root only once, when the package is loaded, and keeps it in memory. `set_here()` does create the `.here` file, but does not rerun the search: its message actually asks you to start a new session. Until then, `here()` keeps returning the old root.
 
-## The fix
+## The remedy
 
 Declare where the script lives with `here::i_am()`, which sets the root immediately and checks that the file really exists at that location.
 

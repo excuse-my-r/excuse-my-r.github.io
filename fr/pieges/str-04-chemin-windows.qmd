@@ -24,7 +24,7 @@ Dans une chaîne R, la barre oblique inverse introduit une séquence d'échappem
 
 Le pire cas est celui qui ne plante pas : `"C:\temp\nouveau"` est une chaîne valide, qui contient une tabulation et un saut de ligne. Le fichier n'est simplement jamais trouvé.
 
-## La parade
+## Le remède
 
 Écrire les chemins avec des barres obliques, que Windows accepte, ou doubler les barres inverses. Depuis R 4.0.0, une chaîne brute `r"(...)"` garde le texte tel quel.
 

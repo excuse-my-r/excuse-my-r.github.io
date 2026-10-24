@@ -28,7 +28,7 @@ With `[`, the `drop` argument is `TRUE` by default: as soon as the result has on
 
 The pitfall shows up in a function written for several columns: the day the filter keeps only one, `nrow()`, `colnames()` or `apply()` receive a vector and fail, or return something else.
 
-## The fix
+## The remedy
 
 Write `drop = FALSE` whenever the number of selected rows or columns can fall to one.
 

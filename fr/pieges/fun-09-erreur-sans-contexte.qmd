@@ -30,7 +30,7 @@ Le message d'erreur cite seulement l'appel où l'erreur s'est produite, ici `fun
 
 Dans une console interactive, `traceback()` permet de retrouver la pile d'appels. Dans un script lancé en tâche planifiée, ou dans une boucle sur des centaines d'éléments, il ne reste souvent que ce message.
 
-## La parade
+## Le remède
 
 Ajouter le contexte là où on le connaît, en interceptant l'erreur pour la relancer avec un message complet.
 

@@ -27,7 +27,7 @@ When no name matches and there is no default value, `switch()` returns `NULL`, a
 
 With a number, `switch()` picks by position: `switch(2, "a", "b")` gives `"b"`, and `switch(3, "a", "b")` returns the same invisible `NULL`. With the string `"2"`, the unnamed cases become defaults, and R refuses to have two of them: `switch("2", "a", "b")` is a "duplicate 'switch' defaults" error.
 
-## The fix
+## The remedy
 
 End with an unnamed case that stops the program with a clear message.
 

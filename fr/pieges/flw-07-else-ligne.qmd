@@ -29,7 +29,7 @@ Exécutez ce bloc : R affiche « Error: unexpected 'else' in "else" », puis év
 
 Le même code passe sans problème à l'intérieur d'une fonction ou de tout autre bloc entre accolades, car R ne termine l'instruction qu'à l'accolade fermante du bloc. Un code copié d'une fonction vers la console casse donc sans raison apparente.
 
-## La parade
+## Le remède
 
 Toujours écrire `} else {` sur la même ligne.
 

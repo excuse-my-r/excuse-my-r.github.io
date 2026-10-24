@@ -27,7 +27,7 @@ Before installing, {remotes} compares the available version (for CRAN, the "SHA1
 
 If `glue` is already present elsewhere, for instance in the system library, the installation is skipped. The `ci/lib` folder stays empty, and the script that expected to find the package there fails further on, or uses another version.
 
-## The fix
+## The remedy
 
 Force the installation when the target library matters, or restrict `.libPaths()` to that library for the duration of the installation.
 

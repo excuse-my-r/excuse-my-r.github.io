@@ -29,7 +29,7 @@ Windows termine les lignes par deux caractères, retour chariot puis saut de lig
 
 Ces caractères invisibles se retrouvent dans `DESCRIPTION`, dans des fichiers de données ou dans le code, et font échouer des outils qui lisent le texte. L'incident d'origine s'est soldé par une erreur du type « input string 1 is invalid in this locale », qui évoque l'encodage et non les fins de ligne.
 
-## La parade
+## Le remède
 
 Fixer les fins de ligne dans le dépôt lui-même, par un fichier `.gitattributes`, plutôt que dans la configuration de chaque poste.
 

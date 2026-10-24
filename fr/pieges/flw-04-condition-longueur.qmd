@@ -27,7 +27,7 @@ Choisissez **R 4.1.3** dans le menu, puis exécutez à nouveau : le même code r
 
 `&&` et `||` faisaient pire : ils prenaient le premier élément sans aucun avertissement. R 4.2.0 a transformé le cas de `if` en erreur et ajouté un avertissement à `&&` et `||`, devenu une erreur en R 4.3.0. Un vieux script qui « marchait » peut donc s'arrêter net après une mise à jour de R.
 
-## La parade
+## Le remède
 
 Dire explicitement ce que l'on veut tester sur l'ensemble du vecteur.
 

@@ -22,7 +22,7 @@ R stocke les nombres décimaux en binaire, au format IEEE 754. Comme 1/3 en déc
 
 Le piège se cache dans les filtres : `df[df$taux == 0.3, ]` peut renvoyer zéro ligne sans le moindre avertissement.
 
-## La parade
+## Le remède
 
 Comparer avec une tolérance. `all.equal()` en applique une par défaut, mais renvoie un texte quand les valeurs diffèrent : il faut l'envelopper dans `isTRUE()`.
 

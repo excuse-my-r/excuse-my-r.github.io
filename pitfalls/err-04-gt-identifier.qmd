@@ -34,7 +34,7 @@ To keep a table's styling from leaking onto the other tables of the page, {gt} w
 
 So two renders of the same table differ. A snapshot test fails on every run, and a report versioned in git changes on every build. On top of that, the draw advances the random number generator: the numbers drawn later in the script are no longer the same.
 
-## The fix
+## The remedy
 
 Give a fixed identifier with the `id` argument. Failing that, `withr::with_seed()` freezes the draw without touching the generator of the rest of the script.
 

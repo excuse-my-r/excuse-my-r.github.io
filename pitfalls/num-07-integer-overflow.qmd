@@ -24,7 +24,7 @@ R integers (the `L` suffix, but also `length()`, `nrow()`, `1:n` or columns read
 
 That `NA` then spreads through the calculations, and the warning is easily lost in the middle of a long job. You discover it further down, as a missing total whose cause is far away.
 
-## The fix
+## The remedy
 
 Switch to double before the calculation, with `as.numeric()` or literals without `L`.
 

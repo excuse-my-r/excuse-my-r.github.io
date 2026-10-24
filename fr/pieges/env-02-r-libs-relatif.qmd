@@ -27,7 +27,7 @@ Ce piège dépend d'un pipeline de CI, il ne peut pas se rejouer dans le navigat
 
 Un chemin relatif dans `R_LIBS` est interprété depuis le dossier de travail du processus R, au moment où il démarre. L'installation se fait depuis la racine du dépôt, dans `ci/lib`. Mais `quarto render` exécute le document dans un nouveau processus R lancé depuis `rapports/`, qui cherche alors `rapports/ci/lib`. Ce dossier n'existe pas, et R l'écarte de `.libPaths()` sans avertir : les paquets sont simplement introuvables.
 
-## La parade
+## Le remède
 
 Construire un chemin absolu à partir de la variable fournie par la CI.
 

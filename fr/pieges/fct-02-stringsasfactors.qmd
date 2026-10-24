@@ -30,7 +30,7 @@ Jusqu'à R 3.6, `data.frame()` et `read.table()` (donc `read.csv()`) transformai
 
 Un script écrit avant 4.0 qui s'appuie sur `levels()`, `nlevels()` ou sur les codes du facteur continue de tourner, mais reçoit maintenant `NULL`, 0 ou des `NA`. Seule la conversion numérique laisse un avertissement. Ajouter `options(stringsAsFactors = TRUE)` en tête du script ne ramène pas les facteurs : R accepte l'option avec un avertissement qui annonce sa suppression, et le texte reste du texte.
 
-## La parade
+## Le remède
 
 Écrire l'argument explicitement, quelle que soit la valeur voulue : le script se comporte alors de la même façon sur toutes les versions.
 

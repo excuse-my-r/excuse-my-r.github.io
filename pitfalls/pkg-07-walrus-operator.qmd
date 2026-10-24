@@ -26,7 +26,7 @@ R's parser knows `:=` and turns it into a function call, `` `:=`(total, 1) ``. B
 
 In a package, the code works at run time because the call is interpreted by {data.table} or {rlang}. The static analysis of the check, however, sees a call to a function that no imported package provides, and flags it.
 
-## The fix
+## The remedy
 
 Import `:=` from the package that interprets it, in the package's `NAMESPACE` file.
 

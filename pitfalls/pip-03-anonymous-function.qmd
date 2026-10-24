@@ -25,7 +25,7 @@ On the right of `|>`, R expects a function call, into which it inserts the value
 
 With `%>%`, `x %>% (\(y) ...)` works, without the call parentheses. The native pipe requires you to call the function explicitly, with a trailing `()` that looks superfluous.
 
-## The fix
+## The remedy
 
 Wrap the function in parentheses and call it. Since R 4.2.0, the `_` placeholder often removes the need for an anonymous function.
 

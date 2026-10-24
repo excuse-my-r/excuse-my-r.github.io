@@ -30,7 +30,7 @@ Ici, un dossier `.git` oublié dans le répertoire personnel suffit : `here()` d
 
 `R CMD check` lance les tests dans `monpaquet.Rcheck/tests`, sur le paquet construit. Le `.Rproj` est exclu par `.Rbuildignore`, et le `DESCRIPTION` copié n'est pas dans un dossier parent des tests. `here()` continue donc à remonter, jusqu'au répertoire personnel s'il y trouve un marqueur. Les chemins construits pointent alors hors du paquet, vers des fichiers qui n'existent pas ou, pire, vers d'autres fichiers du même nom.
 
-## La parade
+## Le remède
 
 Dans un paquet, ne pas utiliser {here} : `testthat::test_path()` dans les tests, `system.file()` pour les fichiers installés depuis `inst/`.
 

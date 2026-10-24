@@ -22,7 +22,7 @@ paste(c("a", "b"), colapse = "+")
 
 `sum()` et `paste()` acceptent un nombre quelconque de valeurs via `...`. Un argument dont le nom n'est pas reconnu n'est pas rejeté : il rejoint les données. `na.rn = TRUE` devient la valeur `TRUE`, soit 1, ajoutée à la somme. `colapse = "+"` devient une chaîne de plus à coller.
 
-## La parade
+## Le remède
 
 Relire les noms d'arguments, et dans vos propres fonctions, refuser ce qui n'est pas attendu dans `...`, par exemple avec `rlang::check_dots_empty()`.
 
