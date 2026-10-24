@@ -7,7 +7,7 @@ extrait: 'class(sapply(list(), length))'
 reponse: '"list"'
 attendu: "un vecteur d'entiers, éventuellement vide"
 versions: "Toutes"
-source: "The R Inferno"
+source: "The R Inferno, hadley/strict"
 ---
 
 ::: {.piege}
@@ -24,12 +24,18 @@ sapply(1:3, function(i) {
 sapply(1:3, function(i) {
   c(min = i, max = i^2)
 })
+
+evenements <- data.frame(id = 1, debut = as.POSIXct("2024-01-01", tz = "UTC"))
+sapply(evenements["id"], class)
+sapply(evenements, class)
 ```
 :::
 
 ## Pourquoi
 
 `sapply()` applique la fonction, puis essaie de simplifier le résultat. Si chaque appel renvoie une seule valeur, on obtient un vecteur. Si tous renvoient le même nombre de valeurs, une matrice. Sinon, une liste. Et sur une entrée vide, il n'y a rien à simplifier : `sapply()` renvoie `list()`.
+
+Le classique `sapply(df, class)` y tombe aussi. Il suffit d'une colonne à deux classes, comme une date-heure (`"POSIXct" "POSIXt"`), pour que le vecteur nommé devienne une liste.
 
 Le type du résultat dépend donc des données, pas du code. Une fonction qui marche sur l'exemple casse plus loin, le jour où l'entrée est vide ou irrégulière.
 

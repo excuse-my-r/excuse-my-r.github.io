@@ -5,7 +5,7 @@ categories: [Functions]
 impact: silencieux
 attendu: "`2`, the mean"
 versions: "All"
-source: "safer-r"
+source: "safer-r, hadley/strict"
 ---
 
 ::: {.piege}
@@ -22,7 +22,7 @@ find("mean")
 
 R looks for a function first in the current environment, then in the attached packages, from the most recent to the oldest. A `mean` function created in the workspace therefore comes before the one in {base}, and R says nothing.
 
-The same mechanism applies between packages. Loading {plyr} after {dplyr} replaces `summarise()` and `mutate()` with their {plyr} namesakes, which ignore `group_by()`. R does print a message when loading, but it is easy to miss.
+The same mechanism applies between packages. Loading {plyr} after {dplyr} replaces `summarise()` and `mutate()` with their {plyr} namesakes, which ignore `group_by()`. R does print a message when loading, but it is easy to miss, and `library(plyr, warn.conflicts = FALSE)` or `suppressPackageStartupMessages()` remove even that one.
 
 ## The fix
 

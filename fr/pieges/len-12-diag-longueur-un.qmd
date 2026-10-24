@@ -1,0 +1,36 @@
+---
+title: "diag() sur une seule valeur construit une matrice identité de cette taille"
+ref: LEN-12
+categories: [Vides et NA]
+impact: silencieux
+extrait: 'dim(diag(c(4)))'
+reponse: '4 4'
+attendu: "`1 1`, une matrice 1 x 1 qui contient 4"
+versions: "Toutes"
+source: "hadley/strict"
+---
+
+::: {.piege}
+```{r}
+variances <- c(4, 9)
+diag(variances)
+variances <- c(4)
+diag(variances)
+```
+:::
+
+## Pourquoi
+
+`diag()` a deux comportements. Si on lui donne un vecteur de plusieurs valeurs, il les place sur la diagonale d'une matrice carrée. Si on lui donne un seul nombre, il le prend pour une taille et renvoie la matrice identité de cette taille, tronquée à l'entier : `diag(2.7)` est une identité 2 x 2, `diag(0.5)` une matrice 0 x 0.
+
+Une fonction qui construit une matrice de covariance à partir d'un vecteur de variances marche donc jusqu'au jour où le vecteur ne contient plus qu'une valeur. Elle renvoie alors une identité 4 x 4, sans avertissement.
+
+## La parade
+
+Donner la taille explicitement avec `nrow` : le résultat est la matrice diagonale attendue, quelle que soit la longueur du vecteur.
+
+::: {.piege}
+```{r}
+diag(variances, nrow = length(variances))
+```
+:::

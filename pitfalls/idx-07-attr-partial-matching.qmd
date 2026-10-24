@@ -1,0 +1,38 @@
+---
+title: "attr() completes attribute names, until a second one starts the same way"
+ref: IDX-07
+categories: [Indexing]
+impact: silencieux
+extrait: 'attr(structure(1:3, unit = "cm"), "u")'
+reponse: '"cm"'
+attendu: "`NULL`, there is no attribute named u"
+versions: "All"
+source: "hadley/strict"
+---
+
+::: {.piege}
+```{r}
+measure <- structure(1:3, unit = "cm")
+attr(measure, "u")
+measure <- structure(1:3, unit = "cm", uncertainty = 0.1)
+attr(measure, "u")
+```
+:::
+
+## Why
+
+The `exact` argument of `attr()` is `FALSE` by default: a prefix is enough, as long as only one attribute starts with it. R returns that attribute without a warning.
+
+The day another attribute starts with the same letters, here `uncertainty` next to `unit`, the prefix becomes ambiguous and `attr()` returns `NULL`. The code that reads the attribute has not changed.
+
+## The fix
+
+Write the full name with `exact = TRUE`, or ask R to flag every partial match.
+
+::: {.piege}
+```{r}
+attr(measure, "unit", exact = TRUE)
+options(warnPartialMatchAttr = TRUE)
+attr(structure(1:3, unit = "cm"), "u")
+```
+:::

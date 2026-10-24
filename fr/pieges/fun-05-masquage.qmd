@@ -5,7 +5,7 @@ categories: [Fonctions]
 impact: silencieux
 attendu: "`2`, la moyenne"
 versions: "Toutes"
-source: "safer-r"
+source: "safer-r, hadley/strict"
 ---
 
 ::: {.piege}
@@ -22,7 +22,7 @@ find("mean")
 
 R cherche une fonction d'abord dans l'environnement courant, puis dans les paquets chargés, du plus récent au plus ancien. Une fonction `mean` créée dans l'espace de travail passe donc avant celle de {base}, et R ne dit rien.
 
-Le même mécanisme joue entre paquets. Charger {plyr} après {dplyr} remplace `summarise()` et `mutate()` par leurs homonymes de {plyr}, qui ignorent `group_by()`. R affiche bien un message au chargement, mais il est facile à manquer.
+Le même mécanisme joue entre paquets. Charger {plyr} après {dplyr} remplace `summarise()` et `mutate()` par leurs homonymes de {plyr}, qui ignorent `group_by()`. R affiche bien un message au chargement, mais il est facile à manquer, et `library(plyr, warn.conflicts = FALSE)` ou `suppressPackageStartupMessages()` font disparaître même celui-là.
 
 ## La parade
 

@@ -7,7 +7,7 @@ extrait: 'is.matrix(matrix(1:6, nrow = 2)[1, ])'
 reponse: 'FALSE'
 attendu: "a one-row matrix, and a one-column data frame"
 versions: "All"
-source: "The R Inferno"
+source: "The R Inferno, hadley/strict"
 ---
 
 ::: {.piege}
@@ -18,12 +18,13 @@ dim(m[1, ])
 
 df <- data.frame(a = 1:3, b = 4:6)
 df[, "a"]
+df[, c(TRUE, FALSE)]
 ```
 :::
 
 ## Why
 
-With `[`, the `drop` argument is `TRUE` by default: as soon as the result has only one row or one column left, R removes the dimension that has become useless. The matrix row becomes a plain vector, with no `dim()`, and the data frame column becomes a vector.
+With `[`, the `drop` argument is `TRUE` by default: as soon as the result has only one row or one column left, R removes the dimension that has become useless. The matrix row becomes a plain vector, with no `dim()`, and the data frame column becomes a vector. A logical index behaves the same way: `df[, c(TRUE, FALSE)]` keeps only `a`, as a vector.
 
 The pitfall shows up in a function written for several columns: the day the filter keeps only one, `nrow()`, `colnames()` or `apply()` receive a vector and fail, or return something else.
 
