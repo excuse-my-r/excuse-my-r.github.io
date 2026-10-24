@@ -18,7 +18,7 @@ listing:
 # We love R. Sometimes we also feel like swearing at it. {.accueil-titre .unnumbered .unlisted}
 
 ::: {.accueil-chapo}
-We like R, but it sometimes behaves in rather surprising ways, to put it politely. Excuse my R gathers these small betrayals, all met in real projects, so that you run into them here rather than in production. Each page explains what happens and how to avoid it, and the code runs in your browser, on the R version of your choice.
+Excuse my R gathers its small betrayals, all met in real projects, so that you run into them here rather than in production. Each page explains what happens and how to avoid it, and the code runs in your browser, on the R version of your choice.
 :::
 
 :::

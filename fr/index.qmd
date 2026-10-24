@@ -18,7 +18,7 @@ listing:
 # R, on l'aime bien. Mais parfois, on a envie de l'insulter. {.accueil-titre .unnumbered .unlisted}
 
 ::: {.accueil-chapo}
-R, on l'aime bien, mais il a parfois des comportements quelque peu étonnants, pour ne pas dire autre chose. Excuse my R se propose de regrouper ces petites trahisons, toutes vécues sur de vrais projets, pour que vous les croisiez ici plutôt qu'en production. Chaque fiche explique ce qui se passe et comment l'éviter, et le code tourne dans votre navigateur, sur la version de R de votre choix.
+Excuse my R se propose de regrouper ses petites trahisons, toutes vécues sur de vrais projets, pour que vous les croisiez ici plutôt qu'en production. Chaque fiche explique ce qui se passe et comment l'éviter, et le code tourne dans votre navigateur, sur la version de R de votre choix.
 :::
 
 :::
