@@ -3,7 +3,7 @@ title: "unnest() supprime les lignes dont la liste est vide"
 ref: TDY-09
 categories: [tidyverse]
 impact: silencieux
-attendu: "les groupes b et c gardés, avec NA"
+attendu: "les clients b et c gardés, avec NA"
 versions: "Toutes les versions de {tidyr}"
 source: "Slack ThinkR (2022)"
 ---

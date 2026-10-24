@@ -20,7 +20,7 @@ quote(!a |> any())
 
 ## Pourquoi
 
-L'opérateur `!` a une priorité plus faible que `|>`, et même que les comparaisons et `%in%`. R lit donc d'abord tout le pipe, `a |> any()`, puis applique la négation au résultat : `!any(a)`, et non `any(!a)`.
+L'opérateur `!` a une priorité plus faible que `|>` et `%in%`, et même que les comparaisons. R lit donc d'abord tout le pipe, `a |> any()`, puis applique la négation au résultat : `!any(a)`, et non `any(!a)`.
 
 `quote()` montre l'expression telle que R l'a comprise. Le même phénomène joue avec `%>%` de {magrittr}, et avec `!x %in% y`, qui vaut `!(x %in% y)`.
 

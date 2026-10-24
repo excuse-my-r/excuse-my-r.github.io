@@ -14,16 +14,16 @@ suppressPackageStartupMessages(library(shiny))
 
 options_de <- function(entree) {
   html <- as.character(entree)
-  regmatches(html, gregexpr("<(optgroup|option)[^>]*>[^<\n]*", html))[[1]]
+  regmatches(html, m = gregexpr("<(optgroup|option)[^>]*>[^<\n]*", text = html))[[1]]
 }
 
 options_de(selectInput(
-  "choix", "Choix",
+  "choix", label = "Choix",
   choices = list(Fruits = c("pomme", "poire"), Legumes = c("poireau"))
 ))
 
 options_de(selectInput(
-  "choix", "Choix",
+  "choix", label = "Choix",
   choices = list(Fruits = c(Pomme = "pomme"), Legumes = c(Pomme = "pomme"))
 ))
 ```
@@ -31,7 +31,7 @@ options_de(selectInput(
 
 ## Pourquoi
 
-Dans `choices`, un élément nommé de longueur 1 est lu comme un choix simple, son nom servant d'étiquette. `Legumes = c("poireau")` ne crée donc pas de groupe : il crée une option affichée « Legumes » dont la valeur est `"poireau"`. Le groupe n'apparaît qu'à partir de deux éléments, ou si l'élément est une liste ou un vecteur nommé.
+Dans `choices`, un élément nommé de longueur 1 dont la valeur n'a pas elle-même de nom est lu comme un choix simple, son nom servant d'étiquette. `Legumes = c("poireau")` ne crée donc pas de groupe : il crée une option affichée « Legumes » dont la valeur est `"poireau"`. Le groupe n'apparaît qu'à partir de deux éléments, ou si l'élément est une liste ou un vecteur nommé.
 
 Second piège : deux options de groupes différents peuvent porter la même valeur. `input$choix` vaut alors `"pomme"` dans les deux cas, et le serveur ne peut pas savoir lequel a été choisi.
 
@@ -44,7 +44,7 @@ Second piège : deux options de groupes différents peuvent porter la même vale
 suppressPackageStartupMessages(library(shiny))
 
 options_de(selectInput(
-  "choix", "Choix",
+  "choix", label = "Choix",
   choices = list(
     Fruits = list(Pomme = "fruit_pomme", Poire = "fruit_poire"),
     Legumes = list(Poireau = "legume_poireau")

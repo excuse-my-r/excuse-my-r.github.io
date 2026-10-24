@@ -10,8 +10,8 @@ source: "Slack ThinkR (2021)"
 
 ::: {.piege .piege-statique}
 ```r
-write.csv(brut, "sorties/Resultats.csv")
-write.csv(nettoye, "sorties/resultats.csv")
+write.csv(brut, file = "sorties/Resultats.csv")
+write.csv(nettoye, file = "sorties/resultats.csv")
 list.files("sorties")
 ```
 
@@ -34,7 +34,7 @@ Choisir une convention de nommage (tout en minuscules, par exemple) et n'avoir j
 
 ::: {.piege .piege-statique}
 ```r
-write.csv(brut, "sorties/resultats_bruts.csv")
-write.csv(nettoye, "sorties/resultats_nettoyes.csv")
+write.csv(brut, file = "sorties/resultats_bruts.csv")
+write.csv(nettoye, file = "sorties/resultats_nettoyes.csv")
 ```
 :::

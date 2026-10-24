@@ -24,8 +24,6 @@ tribble(
 
 Une colonne de tibble doit être un vecteur, et une fonction n'en est pas un : `tibble()` le refuse. `tribble()` lit ses valeurs cellule par cellule et, quand une cellule n'est pas une valeur simple, il range la colonne dans une liste. La fonction devient alors l'élément d'une colonne-liste, ce qui est autorisé.
 
-Les deux constructeurs du même paquet donnent donc des réponses opposées pour la même donnée.
-
 ## La parade
 
 Construire explicitement la colonne-liste avec `list()`, ce qui marche partout, puis appeler la fonction avec `[[ ]]`.
