@@ -23,7 +23,7 @@ Avec `%>%` de {magrittr}, le point désigne la valeur qui arrive par le pipe, et
 
 `quote()` montre l'appel réellement construit : `mots` devient le motif, `"a"` le remplacement, `"b"` le texte, et `.` est passé en quatrième argument. Si aucune variable `.` n'existe, l'erreur « object '.' not found » ne dit rien du pipe. Si une variable `.` traîne dans l'environnement, le calcul tourne et donne un résultat faux.
 
-## La parade
+## Le remède
 
 Depuis R 4.2.0, le pipe natif a son propre placeholder, `_`, qui doit être passé à un argument nommé.
 

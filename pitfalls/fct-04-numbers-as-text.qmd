@@ -24,7 +24,7 @@ On text, `max()`, `sort()` and `<` follow alphabetical order, character by chara
 
 Such text often comes from reading a file where a single non-numeric cell turned the whole column into characters.
 
-## The fix
+## The remedy
 
 Convert to numbers before comparing or sorting, and check for `NA`s produced by the conversion.
 

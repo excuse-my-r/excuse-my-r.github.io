@@ -27,7 +27,7 @@ The `R` launcher is a shell script, which relies on system commands to locate it
 
 R then could not find its base packages, `base`, `utils`, `stats`, and the pipeline stopped on startup errors that never mentioned `which`. Images based on Ubuntu Focal, such as `rocker/verse:4.1`, worked.
 
-## The fix
+## The remedy
 
 Pin a tested image version rather than `latest`, as the team did by going back to a Focal-based image, and check that `which` is there before launching R.
 

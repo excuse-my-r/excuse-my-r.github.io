@@ -31,7 +31,7 @@ This pitfall depends on the machine's time zone, so it cannot be replayed in the
 
 The same script therefore gives different times locally and in production, with no error or warning. The gap looks like a Windows versus Linux difference, but what matters is the system time zone.
 
-## The fix
+## The remedy
 
 State the time zone at read time, with a function that uses it to interpret the text.
 

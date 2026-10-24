@@ -25,7 +25,7 @@ Subtracting two date-times calls `difftime()` with `units = "auto"`. R then pick
 
 The printout says so ("Time difference of 1.5 mins"), but `as.numeric()` throws the unit away and keeps only the number. On a vector, the unit depends on the smallest gap: adding or removing a row can change the unit of the whole column.
 
-## The fix
+## The remedy
 
 Choose the unit explicitly, when computing or when converting.
 

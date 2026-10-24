@@ -29,7 +29,7 @@ This pitfall depends on a Shiny app running in a browser, so it cannot be replay
 
 Because the conversions round, the value sent back is never quite the same. The fields flicker, the user's input is overwritten while they type, and the app may never settle.
 
-## The fix
+## The remedy
 
 Only update the other field if its value really changes, or keep a single source of truth (for example a reactive value in Celsius) from which both fields derive.
 

@@ -25,7 +25,7 @@ An `n` stored as text slips in easily, for instance read from a parameter file o
 
 R 4.3.0 turned this case into an error. An old script that "worked" may therefore stop after an upgrade, and that is a good thing.
 
-## The fix
+## The remedy
 
 Convert the parameter to a number as soon as it enters the code.
 

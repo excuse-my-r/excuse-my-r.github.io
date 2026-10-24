@@ -29,7 +29,7 @@ The functions of the `apply` family hide a loop: `sapply()` calls the function o
 
 Conversely, vectorising at all costs has a price too. `ifelse()` computes both of its branches in full, then picks element by element. So `log(x)` is computed for -1 as well, hence the warning, even though the condition was meant to rule that case out. On heavy computations, you pay for every branch on every value.
 
-## The fix
+## The remedy
 
 Call the vectorised functions directly, and keep the computation for the elements that need it.
 

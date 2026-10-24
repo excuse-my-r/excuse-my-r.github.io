@@ -25,7 +25,7 @@ Dans `aes()`, `.data` est le pronom qui désigne le tableau de données. Mais `f
 
 La forme formule, `facet_grid(.data[[variable]] ~ .)`, ne plante pas, mais la variable y perd son nom : {ggplot2} la range sous le nom `<unknown>`, qui ressort par exemple avec `labeller = label_both`.
 
-## La parade
+## Le remède
 
 `vars()` retarde l'évaluation, comme `aes()`, jusqu'au moment où les données sont disponibles. La variable garde alors son nom.
 

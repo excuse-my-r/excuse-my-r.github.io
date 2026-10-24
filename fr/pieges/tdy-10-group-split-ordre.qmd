@@ -25,7 +25,7 @@ morceaux$Suisse
 
 Pour une colonne facteur, l'ordre est celui des niveaux, ce qui ne simplifie pas les choses.
 
-## La parade
+## Le remède
 
 Prendre les noms dans `group_keys()`, qui suit le même ordre que `group_split()`, ou utiliser `split()` de base R, qui nomme lui-même la liste.
 

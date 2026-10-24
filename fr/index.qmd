@@ -18,7 +18,7 @@ listing:
 # R, on l'aime bien. Mais parfois, on a envie de l'insulter. {.accueil-titre .unnumbered .unlisted}
 
 ::: {.accueil-chapo}
-R plante rarement sans raison. Le plus souvent, il répond quelque chose de plausible et de faux, ou échoue avec un message qui regarde ailleurs. Ce catalogue rassemble ces moments, repérés dans de vrais projets. Chaque piège vient avec son explication et sa parade, et son code s'exécute ici même, dans votre navigateur, avec la version de R de votre choix.
+Excuse my R se propose de regrouper ses petites trahisons, toutes vécues sur de vrais projets, pour que vous les croisiez ici plutôt qu'en production. Chaque fiche explique ce qui se passe et comment l'éviter, et le code tourne dans votre navigateur, sur la version de R de votre choix.
 :::
 
 :::

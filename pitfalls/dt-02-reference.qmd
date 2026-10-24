@@ -32,7 +32,7 @@ In R, `backup <- dt` copies nothing right away: both names point to the same obj
 
 The same goes inside a function: the argument `d` points to the caller's table, and `:=` modifies it, even though the function only returns a number.
 
-## The fix
+## The remedy
 
 Make a real copy with `copy()` when you want to keep the original.
 

@@ -24,7 +24,7 @@ ifelse(all(x == 0), yes = NA_real_, no = max(x[x != 0]))
 
 `ifelse()` de base R se comporte autrement : il n'évalue `no` que si le test contient au moins un `FALSE`. Les deux fonctions donnent le même résultat, mais pas les mêmes avertissements ni les mêmes erreurs. Si la branche inutile appelle `stop()`, `if_else()` s'arrête, `ifelse()` non.
 
-## La parade
+## Le remède
 
 Pour une condition unique, `if` n'évalue que la branche choisie.
 

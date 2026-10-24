@@ -22,7 +22,7 @@ R stores decimal numbers in binary, in the IEEE 754 format. Just as 1/3 has no f
 
 The pitfall hides in filters: `df[df$rate == 0.3, ]` can return zero rows without the slightest warning.
 
-## The fix
+## The remedy
 
 Compare with a tolerance. `all.equal()` applies one by default, but returns a string when the values differ: wrap it in `isTRUE()`.
 

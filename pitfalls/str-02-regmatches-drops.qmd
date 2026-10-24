@@ -22,7 +22,7 @@ Base R has no "extract" function: you have to combine a function that finds the 
 
 With `regexpr()`, `regmatches()` only returns the matches it found. `"none"` vanishes without a warning: the result has two elements for three texts, and no longer lines up with them. Dropped into a data frame column, it gets recycled or triggers a length error far from its cause. With `gregexpr()`, you get a list, where a missing match is a `character(0)`.
 
-## The fix
+## The remedy
 
 `stringr::str_extract()` returns one value per string, with `NA` when nothing matches. `str_extract_all()` gives the list of all matches.
 

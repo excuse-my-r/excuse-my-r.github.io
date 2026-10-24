@@ -26,7 +26,7 @@ This pitfall depends on a complete package, its library and `R CMD check`, so it
 
 `check()` first builds the package, installs it into a temporary library, then runs the tests in a fresh R process. A `Suggests` package missing from the machine, a file excluded by `.Rbuildignore`, a file read from outside `inst/`, or a variable defined in your `.Renviron` is enough to make the tests fail there and only there.
 
-## The fix
+## The remedy
 
 Make the tests independent of the session: skip cleanly whatever depends on an optional package or a secret, and only read files installed with the package.
 

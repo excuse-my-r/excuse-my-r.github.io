@@ -25,7 +25,7 @@ traiter()
 
 Le piège se cache souvent dans une longue fonction, où le second `on.exit()` est ajouté des dizaines de lignes après le premier.
 
-## La parade
+## Le remède
 
 Ajouter `add = TRUE` à chaque appel. Les actions s'exécutent alors dans l'ordre où elles ont été déclarées, ou dans l'ordre inverse avec `after = FALSE`.
 

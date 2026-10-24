@@ -28,7 +28,7 @@ R has two output streams. `print()` and `cat()` write to standard output, which 
 
 So a function that "prints" something can return an almost empty capture, depending on how its author chose to write it.
 
-## The fix
+## The remedy
 
 To collect the messages, intercept them as conditions with `withCallingHandlers()`. `capture.output(type = "message")` also exists, but it diverts the stream itself: it sees nothing as soon as another tool is already intercepting messages, like knitr, which produced this page.
 

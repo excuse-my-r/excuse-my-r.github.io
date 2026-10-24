@@ -32,7 +32,7 @@ Quand un nom d'argument ne correspond exactement à aucun argument, R cherche un
 
 Le jour où la fonction gagne un argument au même début, ici `longitude`, l'abréviation désigne deux arguments à la fois et l'appel échoue. Le code appelant, lui, n'a pas changé.
 
-## La parade
+## Le remède
 
 Écrire les noms d'arguments en entier, et demander à R de signaler chaque abréviation.
 

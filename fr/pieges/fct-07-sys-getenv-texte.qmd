@@ -28,7 +28,7 @@ Une variable d'environnement est une chaîne de caractères pour le système. `S
 
 Le calcul échoue franchement, mais la comparaison ne prévient pas : `"1" == TRUE` compare le texte `"1"` au texte `"TRUE"`, et renvoie `FALSE`.
 
-## La parade
+## Le remède
 
 Convertir explicitement la valeur lue, avec un repli sous forme de texte.
 

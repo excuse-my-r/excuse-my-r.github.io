@@ -24,7 +24,7 @@ A bare name must refer to an existing column: `select()` stops if it cannot find
 
 A typo in a `matches()` thus goes unnoticed: the column you thought you had removed is still there.
 
-## The fix
+## The remedy
 
 Say what you mean: `all_of()` when the columns must exist, `any_of()` when they are optional.
 

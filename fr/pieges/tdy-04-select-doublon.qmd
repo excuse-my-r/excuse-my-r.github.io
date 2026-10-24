@@ -23,7 +23,7 @@ select(voitures, pouet = mpg, mpg)
 
 `select()` choisit des colonnes, il ne les copie pas. `pouet = mpg` sélectionne `mpg` en la renommant, et la seconde mention de `mpg` désigne la même colonne, déjà prise : elle n'est pas dupliquée. Il ne reste qu'une colonne, sous le premier nom donné, sans avertissement.
 
-## La parade
+## Le remède
 
 Pour obtenir une copie, la créer avec `mutate()`, puis sélectionner.
 

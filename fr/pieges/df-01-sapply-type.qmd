@@ -39,7 +39,7 @@ Le classique `sapply(df, class)` y tombe aussi. Il suffit d'une colonne à deux 
 
 Le type du résultat dépend donc des données, pas du code. Une fonction qui marche sur l'exemple casse plus loin, le jour où l'entrée est vide ou irrégulière.
 
-## La parade
+## Le remède
 
 `vapply()` oblige à déclarer la forme de chaque résultat, et s'arrête si elle n'est pas respectée.
 

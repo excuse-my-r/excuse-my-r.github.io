@@ -23,7 +23,7 @@ x[-which(x > 10)]
 
 Le code marche tant qu'il y a quelque chose à retirer. Le jour où les données sont propres, il supprime tout.
 
-## La parade
+## Le remède
 
 Indexer avec le vecteur logique inversé, qui garde tout quand aucune valeur n'est à exclure.
 

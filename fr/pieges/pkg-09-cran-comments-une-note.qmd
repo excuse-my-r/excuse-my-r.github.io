@@ -30,7 +30,7 @@ Le modèle part du cas le plus courant, une première soumission : CRAN signale 
 
 Pour une mise à jour sans aucune note, ou avec deux notes, le fichier envoyé à CRAN décrit un check qui n'est pas le vôtre. Les relecteurs le lisent, et une incohérence de ce genre peut coûter un aller-retour.
 
-## La parade
+## Le remède
 
 Relancer le check, puis réécrire le résumé avec les chiffres réels et expliquer chaque note restante.
 

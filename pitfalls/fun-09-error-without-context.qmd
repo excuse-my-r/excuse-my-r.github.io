@@ -30,7 +30,7 @@ The error message only cites the call where the error happened, here `fun1()`. Y
 
 In an interactive console, `traceback()` lets you recover the call stack. In a script run as a scheduled task, or in a loop over hundreds of items, that message is often all that is left.
 
-## The fix
+## The remedy
 
 Add context where you know it, by catching the error and raising it again with a complete message.
 

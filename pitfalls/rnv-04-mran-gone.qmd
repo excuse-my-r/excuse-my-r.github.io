@@ -23,7 +23,7 @@ MRAN was the daily CRAN snapshot run by Microsoft. On Windows and macOS, old ver
 
 A project still on an old version of {renv} therefore keeps trying to reach MRAN during `restore()`. The resulting download errors talk about addresses or connections, not about MRAN being closed. {renv} 1.0.0 turned this integration off by default, and the option is now marked as deprecated.
 
-## The fix
+## The remedy
 
 Turn MRAN off before restoring, then update {renv} in the project.
 

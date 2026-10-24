@@ -29,7 +29,7 @@ The empty pattern matches everywhere. Base R draws the logical conclusion: `grep
 
 The pitfall appears when the pattern comes from a variable, for example a search field left blank: a filter that used to keep everything starts failing after an upgrade. And not every function follows the rule: `str_split()` still accepts the empty pattern and splits into characters.
 
-## The fix
+## The remedy
 
 Handle the empty pattern explicitly, according to what it should mean.
 

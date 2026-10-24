@@ -27,7 +27,7 @@ Dans l'incident d'origine, un projet utilisait une ancienne version de {renv}. A
 
 `utils::install.packages()` avec le même `repos =` téléchargeait bien `xfun` 0.48. Après la mise à jour de {renv}, `renv::install()` propose lui aussi 0.48.
 
-## La parade
+## Le remède
 
 Mettre {renv} à jour, puis relire la liste des versions proposées avant d'accepter l'installation.
 

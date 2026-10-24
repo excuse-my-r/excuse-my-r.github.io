@@ -30,7 +30,7 @@ Dans `dt[, j]`, `j` est une expression évaluée **dans** la table, comme dans `
 
 {data.table} ajoute des règles de commodité qui rendent le tout imprévisible : `j` réduit à un symbole sans colonne de ce nom donne une erreur qui suggère `..v`, et un `c()` autour d'un appel de fonction suffit à déclencher une sélection de colonnes.
 
-## La parade
+## Le remède
 
 Dire explicitement que `j` contient des noms de colonnes, avec le préfixe `..` ou `with = FALSE`.
 

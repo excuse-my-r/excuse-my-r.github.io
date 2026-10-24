@@ -26,7 +26,7 @@ if (T) {
 
 Le code qui écrit `na.rm = T` ou `if (F)` change alors de sens sans erreur.
 
-## La parade
+## Le remède
 
 Toujours écrire `TRUE` et `FALSE` en entier. Impossible de les écraser : R refuse.
 

@@ -27,7 +27,7 @@ nb_valeurs
 
 La fonction laisse alors une trace dans l'espace de travail. Pire, si une variable `nb_valeurs` existait déjà, elle est écrasée sans prévenir.
 
-## La parade
+## Le remède
 
 Renvoyer la valeur et l'affecter à l'appel. Réserver `<<-` aux fermetures, où la variable existe déjà dans la fonction englobante.
 

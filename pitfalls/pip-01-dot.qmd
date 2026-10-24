@@ -23,7 +23,7 @@ With the {magrittr} `%>%`, the dot stands for the value coming down the pipe, an
 
 `quote()` shows the call actually built: `words` becomes the pattern, `"a"` the replacement, `"b"` the text, and `.` is passed as the fourth argument. If no `.` variable exists, the error "object '.' not found" says nothing about the pipe. If a `.` variable is lying around in the environment, the computation runs and gives a wrong result.
 
-## The fix
+## The remedy
 
 Since R 4.2.0, the native pipe has its own placeholder, `_`, which must be passed to a named argument.
 

@@ -27,7 +27,7 @@ Quand aucun nom ne correspond et qu'il n'y a pas de valeur par défaut, `switch(
 
 Avec un nombre, `switch()` choisit par position : `switch(2, "a", "b")` donne `"b"`, et `switch(3, "a", "b")` renvoie le même `NULL` invisible. Avec le texte `"2"`, les cas sans nom deviennent des valeurs par défaut, et R refuse d'en avoir deux : `switch("2", "a", "b")` est une erreur « duplicate 'switch' defaults ».
 
-## La parade
+## Le remède
 
 Terminer par un cas sans nom qui arrête le programme avec un message clair.
 

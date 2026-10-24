@@ -37,7 +37,7 @@ Le dépôt inscrit dans le lockfile n'est pas celui qu'utilise `renv::install()`
 
 Le paquet est alors installé depuis CRAN courant, et non depuis l'instantané daté. Au `snapshot()` suivant, le lockfile enregistre le dépôt actif : l'adresse datée disparaît du fichier, et avec elle la reproductibilité qu'elle garantissait.
 
-## La parade
+## Le remède
 
 Vérifier `getOption("repos")` avant d'installer, et ne pas redéfinir les dépôts dans un projet {renv} sans le vouloir.
 

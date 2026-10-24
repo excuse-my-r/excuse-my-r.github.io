@@ -29,7 +29,7 @@ Ce piège dépend d'une session R non interactive et de l'écriture d'un projet 
 
 Quand le nouveau projet est à l'intérieur d'un autre (un dossier qui contient déjà un `.Rproj`, un `DESCRIPTION` ou un `.git`), {usethis} demande confirmation. En session interactive, on répond oui. Dans un `Rscript`, une CI ou un appel depuis une autre fonction, personne ne peut répondre : selon les versions, l'appel restait bloqué sur la question ou s'arrête sur cette erreur.
 
-## La parade
+## Le remède
 
 Autoriser explicitement le projet imbriqué par l'option prévue pour cela, ou créer le paquet hors du projet parent.
 

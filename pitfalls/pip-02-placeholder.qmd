@@ -26,7 +26,7 @@ The native pipe is not a function: it is a rewrite of the code at parse time, be
 
 The {magrittr} `.` had none of these limits, hence the surprise when translating existing code.
 
-## The fix
+## The remedy
 
 Rely on the function's defaults when they are enough (`setNames()` reuses `nm` as the value), otherwise go through an anonymous function, which can use its argument as many times as it likes.
 

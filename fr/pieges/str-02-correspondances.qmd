@@ -22,7 +22,7 @@ Base R n'a pas de fonction « extraire » : il faut combiner une fonction qui ch
 
 Avec `regexpr()`, `regmatches()` ne renvoie que les correspondances trouvées. `"rien"` disparaît sans avertissement : le résultat a deux éléments pour trois textes, et ne s'aligne plus sur eux. Glissé dans une colonne de data frame, il est recyclé ou provoque une erreur de longueur loin de sa cause. Avec `gregexpr()`, on obtient une liste, où l'absence est un `character(0)`.
 
-## La parade
+## Le remède
 
 `stringr::str_extract()` renvoie une valeur par chaîne, avec `NA` quand rien ne correspond. `str_extract_all()` donne la liste de toutes les correspondances.
 

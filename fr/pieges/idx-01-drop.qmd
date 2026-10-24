@@ -28,7 +28,7 @@ Avec `[`, l'argument `drop` vaut `TRUE` par défaut : dès que le résultat n'a 
 
 Le piège apparaît dans une fonction écrite pour plusieurs colonnes : le jour où le filtre n'en garde qu'une, `nrow()`, `colnames()` ou `apply()` reçoivent un vecteur et échouent, ou renvoient autre chose.
 
-## La parade
+## Le remède
 
 Écrire `drop = FALSE` dès que le nombre de lignes ou de colonnes sélectionnées peut tomber à un.
 

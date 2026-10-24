@@ -23,7 +23,7 @@ Les fonctions de {cli} interprètent leur texte comme {glue} : ce qui est entre 
 
 Le piège frappe surtout les messages d'erreur : le code qui devait signaler un problème plante lui-même, avec un message sans rapport.
 
-## La parade
+## Le remède
 
 Doubler les accolades pour les afficher, ou passer le texte par une variable.
 

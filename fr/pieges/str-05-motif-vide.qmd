@@ -29,7 +29,7 @@ Le motif vide correspond partout. Base R en tire la conséquence : `grepl("", x)
 
 Le piège naît quand le motif vient d'une variable, par exemple un champ de recherche laissé vide : un filtre qui gardait tout se met à planter après une mise à jour. Et toutes les fonctions ne suivent pas la règle : `str_split()` accepte toujours le motif vide et découpe en caractères.
 
-## La parade
+## Le remède
 
 Traiter le motif vide explicitement, selon ce qu'il doit signifier.
 

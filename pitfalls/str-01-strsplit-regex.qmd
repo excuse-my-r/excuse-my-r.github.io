@@ -24,7 +24,7 @@ The `split` argument is a regular expression, and in a regular expression the do
 
 The vertical bar `|` means "or": `"|"` is the alternation between two empty patterns, which matches the empty string. `strsplit()` then splits between every character, and the bar ends up in the result instead of disappearing.
 
-## The fix
+## The remedy
 
 Ask for a literal match with `fixed = TRUE`, or escape the special character.
 

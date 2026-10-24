@@ -23,7 +23,7 @@ ifelse(c(TRUE, FALSE), yes = params$threshold, no = params$default)
 
 As soon as a `FALSE` shows up, `ifelse()` recycles `no` to the length of the test with `rep()`, which returns `NULL` (the first warning), then tries to assign it into the result: "replacement has length zero". The message talks about replacement and zero length without ever naming the faulty variable, and the bug only appears with some data.
 
-## The fix
+## The remedy
 
 Check the value before using it, and give it an explicit fallback.
 

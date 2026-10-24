@@ -26,7 +26,7 @@ Ce piège dépend de plusieurs bibliothèques et du réseau, il ne peut pas se r
 
 `install.packages()` se comporte autrement, ce qui surprend quand on passe de l'un à l'autre. Sur un serveur partagé, chaque utilisateur finit avec sa propre copie de paquets que l'administrateur avait installés pour tous.
 
-## La parade
+## Le remède
 
 Depuis {pak} 0.9.3, passer toutes les bibliothèques à `lib` : la première reste la cible, les suivantes servent à satisfaire les dépendances sans réinstaller.
 

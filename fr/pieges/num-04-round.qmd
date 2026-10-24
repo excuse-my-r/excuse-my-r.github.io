@@ -25,7 +25,7 @@ R suit la norme IEC 60559 : quand un nombre tombe exactement à mi-chemin, il es
 
 Pour `0.15`, s'ajoute la représentation binaire : le nombre stocké n'est pas exactement 0.15, et R arrondit ce qu'il a réellement en mémoire.
 
-## La parade
+## Le remède
 
 Si la règle métier impose l'arrondi commercial (mi-chemin vers le haut), l'écrire explicitement, avec une petite marge pour absorber l'erreur binaire.
 

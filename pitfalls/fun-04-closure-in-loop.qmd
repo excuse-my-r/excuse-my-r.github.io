@@ -25,7 +25,7 @@ f_1()
 
 A function does not copy the variables it uses: it keeps a link to the environment where it was created, and looks up `i` there when it is called. A `for` loop has no environment of its own. Both functions therefore share the same `i`, which is 2 at the end of the loop.
 
-## The fix
+## The remedy
 
 Create each function in its own environment, for example with `lapply()`, which calls a new function at each step.
 

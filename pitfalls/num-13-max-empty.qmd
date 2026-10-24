@@ -24,7 +24,7 @@ The maximum of an empty set does not exist. R chooses to return the identity ele
 
 The case comes up after a filter that keeps nothing. `-Inf` is a valid number: it flows into the next calculations, shows up in a results table or blows up the scale of a chart, far from the cause.
 
-## The fix
+## The remedy
 
 Check the length before computing, and decide yourself which value to return.
 

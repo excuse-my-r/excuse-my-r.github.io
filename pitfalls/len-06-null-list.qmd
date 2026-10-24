@@ -22,7 +22,7 @@ For a list, `l$a <- NULL` (like `l[["a"]] <- NULL`) is the way to delete an elem
 
 When `NULL` is a legitimate value (a setting "left blank", a default argument), the code believes it stored it, and the key no longer exists. The positions of the following elements shift too.
 
-## The fix
+## The remedy
 
 Assign a list containing `NULL`, with single brackets.
 

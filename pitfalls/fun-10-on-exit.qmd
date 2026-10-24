@@ -25,7 +25,7 @@ process()
 
 The pitfall often hides in a long function, where the second `on.exit()` is added dozens of lines after the first.
 
-## The fix
+## The remedy
 
 Add `add = TRUE` to every call. The actions then run in the order they were declared, or in reverse order with `after = FALSE`.
 

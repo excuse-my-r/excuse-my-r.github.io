@@ -25,7 +25,7 @@ The `exact` argument of `attr()` is `FALSE` by default: a prefix is enough, as l
 
 The day another attribute starts with the same letters, here `uncertainty` next to `unit`, the prefix becomes ambiguous and `attr()` returns `NULL`. The code that reads the attribute has not changed.
 
-## The fix
+## The remedy
 
 Write the full name with `exact = TRUE`, or ask R to flag every partial match.
 

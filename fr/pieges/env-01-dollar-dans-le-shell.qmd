@@ -27,7 +27,7 @@ Entre guillemets doubles, le shell remplace `$cache` par la valeur de la variabl
 
 Le même piège frappe `df$colonne`, `x$y` ou une expression régulière qui finit par `$` dans un script de CI.
 
-## La parade
+## Le remède
 
 Mettre le code R entre guillemets simples, que le shell ne touche pas, et réserver les guillemets doubles au code R.
 

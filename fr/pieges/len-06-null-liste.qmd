@@ -22,7 +22,7 @@ Pour une liste, `l$a <- NULL` (comme `l[["a"]] <- NULL`) est la façon de suppri
 
 Quand `NULL` est une valeur légitime (un réglage « non renseigné », un argument par défaut), le code croit l'avoir enregistré, et la clé n'existe plus. Les positions des éléments suivants changent aussi.
 
-## La parade
+## Le remède
 
 Affecter une liste qui contient `NULL`, avec des crochets simples.
 

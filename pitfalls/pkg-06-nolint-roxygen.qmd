@@ -37,7 +37,7 @@ With markdown enabled in roxygen, a line that starts with `#` followed by a spac
 
 With {roxygen2} 8.1.0, there is no error any more, but the `.Rd` file contains an empty section named "nolint".
 
-## The fix
+## The remedy
 
 Drop the space after the hash, since `#nolint` is not a markdown heading, or put the {lintr} exclusion on the line of code concerned rather than in the documentation.
 

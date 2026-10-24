@@ -23,7 +23,7 @@ for (i in 1:length(x)) {
 
 `length(x)` vaut 0, et `1:0` n'est pas une séquence vide : c'est le vecteur `c(1, 0)`, qui descend de 1 à 0. La boucle tourne donc deux fois, avec des indices qui n'existent pas dans `x`.
 
-## La parade
+## Le remède
 
 `seq_along()` et `seq_len()` renvoient une séquence vide quand il le faut.
 

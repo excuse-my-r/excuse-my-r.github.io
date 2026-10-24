@@ -24,7 +24,7 @@ L'argument `split` est une expression régulière, et dans une expression régul
 
 La barre verticale `|` signifie « ou » : `"|"` est l'alternative entre deux motifs vides, qui correspond à la chaîne vide. `strsplit()` coupe alors entre chaque caractère, et la barre se retrouve dans le résultat au lieu de disparaître.
 
-## La parade
+## Le remède
 
 Demander une recherche littérale avec `fixed = TRUE`, ou échapper le caractère spécial.
 

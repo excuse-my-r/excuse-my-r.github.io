@@ -25,7 +25,7 @@ arrange(grades, "grade")
 
 The typical case is Shiny: `arrange(data, input$column)` receives the name picked by the user as text, and the displayed table is never sorted.
 
-## The fix
+## The remedy
 
 Turn the text into a column with `.data[[ ]]`.
 

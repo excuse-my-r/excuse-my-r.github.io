@@ -28,7 +28,7 @@ In `filter()`, names are looked up first among the columns of the table, and onl
 
 The trap often shows up after the fact, when someone adds to the table a column that has the same name as an argument.
 
-## The fix
+## The remedy
 
 Say explicitly where each name comes from: `.data` for columns, `.env` for variables.
 

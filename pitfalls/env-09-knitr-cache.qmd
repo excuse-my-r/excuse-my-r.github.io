@@ -24,7 +24,7 @@ The `cache = TRUE` option is read by {knitr}, while the document is rendered. Wh
 
 The other way round, the cache created at render time is not loaded into the IDE session. The objects are therefore not available in the console until you rerun the chunks.
 
-## The fix
+## The remedy
 
 For a long computation that is also used outside rendering, handle saving the result yourself.
 

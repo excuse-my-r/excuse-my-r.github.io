@@ -26,7 +26,7 @@ sample(x[x > 10])
 
 As long as the filter keeps several values, all is well. The day it keeps only one, here 12, `sample()` returns a permutation of the integers from 1 to 12, which have nothing to do with the data.
 
-## The fix
+## The remedy
 
 Draw positions with `sample.int()`, then index the vector.
 

@@ -24,7 +24,7 @@ R n'accepte que le point comme séparateur décimal, quelle que soit la langue d
 
 Les valeurs entières, elles, passent. Le résultat a donc l'air plausible : ici la « moyenne » vaut 2, calculée sur la seule valeur sans virgule.
 
-## La parade
+## Le remède
 
 Remplacer la virgule avant la conversion, ou lire le fichier avec `read.csv2()`, qui attend la virgule décimale utilisée en France et dans une bonne partie de l'Europe.
 

@@ -28,7 +28,7 @@ Dans `filter()`, les noms sont d'abord cherchés parmi les colonnes du tableau, 
 
 Le piège apparaît souvent après coup, quand on ajoute au tableau une colonne qui porte le nom d'un argument.
 
-## La parade
+## Le remède
 
 Dire explicitement d'où vient chaque nom : `.data` pour les colonnes, `.env` pour les variables.
 

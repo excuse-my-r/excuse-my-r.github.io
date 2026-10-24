@@ -18,7 +18,7 @@ listing:
 # We love R. Sometimes we also feel like swearing at it. {.accueil-titre .unnumbered .unlisted}
 
 ::: {.accueil-chapo}
-R rarely crashes for no reason. More often, it answers something plausible and wrong, or fails with a message that points elsewhere. This catalogue gathers those moments, spotted in real projects. Each pitfall comes with its explanation and its fix, and its code runs right here in your browser, on the R version of your choice.
+Excuse my R gathers its small betrayals, all met in real projects, so that you run into them here rather than in production. Each page explains what happens and how to avoid it, and the code runs in your browser, on the R version of your choice.
 :::
 
 :::

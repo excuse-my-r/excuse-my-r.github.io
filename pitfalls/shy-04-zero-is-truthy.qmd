@@ -27,7 +27,7 @@ req(0)
 
 The number 0 is not on it. A `numericInput()` left at 0 therefore gets through `req()`, and the computation runs with a zero quantity. Only the action button is an exception: its value 0 carries a special class that `isTruthy()` recognises.
 
-## The fix
+## The remedy
 
 Give `req()` the business rule itself, as a logical test.
 

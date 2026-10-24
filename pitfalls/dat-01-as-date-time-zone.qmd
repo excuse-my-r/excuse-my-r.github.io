@@ -24,7 +24,7 @@ A `POSIXct` is a number of seconds since 1 January 1970 in universal time, along
 
 Every time between midnight and 1 a.m. (2 a.m. in summer) therefore lands on the wrong day. On a timestamped dataset, the error only hits a small share of the rows, which makes it hard to spot. {lubridate}, for its part, uses the object's time zone: `as_date(h)` and `as.Date(h)` do not give the same day.
 
-## The fix
+## The remedy
 
 Pass the time zone explicitly.
 

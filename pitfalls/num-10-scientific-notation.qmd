@@ -23,7 +23,7 @@ To convert a double to text, R picks the shortest form. `100000` takes 6 charact
 
 Only "round" numbers are affected, which makes the pitfall rare and therefore hard to spot. Identifiers, codes or file names built with `paste0()` break a join for a handful of rows only.
 
-## The fix
+## The remedy
 
 Format the number explicitly before pasting it.
 

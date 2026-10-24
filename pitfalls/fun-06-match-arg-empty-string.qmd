@@ -28,7 +28,7 @@ Pick **R 4.1.3** in the menu, then run again: the error is the same, with a diff
 
 Without an argument, the function does return `""`, the first choice by default. Things break only when you pass `""` explicitly, and the message does not even list the empty string among the possible choices.
 
-## The fix
+## The remedy
 
 Do not offer the empty string as a choice: replace it with a word.
 

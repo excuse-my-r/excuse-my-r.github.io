@@ -27,7 +27,7 @@ Up to R 3.2, `nchar(NA)` was 2: R counted the characters of the printed "NA". R 
 
 The most common pitfall today comes from `paste()`, which turns an `NA` into the text `"NA"`. After that, nothing tells it apart from a real two-letter name.
 
-## The fix
+## The remedy
 
 Ask explicitly to keep the `NA`s, and handle them before pasting text.
 

@@ -24,7 +24,7 @@ R n'interdit pas deux éléments portant le même nom. Quand on indexe par un no
 
 Ces doublons arrivent facilement : `c()` de deux vecteurs nommés, `unlist()` d'une liste, ou une jointure faite à la main.
 
-## La parade
+## Le remède
 
 Comparer les noms pour viser tous les éléments, et repérer les doublons tôt.
 

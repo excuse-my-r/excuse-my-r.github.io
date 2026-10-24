@@ -29,7 +29,7 @@ R lit une ligne, et s'arrête dès que l'expression est complète. `rendu <- cal
 
 Dans Shiny, l'erreur prend la forme `output$graphique <- renderPlot` suivi à la ligne de `({ ... })`. La sortie reçoit la fonction `renderPlot` au lieu d'un rendu, et le code entre accolades est exécuté une fois, hors de toute réactivité. Le graphique n'apparaît pas, sans erreur qui pointe vers ce saut de ligne.
 
-## La parade
+## Le remède
 
 Garder la parenthèse ouvrante sur la même ligne que le nom de la fonction.
 

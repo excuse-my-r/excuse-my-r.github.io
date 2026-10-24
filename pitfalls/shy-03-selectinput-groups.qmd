@@ -35,7 +35,7 @@ In `choices`, a named element of length 1 whose value carries no name of its own
 
 A second pitfall: two options from different groups can carry the same value. `input$choice` is then `"apple"` in both cases, and the server cannot tell which one was picked.
 
-## The fix
+## The remedy
 
 Write each group as a list, and give every option a unique value.
 

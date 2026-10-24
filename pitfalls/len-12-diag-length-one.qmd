@@ -25,7 +25,7 @@ diag(variances)
 
 A function that builds a covariance matrix from a vector of variances therefore works until the day the vector holds a single value. It then returns a 4 by 4 identity, with no warning.
 
-## The fix
+## The remedy
 
 Give the size explicitly with `nrow`: the result is the expected diagonal matrix whatever the length of the vector.
 

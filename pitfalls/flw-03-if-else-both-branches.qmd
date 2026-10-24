@@ -24,7 +24,7 @@ ifelse(all(x == 0), yes = NA_real_, no = max(x[x != 0]))
 
 Base R's `ifelse()` behaves differently: it only evaluates `no` if the test contains at least one `FALSE`. Both functions give the same result, but not the same warnings or the same errors. If the unused branch calls `stop()`, `if_else()` stops and `ifelse()` does not.
 
-## The fix
+## The remedy
 
 For a single condition, `if` evaluates only the chosen branch.
 

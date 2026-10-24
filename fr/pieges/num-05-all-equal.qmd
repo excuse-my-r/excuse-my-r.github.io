@@ -25,7 +25,7 @@ if (all.equal(1, 1.1)) {
 
 `if` ne sait pas quoi faire d'une chaîne de caractères et s'arrête sur une erreur qui ne parle pas du tout de comparaison. Le code ne plante donc que le jour où les valeurs diffèrent, c'est-à-dire précisément quand le test devait servir.
 
-## La parade
+## Le remède
 
 Envelopper l'appel dans `isTRUE()`, qui transforme tout ce qui n'est pas exactement `TRUE` en `FALSE`.
 

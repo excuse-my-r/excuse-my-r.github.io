@@ -25,7 +25,7 @@ x[4] == 0.3
 
 Ici, trois termes sur onze diffèrent de leur valeur « ronde » : `0.3`, `0.6` et `0.7`. Un `%in%` ou un filtre `==` sur ces valeurs échoue sans prévenir.
 
-## La parade
+## Le remède
 
 Construire la séquence à partir d'entiers, ou chercher avec une tolérance.
 

@@ -24,7 +24,7 @@ L'opérateur `:` est prioritaire sur l'addition et la soustraction. `1:n-1` se l
 
 De même, la puissance passe avant le moins unaire : `-2^2` se lit `-(2^2)` et vaut -4. C'est la convention mathématique, mais elle surprend quand on pense « moins deux, au carré ».
 
-## La parade
+## Le remède
 
 Mettre des parenthèses dès que `:` ou `^` côtoient un autre opérateur.
 

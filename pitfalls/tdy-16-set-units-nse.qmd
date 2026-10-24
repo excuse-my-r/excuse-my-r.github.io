@@ -37,7 +37,7 @@ This pitfall depends on the {units} package, so it cannot be replayed in the bro
 
 With a variable name that is not a unit, such as `target`, you at least get an error. The trap only snaps shut on short names that are also units: `u`, `m`, `g`, `s`, `h`...
 
-## The fix
+## The remedy
 
 Pass the unit as text, with `mode = "standard"`, which evaluates the argument normally.
 

@@ -29,7 +29,7 @@ length(rien)
 
 Selon la fonction, un résultat vide arrive sous l'une ou l'autre forme : `which()` renvoie `integer(0)`, `unlist(list())` et `c()` renvoient `NULL`. Un test `is.null()` laisse donc passer la moitié des cas vides. Seul point commun : `length()` vaut 0 dans les deux.
 
-## La parade
+## Le remède
 
 Tester la longueur, qui couvre `NULL` comme les vecteurs vides.
 

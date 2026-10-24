@@ -26,7 +26,7 @@ mean(check, na.rm = TRUE)
 
 A check that ran on no known data at all thus turns into "everything is compliant". Nothing signals that the column was entirely missing.
 
-## The fix
+## The remedy
 
 Handle separately the case where every value is missing.
 

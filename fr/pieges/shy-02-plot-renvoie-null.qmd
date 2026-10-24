@@ -23,7 +23,7 @@ Les graphiques de base sont un effet de bord : `plot()` dessine sur le périphé
 
 Avec {ggplot2}, `p <- ggplot(...)` crée un objet que l'on affiche plus tard. Le réflexe ne se transpose pas : dans Shiny, un `reactive()` qui « contient » un `plot()` ne contient que `NULL`, et un `renderPlot()` qui renvoie cet objet n'affiche rien.
 
-## La parade
+## Le remède
 
 Stocker la recette du graphique dans une fonction, et l'appeler là où il doit être dessiné, par exemple dans `renderPlot()`.
 

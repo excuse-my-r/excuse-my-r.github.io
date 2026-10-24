@@ -22,7 +22,7 @@ Par défaut, `merge()` trie le résultat selon la clé (`sort = TRUE`). L'ordre 
 
 Les colonnes présentes des deux côtés sans servir de clé sont gardées toutes les deux, avec les suffixes `.x` et `.y`. Le code qui utilisait `statut` ne trouve plus la colonne. Même avec `sort = FALSE`, l'aide précise que l'ordre des lignes n'est pas garanti.
 
-## La parade
+## Le remède
 
 Choisir des suffixes parlants, et rétablir explicitement l'ordre voulu.
 

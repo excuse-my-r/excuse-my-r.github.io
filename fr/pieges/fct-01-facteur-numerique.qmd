@@ -23,7 +23,7 @@ Un facteur est un vecteur d'entiers accompagné d'une table de niveaux. `as.nume
 
 Avant R 4.0, `read.csv()` transformait par défaut les colonnes de texte en facteurs. Une colonne d'années mal lue donnait ainsi des « années » 1, 2 et 1, plausibles dans un modèle.
 
-## La parade
+## Le remède
 
 Repasser par le texte, ou indexer les niveaux.
 

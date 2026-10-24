@@ -23,7 +23,7 @@ modify_url(base, path = "users")
 
 `modify_url()` splits the address into pieces (scheme, host, path, query), replaces the ones you give it, then glues everything back together. So the `path` argument replaces the whole path, and the `v1/` of the base address disappears. The request goes to a different address, which may well exist and answer something else.
 
-## The fix
+## The remedy
 
 Build the full path from the one in the base address. With {httr2}, `req_url_path_append()` does exactly that.
 

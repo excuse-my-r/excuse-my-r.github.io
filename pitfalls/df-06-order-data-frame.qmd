@@ -24,7 +24,7 @@ Pick **R 4.1.3** in the menu: you get a mere warning, and a result that makes no
 
 Before R 4.3.0, the same method only emitted a warning and ranked all the values of the table laid end to end. You got more indices than rows, and `NA` rows in the result.
 
-## The fix
+## The remedy
 
 Pass the columns to `order()` one by one, by hand or with `do.call()`. `unname()` prevents a column named like an argument of `order()` (`decreasing`, `method`) from being taken for it.
 

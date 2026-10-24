@@ -24,7 +24,7 @@ The `:` operator takes precedence over addition and subtraction. `1:n-1` therefo
 
 Likewise, the power comes before the unary minus: `-2^2` reads as `-(2^2)` and gives -4. That is the mathematical convention, but it is surprising when you think "minus two, squared".
 
-## The fix
+## The remedy
 
 Add parentheses as soon as `:` or `^` sits next to another operator.
 

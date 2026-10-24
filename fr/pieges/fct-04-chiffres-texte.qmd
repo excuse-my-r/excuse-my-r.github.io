@@ -24,7 +24,7 @@ Sur du texte, `max()`, `sort()` et `<` suivent l'ordre alphabétique, caractère
 
 Ce texte vient souvent d'une lecture de fichier où une seule cellule non numérique a fait basculer toute la colonne en caractères.
 
-## La parade
+## Le remède
 
 Convertir en nombre avant de comparer ou de trier, et vérifier les `NA` produits par la conversion.
 

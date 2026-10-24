@@ -27,7 +27,7 @@ readLines(f)
 
 The pipe does not read the file before writing it: it builds the call `write(gsub(..., readLines(f)), file = f)`. Because of lazy evaluation, `write()` starts by opening its destination file, which empties it, and only evaluates its first argument when it is time to write. `readLines()` then reads a file that is already empty.
 
-## The fix
+## The remedy
 
 Force the read before the write, by going through a variable.
 

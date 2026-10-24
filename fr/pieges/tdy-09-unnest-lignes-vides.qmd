@@ -26,7 +26,7 @@ unnest(commandes, cols = articles)
 
 Les comptages faits ensuite (nombre de clients, taux de clients sans commande) sont alors faux, puisque les clients sans article n'existent plus.
 
-## La parade
+## Le remède
 
 `keep_empty = TRUE` garde une ligne avec `NA` pour chaque liste vide.
 

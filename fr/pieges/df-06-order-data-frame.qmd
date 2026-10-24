@@ -24,7 +24,7 @@ Choisissez **R 4.1.3** dans le menu : vous obtenez un simple avertissement, et u
 
 Avant R 4.3.0, la même méthode n'émettait qu'un avertissement et classait toutes les valeurs du tableau mises bout à bout. On obtenait plus d'indices que de lignes, et des lignes `NA` dans le résultat.
 
-## La parade
+## Le remède
 
 Passer les colonnes une par une à `order()`, à la main ou avec `do.call()`. `unname()` évite qu'une colonne nommée comme un argument d'`order()` (`decreasing`, `method`) soit prise pour lui.
 

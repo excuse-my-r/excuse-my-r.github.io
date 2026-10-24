@@ -26,7 +26,7 @@ Ce piège dépend de plusieurs installations de R et d'un conteneur Docker, il n
 
 Quand le même dossier sert en local puis dans un conteneur Docker monté en volume, ou après une mise à jour de R, chaque environnement trouve ou crée sa propre bibliothèque. L'un a les paquets, l'autre non, et `library()` échoue d'un côté seulement, alors que le lockfile est le même.
 
-## La parade
+## Le remède
 
 Exclure `renv/library` des volumes et des images, et restaurer dans chaque environnement depuis le lockfile.
 

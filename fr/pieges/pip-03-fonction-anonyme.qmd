@@ -25,7 +25,7 @@ Exécutez ce bloc : la première forme donne « function 'function' not supporte
 
 Avec `%>%`, `x %>% (\(y) ...)` fonctionne, sans les parenthèses d'appel. Le pipe natif demande d'appeler explicitement la fonction, avec un `()` final qui a l'air superflu.
 
-## La parade
+## Le remède
 
 Entourer la fonction de parenthèses et l'appeler. Depuis R 4.2.0, le placeholder `_` évite souvent d'avoir besoin d'une fonction anonyme.
 

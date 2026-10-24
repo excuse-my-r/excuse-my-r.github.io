@@ -27,7 +27,7 @@ This pitfall depends on a CI pipeline, so it cannot be replayed in the browser.
 
 A relative path in `R_LIBS` is resolved from the working directory of the R process, at the moment it starts. The installation runs from the root of the repository, into `ci/lib`. But `quarto render` runs the document in a new R process started from `reports/`, which then looks for `reports/ci/lib`. That folder does not exist, and R drops it from `.libPaths()` without a warning: the packages simply cannot be found.
 
-## The fix
+## The remedy
 
 Build an absolute path from the variable provided by the CI.
 

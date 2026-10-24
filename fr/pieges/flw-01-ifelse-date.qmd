@@ -20,7 +20,7 @@ ifelse(TRUE, as.Date("2026-10-22"), as.Date("2026-01-01"))
 
 `ifelse()` construit son résultat à partir du test, pas des valeurs renvoyées. Il hérite donc des attributs du test (ici, aucun) et perd ceux des branches, dont la classe `Date`. Il reste le nombre de jours depuis le 1er janvier 1970. Les facteurs subissent le même sort et deviennent leurs codes entiers.
 
-## La parade
+## Le remède
 
 Pour une seule condition, `if` suffit. Pour un vecteur, `dplyr::if_else()` et `data.table::fifelse()` conservent le type et vérifient que les deux branches sont compatibles.
 

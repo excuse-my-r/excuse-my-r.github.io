@@ -24,7 +24,7 @@ R does not forbid two elements with the same name. When you index by name, it lo
 
 Such duplicates arise easily: `c()` of two named vectors, `unlist()` of a list, or a join done by hand.
 
-## The fix
+## The remedy
 
 Compare the names to target every element, and spot duplicates early.
 

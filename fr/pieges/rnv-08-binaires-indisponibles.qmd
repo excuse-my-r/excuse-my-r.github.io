@@ -22,7 +22,7 @@ CRAN ne fournit des binaires que pour Windows et macOS, et seulement pour les ve
 
 Si elles manquent, la compilation échoue. Le message utile, du type « configuration failed » ou « fichier d'en-tête introuvable », est enfoui dans un long journal de compilation. Le même lockfile marche sur un poste qui a déjà ces bibliothèques.
 
-## La parade
+## Le remède
 
 Utiliser un dépôt qui sert des binaires Linux (Posit Package Manager), et lister les dépendances système à installer.
 

@@ -28,7 +28,7 @@ With `repos = NULL`, `install.packages()` is supposed to install the given file 
 
 The message mentions `contriburl`, an argument the user never passed. Nothing suggests that the problem comes from installing a local file in this context.
 
-## The fix
+## The remedy
 
 Go through a function designed to install a local archive, which worked in the same project.
 

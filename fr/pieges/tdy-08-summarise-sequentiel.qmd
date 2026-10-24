@@ -25,7 +25,7 @@ summarise(mesures, x = mean(x), s = sd(x))
 
 C'est voulu, et souvent pratique. Le piège naît quand on réutilise le nom d'une colonne existante.
 
-## La parade
+## Le remède
 
 Donner un nouveau nom au résultat, ou calculer l'écart-type en premier.
 

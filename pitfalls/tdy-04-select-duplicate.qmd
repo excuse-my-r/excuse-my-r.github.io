@@ -23,7 +23,7 @@ select(cars, foo = mpg, mpg)
 
 `select()` picks columns, it does not copy them. `foo = mpg` selects `mpg` while renaming it, and the second mention of `mpg` refers to the same column, already taken: it is not duplicated. Only one column is left, under the first name given, without a warning.
 
-## The fix
+## The remedy
 
 To get a copy, create it with `mutate()`, then select.
 

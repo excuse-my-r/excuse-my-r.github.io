@@ -26,7 +26,7 @@ L'analyseur de R connaît `:=` et le transforme en appel de fonction, `` `:=`(to
 
 Dans un paquet, le code passe à l'exécution car la fonction est interprétée par {data.table} ou {rlang}. L'analyse statique du check, elle, voit un appel à une fonction qu'aucun paquet importé ne fournit, et le signale.
 
-## La parade
+## Le remède
 
 Importer `:=` depuis le paquet qui l'interprète, dans le fichier `NAMESPACE` du paquet.
 

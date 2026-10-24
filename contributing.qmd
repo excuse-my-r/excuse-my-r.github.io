@@ -42,7 +42,7 @@ source: "Your name or where you found it"
 
 ### The body
 
-The page starts with the pitfall block, then a `## Why` section that explains the mechanism, then a `## The fix` section with a second block that shows the right way.
+The page starts with the pitfall block, then a `## Why` section that explains the mechanism, then a `## The remedy` section with a second block that shows the right way.
 
 ````markdown
 ::: {.piege}

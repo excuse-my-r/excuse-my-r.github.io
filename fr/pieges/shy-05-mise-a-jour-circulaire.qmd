@@ -29,7 +29,7 @@ Ce piège dépend d'une application Shiny en cours d'exécution dans un navigate
 
 Avec les arrondis des conversions, la valeur renvoyée n'est jamais tout à fait la même. Les champs clignotent, la saisie de l'utilisateur est écrasée pendant qu'il tape, et l'application peut ne jamais se stabiliser.
 
-## La parade
+## Le remède
 
 Ne mettre à jour l'autre champ que si sa valeur change vraiment, ou garder une seule source de vérité (par exemple une valeur réactive en Celsius) dont les deux champs dérivent.
 

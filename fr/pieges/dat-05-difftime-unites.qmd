@@ -25,7 +25,7 @@ La soustraction de deux dates-heures appelle `difftime()` avec `units = "auto"`.
 
 L'affichage le dit (« Time difference of 1.5 mins »), mais `as.numeric()` jette l'unité et ne garde que le nombre. Sur un vecteur, l'unité dépend du plus petit écart : ajouter ou retirer une ligne peut changer l'unité de toute la colonne.
 
-## La parade
+## Le remède
 
 Choisir l'unité explicitement, au moment du calcul ou de la conversion.
 

@@ -22,7 +22,7 @@ Les systèmes et les outils imposent des limites à la longueur d'un chemin : 26
 
 Quand la limite est atteinte, c'est l'outil qui échoue qui écrit le message, et il ne dit pas toujours la vraie raison. Dans l'incident d'origine, l'erreur évoquait les fins de ligne, ce qui a orienté la recherche dans la mauvaise direction.
 
-## La parade
+## Le remède
 
 Garder des noms courts pour les fichiers de tests, de snapshots et de données, et vérifier la longueur des chemins avant de pousser.
 

@@ -22,7 +22,7 @@ Ce piège dépend du système Windows, des outils installés dans le PATH et du 
 
 L'extraction échoue alors, avec une erreur de décompression ou de dossier introuvable qui ne parle ni de GitHub ni du paquet.
 
-## La parade
+## Le remède
 
 Demander à R d'utiliser son implémentation interne de tar, qui ne dépend d'aucun programme externe.
 

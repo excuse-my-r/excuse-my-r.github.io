@@ -30,7 +30,7 @@ Up to R 3.6, `data.frame()` and `read.table()` (hence `read.csv()`) turned text 
 
 A script written before 4.0 that relies on `levels()`, `nlevels()` or on the factor codes keeps running, but now gets `NULL`, 0 or `NA`s. Only the numeric conversion leaves a warning. Adding `options(stringsAsFactors = TRUE)` at the top of the script does not bring the factors back: R accepts the option with a warning announcing its removal, and text stays text.
 
-## The fix
+## The remedy
 
 Write the argument explicitly, whatever value you want: the script then behaves the same way on every version.
 

@@ -23,7 +23,7 @@ To R, a trailing comma is not a syntax error: it opens one more argument, left e
 
 `c()` reports that "argument 3 is empty", `paste()` that an argument is missing, with no default. `which()`, which has no `...`, receives one argument too many and answers `unused argument (alist())`. None of these messages mentions a comma.
 
-## The fix
+## The remedy
 
 Remove the trailing comma, especially after deleting or commenting out the last line of a call written over several lines.
 

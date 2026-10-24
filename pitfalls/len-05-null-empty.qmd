@@ -29,7 +29,7 @@ length(nothing)
 
 Depending on the function, an empty result comes in one form or the other: `which()` returns `integer(0)`, `unlist(list())` and `c()` return `NULL`. An `is.null()` test therefore lets half of the empty cases through. The only thing they share: `length()` is 0 in both.
 
-## The fix
+## The remedy
 
 Test the length, which covers `NULL` as well as empty vectors.
 

@@ -37,7 +37,7 @@ Ce piège dépend du paquet {units}, il ne peut pas se rejouer dans le navigateu
 
 Avec un nom de variable qui n'est pas une unité, comme `unite`, on a au moins une erreur. Le piège ne se referme que sur les noms courts qui sont aussi des unités : `u`, `m`, `g`, `s`, `h`...
 
-## La parade
+## Le remède
 
 Passer l'unité en texte, avec `mode = "standard"`, qui évalue l'argument normalement.
 

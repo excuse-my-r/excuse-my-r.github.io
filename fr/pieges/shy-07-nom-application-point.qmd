@@ -22,7 +22,7 @@ Un nom d'application shinyapps.io ne peut contenir que des lettres, des chiffres
 
 Le refus n'arrive qu'au moment du déploiement, une fois le paquet d'application préparé, avec un message qui porte sur le nom et non sur le code. Le piège revient quand le nom est construit automatiquement à partir du nom du paquet ou du dossier.
 
-## La parade
+## Le remède
 
 Donner explicitement un nom conforme, sans point, indépendant du nom du dossier.
 

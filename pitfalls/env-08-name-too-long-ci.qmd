@@ -22,7 +22,7 @@ Systems and tools put limits on the length of a path: 260 characters by default 
 
 When the limit is reached, the tool that fails writes the message, and it does not always give the real reason. In the original incident, the error mentioned line endings, which sent the search in the wrong direction.
 
-## The fix
+## The remedy
 
 Keep the names of test, snapshot and data files short, and check path lengths before pushing.
 

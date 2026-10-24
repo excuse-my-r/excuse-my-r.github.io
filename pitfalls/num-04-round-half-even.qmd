@@ -25,7 +25,7 @@ R follows the IEC 60559 standard: when a number falls exactly halfway, it is rou
 
 For `0.15`, binary representation comes on top: the stored number is not exactly 0.15, and R rounds what it actually holds in memory.
 
-## The fix
+## The remedy
 
 If the business rule requires commercial rounding (halfway goes up), write it explicitly, with a small margin to absorb the binary error.
 

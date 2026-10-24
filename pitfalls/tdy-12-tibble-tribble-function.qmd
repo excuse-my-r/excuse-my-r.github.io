@@ -24,7 +24,7 @@ tribble(
 
 A tibble column must be a vector, and a function is not one: `tibble()` rejects it. `tribble()` reads its values cell by cell and, when a cell is not a simple value, it stores the column in a list. The function then becomes an element of a list-column, which is allowed.
 
-## The fix
+## The remedy
 
 Build the list-column explicitly with `list()`, which works everywhere, then call the function with `[[ ]]`.
 

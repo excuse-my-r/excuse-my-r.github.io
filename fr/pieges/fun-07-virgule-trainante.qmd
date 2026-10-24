@@ -23,7 +23,7 @@ Pour R, la virgule finale n'est pas une faute de syntaxe : elle ouvre un argumen
 
 `c()` parle d'un « argument 3 vide », `paste()` d'un argument manquant sans valeur par défaut. `which()`, qui n'a pas de `...`, reçoit un argument en trop et répond `unused argument (alist())`. Aucun de ces messages ne parle de virgule.
 
-## La parade
+## Le remède
 
 Retirer la virgule finale, en particulier après avoir supprimé ou commenté la dernière ligne d'un appel écrit sur plusieurs lignes.
 

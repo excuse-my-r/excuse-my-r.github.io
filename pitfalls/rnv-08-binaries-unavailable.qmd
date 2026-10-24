@@ -22,7 +22,7 @@ CRAN only provides binaries for Windows and macOS, and only for recent package v
 
 If they are missing, the compilation fails. The useful message, something like "configuration failed" or a header file that cannot be found, is buried in a long compilation log. The same lockfile works on a machine that already has those libraries.
 
-## The fix
+## The remedy
 
 Use a repository that serves Linux binaries (Posit Package Manager), and list the system dependencies to install.
 

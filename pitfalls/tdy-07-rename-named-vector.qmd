@@ -22,7 +22,7 @@ rename(sales, identifier = config["id"])
 
 `config["id"]` returns `"code"` as a vector that keeps its name, `id`. When a named selection receives a vector that is itself named, {tidyselect} combines both names so as to lose nothing, and the column becomes `identifier...id`. Code that then looks for `identifier` does not find it.
 
-## The fix
+## The remedy
 
 Extract the bare value with `[[ ]]`, or drop the names with `unname()`.
 

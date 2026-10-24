@@ -24,7 +24,7 @@ names(select(fleurs, !starts_with("Petal") | !starts_with("Sepal")))
 
 Les opérateurs suivent la logique des ensembles : `|` est une union. « Tout sauf Petal » union « tout sauf Sepal » contient toutes les colonnes, puisque chacune échappe à au moins une des deux exclusions. Au passage, les colonnes sont réordonnées.
 
-## La parade
+## Le remède
 
 Mettre l'exclusion en dernier, et écrire « ni l'un ni l'autre » avec `&`, ou en excluant un seul ensemble.
 

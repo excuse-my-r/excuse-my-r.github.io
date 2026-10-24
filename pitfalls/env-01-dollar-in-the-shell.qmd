@@ -27,7 +27,7 @@ Inside double quotes, the shell replaces `$cache` with the value of the `cache` 
 
 The same pitfall hits `df$column`, `x$y` or a regular expression ending in `$` in a CI script.
 
-## The fix
+## The remedy
 
 Put the R code inside single quotes, which the shell leaves alone, and keep double quotes for use inside the R code.
 

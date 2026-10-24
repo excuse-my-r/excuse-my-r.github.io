@@ -26,7 +26,7 @@ if (T) {
 
 Code that writes `na.rm = T` or `if (F)` then changes meaning without any error.
 
-## The fix
+## The remedy
 
 Always spell out `TRUE` and `FALSE`. They cannot be overwritten: R refuses.
 

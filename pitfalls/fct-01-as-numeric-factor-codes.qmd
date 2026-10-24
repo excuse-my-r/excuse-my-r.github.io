@@ -23,7 +23,7 @@ A factor is an integer vector paired with a table of levels. `as.numeric()` read
 
 Before R 4.0, `read.csv()` turned text columns into factors by default. A badly read column of years would then yield "years" 1, 2 and 1, plausible enough inside a model.
 
-## The fix
+## The remedy
 
 Go back through the text, or index the levels.
 

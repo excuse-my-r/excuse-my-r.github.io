@@ -26,7 +26,7 @@ This pitfall depends on several libraries and the network, so it cannot be repla
 
 `install.packages()` behaves differently, which is surprising when you switch from one to the other. On a shared server, every user ends up with their own copy of packages the administrator had installed for everyone.
 
-## The fix
+## The remedy
 
 Since {pak} 0.9.3, pass every library to `lib`: the first one remains the target, the others are used to satisfy dependencies without reinstalling.
 

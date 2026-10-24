@@ -26,7 +26,7 @@ Le pipe natif n'est pas une fonction : c'est une réécriture du code au moment 
 
 Le `.` de {magrittr} n'avait aucune de ces limites, d'où la surprise quand on traduit un code existant.
 
-## La parade
+## Le remède
 
 Utiliser les valeurs par défaut de la fonction quand elles suffisent (`setNames()` reprend `nm` comme valeur), sinon passer par une fonction anonyme, qui peut utiliser son argument autant de fois qu'elle veut.
 

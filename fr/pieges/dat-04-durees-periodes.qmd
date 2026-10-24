@@ -27,7 +27,7 @@ Quand {lubridate} lit une durée écrite en texte, `m` minuscule désigne les mo
 
 Les autres écritures ne valent pas mieux : `duration()` ne comprend pas le format horloge `"01:32:06"` et renvoie `NA` sans avertissement. Enfin, une période (`hours()`, `minutes()`...) compte des unités du calendrier et refuse les décimales, avec un message de validation d'objet S4 peu parlant.
 
-## La parade
+## Le remède
 
 Écrire `min` pour les minutes, lire le format horloge avec `hms()`, et passer par les durées (`dhours()`, en secondes exactes) pour les quantités décimales.
 
