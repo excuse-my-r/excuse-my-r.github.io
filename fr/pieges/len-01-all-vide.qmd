@@ -5,7 +5,7 @@ categories: [Vides et NA]
 impact: silencieux
 extrait: 'all(logical(0))'
 reponse: 'TRUE'
-attendu: "`FALSE`, puisque aucune note ne dépasse 20"
+attendu: "`FALSE`, puisque le vecteur ne contient aucun `TRUE`"
 versions: "Toutes"
 source: "Slack ThinkR (2023), safer-r"
 ---

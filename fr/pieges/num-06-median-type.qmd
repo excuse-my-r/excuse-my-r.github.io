@@ -24,7 +24,7 @@ identical(median(c(1L, 3L, 5L, 7L)), 4L)
 
 Avec un nombre impair de valeurs, la médiane est la valeur du milieu : R la renvoie telle quelle, donc en entier. Avec un nombre pair, elle est la moyenne des deux valeurs centrales, et `mean()` renvoie toujours un double, même quand le résultat tombe juste.
 
-Le type dépend donc des données, pas du code. Un code strict sur les types (`identical()`, `vapply(..., FUN.VALUE = integer(1))`, une colonne typée en base de données) passe sur un échantillon et casse sur le suivant.
+Le même appel renvoie donc un type différent selon les données. Un code strict sur les types (`identical()`, `vapply(..., FUN.VALUE = integer(1))`, une colonne typée en base de données) passe sur un échantillon et casse sur le suivant.
 
 ## La parade
 

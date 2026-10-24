@@ -14,7 +14,7 @@ server <- function(input, output, session) {
   observe({
     input$enregistrer
     isolate({
-      sauvegarder(input$nom, input$montant)
+      sauvegarder(nom = input$nom, montant = input$montant)
     })
   })
 }
@@ -37,7 +37,7 @@ La dépendance réelle tient à une ligne `input$enregistrer` posée seule, faci
 ```r
 server <- function(input, output, session) {
   observeEvent(input$enregistrer, {
-    sauvegarder(input$nom, input$montant)
+    sauvegarder(nom = input$nom, montant = input$montant)
   })
 }
 ```

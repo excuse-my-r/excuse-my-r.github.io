@@ -721,6 +721,9 @@ h1.accueil-titre {
 
 /* Choix de la langue dans la barre de navigation */
 .choix-langue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font: 600 0.85rem/1 var(--sans);
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--trait);
@@ -729,3 +732,10 @@ h1.accueil-titre {
   text-decoration: none;
 }
 .choix-langue:hover { border-color: currentColor; }
+.choix-langue .drapeau svg {
+  display: block;
+  width: 1.35em;
+  height: 0.9em;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--trait);
+}

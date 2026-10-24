@@ -5,7 +5,7 @@ categories: [Empty and NA]
 impact: silencieux
 extrait: 'all(logical(0))'
 reponse: 'TRUE'
-attendu: "`FALSE`, since no grade is above 20"
+attendu: "`FALSE`, since the vector holds no `TRUE`"
 versions: "All"
 source: "Slack ThinkR (2023), safer-r"
 ---

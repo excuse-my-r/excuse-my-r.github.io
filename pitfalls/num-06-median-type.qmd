@@ -24,7 +24,7 @@ identical(median(c(1L, 3L, 5L, 7L)), 4L)
 
 With an odd number of values, the median is the middle value: R returns it as is, hence as an integer. With an even number, it is the mean of the two central values, and `mean()` always returns a double, even when the result is a whole number.
 
-The type therefore depends on the data, not on the code. Type-strict code (`identical()`, `vapply(..., FUN.VALUE = integer(1))`, a typed database column) passes on one sample and breaks on the next.
+The same call therefore returns a different type depending on the data. Type-strict code (`identical()`, `vapply(..., FUN.VALUE = integer(1))`, a typed database column) passes on one sample and breaks on the next.
 
 ## The fix
 

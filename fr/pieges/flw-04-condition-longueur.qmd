@@ -4,7 +4,7 @@ ref: FLW-04
 categories: [Contrôle de flux]
 impact: silencieux
 attendu: "une erreur, puisque la condition contient deux valeurs"
-versions: "Silencieux jusqu'à R 4.1, erreur pour if depuis R 4.2.0 et pour && depuis R 4.3.0"
+versions: "Silencieux jusqu'à R 4.1, erreur pour if depuis R 4.2.0, avertissement puis erreur pour && en R 4.2.0 et 4.3.0"
 source: "The R Inferno, NEWS de R 4.2.0 et 4.3.0"
 ---
 
@@ -25,7 +25,7 @@ Choisissez **R 4.1.3** dans le menu, puis exécutez à nouveau : le même code r
 
 `if` attend une seule valeur logique. Jusqu'à R 4.1, quand on lui en donnait plusieurs, il utilisait la première et se contentait d'un avertissement, facile à manquer dans un script ou dans une fonction appelée en boucle. Ici, `x > 0` vaut `c(TRUE, FALSE)` : seul le 5 était testé, le -1 passait inaperçu.
 
-`&&` et `||` faisaient pire : ils prenaient le premier élément sans aucun avertissement. R 4.2.0 a transformé le cas de `if` en erreur, R 4.3.0 a fait de même pour `&&` et `||`. Un vieux script qui « marchait » peut donc s'arrêter net après une mise à jour de R.
+`&&` et `||` faisaient pire : ils prenaient le premier élément sans aucun avertissement. R 4.2.0 a transformé le cas de `if` en erreur et ajouté un avertissement à `&&` et `||`, devenu une erreur en R 4.3.0. Un vieux script qui « marchait » peut donc s'arrêter net après une mise à jour de R.
 
 ## La parade
 

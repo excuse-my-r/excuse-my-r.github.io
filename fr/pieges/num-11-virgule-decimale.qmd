@@ -26,11 +26,11 @@ Les valeurs entières, elles, passent. Le résultat a donc l'air plausible : ici
 
 ## La parade
 
-Remplacer la virgule avant la conversion, ou lire le fichier avec `read.csv2()`, qui attend le format français.
+Remplacer la virgule avant la conversion, ou lire le fichier avec `read.csv2()`, qui attend la virgule décimale utilisée en France et dans une bonne partie de l'Europe.
 
 ::: {.piege}
 ```{r}
-as.numeric(sub(",", ".", prix, fixed = TRUE))
+as.numeric(sub(",", ".", x = prix, fixed = TRUE))
 read.csv2(text = "prix\n1,5\n2\n3,25")
 ```
 :::
