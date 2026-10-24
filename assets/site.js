@@ -785,9 +785,19 @@ if (LANGUE === "fr") {
 
 ajouterChoixLangue();
 
+// Drapeau de la langue visée, en SVG : les émojis drapeaux ne s'affichent pas sous Windows
+function drapeau(langue) {
+  const span = el("span", { class: "drapeau", "aria-hidden": "true" });
+  span.innerHTML = langue === "fr"
+    ? '<svg viewBox="0 0 3 2" preserveAspectRatio="none"><path fill="#002395" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ed2939" d="M2 0h1v2H2z"/></svg>'
+    : '<svg viewBox="0 0 60 30" preserveAspectRatio="none"><clipPath id="drapeau-uk"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><path fill="#012169" d="M0 0v30h60V0z"/><path stroke="#fff" stroke-width="6" d="M0 0l60 30m0-30L0 30"/><path stroke="#c8102e" stroke-width="4" clip-path="url(#drapeau-uk)" d="M0 0l60 30m0-30L0 30"/><path stroke="#fff" stroke-width="10" d="M30 0v30M0 15h60"/><path stroke="#c8102e" stroke-width="6" d="M30 0v30M0 15h60"/></svg>';
+  return span;
+}
+
 async function ajouterChoixLangue() {
   const autre = LANGUE === "fr" ? offset : offset + "fr/";
   const lien = el("a", { class: "choix-langue", href: autre + "index.html", lang: LANGUE === "fr" ? "en" : "fr", hreflang: LANGUE === "fr" ? "en" : "fr", title: T.autreLangueTitre }, T.autreLangue);
+  lien.prepend(drapeau(LANGUE === "fr" ? "en" : "fr"));
   const zone = document.querySelector(".navbar .quarto-navbar-tools") ?? document.querySelector(".navbar-nav.ms-auto") ?? document.querySelector(".navbar .container-fluid");
   if (!zone) {
     return;
