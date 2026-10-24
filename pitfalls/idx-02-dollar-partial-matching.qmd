@@ -7,7 +7,7 @@ extrait: 'list(alpha = 0.05)$a'
 reponse: '0.05'
 attendu: "`NULL`, there is no element named a"
 versions: "All"
-source: "The R Inferno"
+source: "The R Inferno, hadley/strict"
 ---
 
 ::: {.piege}
@@ -15,12 +15,15 @@ source: "The R Inferno"
 settings <- list(alpha = 0.05)
 settings$a
 settings[["a"]]
+
+results <- data.frame(revenue = 10)
+results$rev
 ```
 :::
 
 ## Why
 
-On a list, `$` accepts a prefix: if only one name starts with `a`, that element is returned, without warning. `[[` requires the exact name.
+On a list, `$` accepts a prefix: if only one name starts with `a`, that element is returned, without warning. `[[` requires the exact name. A data frame column behaves the same way: `results$rev` returns the `revenue` column.
 
 The day someone adds an `amplitude` element to the list, `settings$a` starts returning `NULL`, and the code that depends on it changes behaviour although nobody touched it.
 

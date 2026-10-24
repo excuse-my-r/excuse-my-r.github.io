@@ -1,0 +1,38 @@
+---
+title: "attr() complète les noms d'attributs, jusqu'à ce qu'un second commence pareil"
+ref: IDX-07
+categories: [Indexation]
+impact: silencieux
+extrait: 'attr(structure(1:3, unite = "cm"), "u")'
+reponse: '"cm"'
+attendu: "`NULL`, il n'y a pas d'attribut nommé u"
+versions: "Toutes"
+source: "hadley/strict"
+---
+
+::: {.piege}
+```{r}
+mesure <- structure(1:3, unite = "cm")
+attr(mesure, "u")
+mesure <- structure(1:3, unite = "cm", usage = "plan")
+attr(mesure, "u")
+```
+:::
+
+## Pourquoi
+
+L'argument `exact` de `attr()` vaut `FALSE` par défaut : un préfixe suffit, tant qu'un seul attribut commence par lui. R renvoie alors cet attribut sans avertissement.
+
+Le jour où un autre attribut commence par les mêmes lettres, ici `usage` à côté de `unite`, le préfixe devient ambigu et `attr()` renvoie `NULL`. Le code qui lit l'attribut n'a pas changé.
+
+## La parade
+
+Écrire le nom complet avec `exact = TRUE`, ou demander à R de signaler chaque correspondance partielle.
+
+::: {.piege}
+```{r}
+attr(mesure, "unite", exact = TRUE)
+options(warnPartialMatchAttr = TRUE)
+attr(structure(1:3, unite = "cm"), "u")
+```
+:::

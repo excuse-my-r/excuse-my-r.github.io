@@ -7,7 +7,7 @@ extrait: 'list(alpha = 0.05)$a'
 reponse: '0.05'
 attendu: "`NULL`, il n'y a pas d'élément nommé a"
 versions: "Toutes"
-source: "The R Inferno"
+source: "The R Inferno, hadley/strict"
 ---
 
 ::: {.piege}
@@ -15,12 +15,15 @@ source: "The R Inferno"
 reglages <- list(alpha = 0.05)
 reglages$a
 reglages[["a"]]
+
+resultats <- data.frame(recette = 10)
+resultats$rec
 ```
 :::
 
 ## Pourquoi
 
-Sur une liste, `$` accepte un préfixe : s'il n'existe qu'un seul nom qui commence par `a`, c'est lui qui est renvoyé, sans avertissement. `[[` exige le nom exact.
+Sur une liste, `$` accepte un préfixe : s'il n'existe qu'un seul nom qui commence par `a`, c'est lui qui est renvoyé, sans avertissement. `[[` exige le nom exact. Une colonne de data frame se comporte de la même façon : `resultats$rec` renvoie la colonne `recette`.
 
 Le jour où quelqu'un ajoute un élément `amplitude` à la liste, `reglages$a` se met à renvoyer `NULL`, et le code qui en dépend change de comportement sans que personne ne l'ait modifié.
 
