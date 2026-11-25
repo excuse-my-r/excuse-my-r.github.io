@@ -1,0 +1,45 @@
+---
+title: "Selecting a data frame row by name accepts a partial name"
+ref: IDX-09
+categories: [Indexing]
+impact: silencieux
+extrait: 'data.frame(x = 1, row.names = "BRCA1")["BRCA", ]'
+reponse: '1'
+attendu: "no row for `BRCA`, as with a matrix"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+genes <- data.frame(
+  level = c(12.5, 3.1),
+  row.names = c("BRCA1", "TP53")
+)
+genes["BRCA", , drop = FALSE]
+as.matrix(genes)["BRCA", ]
+
+genes <- data.frame(
+  level = c(12.5, 8.4, 3.1),
+  row.names = c("BRCA1", "BRCA2", "TP53")
+)
+genes["BRCA", , drop = FALSE]
+```
+:::
+
+## Why
+
+On a data frame, `[` looks up row names with `pmatch()`: an exact name wins, otherwise a beginning that fits a single row is enough. `BRCA` returns the row `BRCA1`, without any warning, while a matrix with the same row names refuses. The help page `?Extract.data.frame` documents it: "Both `[` and `[[` extraction methods partially match row names."
+
+The result depends on the other rows. Once `BRCA2` is there, `BRCA` fits two names and the same line returns a row of `NA`. With genes, samples or patient identifiers as row names, a lookup can return the data of another individual.
+
+## The remedy
+
+Look the name up exactly with `match()`, as the help page suggests.
+
+::: {.piege}
+```{r}
+genes[match("BRCA", table = rownames(genes)), , drop = FALSE]
+genes[match("BRCA1", table = rownames(genes)), , drop = FALSE]
+```
+:::

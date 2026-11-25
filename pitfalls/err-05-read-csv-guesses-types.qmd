@@ -1,0 +1,40 @@
+---
+title: "read.csv() turns postcodes into numbers, F into FALSE and NA into a missing value"
+ref: ERR-05
+categories: [Errors and files]
+impact: silencieux
+extrait: 'read.csv(text = "zip\n01000")$zip'
+reponse: '1000'
+attendu: "the values as written in the file: `\"01000\"`, `\"F\"`, `\"NA\"` for Namibia"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+csv <- "zip,sex,country
+01000,F,FR
+06000,F,NA"
+patients <- read.csv(text = csv)
+patients
+vapply(patients, FUN = class, FUN.VALUE = character(1))
+```
+:::
+
+## Why
+
+`read.csv()` reads every column as text, then lets `type.convert()` pick a type for each one: logical if every value looks like `T`, `F`, `TRUE` or `FALSE`, number if every value looks like a number, text otherwise. The postcodes become integers and lose their leading zero. The sex column, which only holds `F` for female, becomes `FALSE`. And `"NA"`, the ISO code of Namibia, is in `na.strings` by default: it becomes a missing value.
+
+The guess depends on the content of each file. A single `M` in the sex column turns it back into text, so the same script returns a different type from one file to the next.
+
+## The remedy
+
+Give the type of the columns with `colClasses`, and the strings that really mean "missing" with `na.strings`.
+
+::: {.piege}
+```{r}
+patients <- read.csv(text = csv, colClasses = "character", na.strings = "")
+patients
+vapply(patients, FUN = class, FUN.VALUE = character(1))
+```
+:::

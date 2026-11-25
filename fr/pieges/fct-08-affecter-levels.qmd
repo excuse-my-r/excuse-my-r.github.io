@@ -1,0 +1,40 @@
+---
+title: "Affecter levels() renomme les valeurs au lieu de les réordonner"
+ref: FCT-08
+categories: [Facteurs]
+impact: silencieux
+extrait: 'f <- factor(c("non", "oui")); levels(f) <- c("oui", "non"); f'
+reponse: 'oui non'
+attendu: "`non oui oui`, avec oui comme premier niveau"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+reponses <- factor(c("non", "oui", "oui"))
+table(reponses)
+levels(reponses) <- c("oui", "non")
+reponses
+table(reponses)
+```
+:::
+
+## Pourquoi
+
+Un facteur stocke des codes entiers et, à part, les libellés de ces codes : les niveaux. `levels(x) <- valeur` remplace les libellés et ne touche pas aux codes. Le code 1, qui voulait dire `non`, veut maintenant dire `oui` : chaque valeur change de sens, et les effectifs sont inversés.
+
+L'intention était de changer l'ordre des niveaux, pour un tableau ou la légende d'un graphique. R ne peut pas distinguer un réordonnancement d'un renommage : dans les deux cas, il reçoit un nouveau vecteur de libellés de même longueur.
+
+## Le remède
+
+Réordonner avec `factor()` et son argument `levels`, qui associe les valeurs par leurs libellés. Pour renommer, donner une liste nommée qui dit quel ancien libellé devient quel nouveau.
+
+::: {.piege}
+```{r}
+reponses <- factor(c("non", "oui", "oui"))
+factor(reponses, levels = c("oui", "non"))
+levels(reponses) <- list(Oui = "oui", Non = "non")
+reponses
+```
+:::

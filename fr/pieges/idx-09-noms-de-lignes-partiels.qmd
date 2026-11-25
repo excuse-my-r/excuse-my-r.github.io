@@ -1,0 +1,45 @@
+---
+title: "Sélectionner une ligne de data frame par son nom accepte un nom partiel"
+ref: IDX-09
+categories: [Indexation]
+impact: silencieux
+extrait: 'data.frame(x = 1, row.names = "BRCA1")["BRCA", ]'
+reponse: '1'
+attendu: "aucune ligne pour `BRCA`, comme avec une matrice"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+genes <- data.frame(
+  niveau = c(12.5, 3.1),
+  row.names = c("BRCA1", "TP53")
+)
+genes["BRCA", , drop = FALSE]
+as.matrix(genes)["BRCA", ]
+
+genes <- data.frame(
+  niveau = c(12.5, 8.4, 3.1),
+  row.names = c("BRCA1", "BRCA2", "TP53")
+)
+genes["BRCA", , drop = FALSE]
+```
+:::
+
+## Pourquoi
+
+Sur un data frame, `[` cherche les noms de lignes avec `pmatch()` : un nom exact l'emporte, sinon un début de nom qui ne correspond qu'à une seule ligne suffit. `BRCA` renvoie la ligne `BRCA1`, sans aucun avertissement, alors qu'une matrice avec les mêmes noms de lignes refuse. La page d'aide `?Extract.data.frame` le documente : « Both `[` and `[[` extraction methods partially match row names. »
+
+Le résultat dépend des autres lignes. Dès que `BRCA2` est là, `BRCA` correspond à deux noms et la même ligne de code renvoie une ligne de `NA`. Avec des gènes, des échantillons ou des identifiants de patients en noms de lignes, une recherche peut renvoyer les données d'un autre individu.
+
+## Le remède
+
+Chercher le nom exact avec `match()`, comme le suggère la page d'aide.
+
+::: {.piege}
+```{r}
+genes[match("BRCA", table = rownames(genes)), , drop = FALSE]
+genes[match("BRCA1", table = rownames(genes)), , drop = FALSE]
+```
+:::

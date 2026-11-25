@@ -1,0 +1,46 @@
+---
+title: "return sans parenthèses ne quitte pas la fonction"
+ref: FUN-15
+categories: [Fonctions]
+impact: silencieux
+extrait: '(function() { return; "après" })()'
+reponse: '"après"'
+attendu: "`NULL` : la fonction devrait s'arrêter avant `log()`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+log_sur <- function(x) {
+  if (x <= 0) {
+    return
+  }
+  log(x)
+}
+log_sur(-1)
+```
+:::
+
+## Pourquoi
+
+En R, `return` est une fonction. Écrit seul, sans parenthèses, c'est seulement son nom : R évalue le symbole, obtient la fonction, n'en fait rien et passe à la ligne suivante. Le garde-fou n'arrête rien, et `log(-1)` s'exécute.
+
+L'habitude vient du C, de Java ou de JavaScript, où `return;` termine une fonction. R ne donne ni erreur ni avertissement sur le `return` lui-même. Ici, le seul indice est l'avertissement de `log()`, et il n'y en a aucun quand la ligne suivante accepte la valeur.
+
+## Le remède
+
+Toujours l'appeler : `return()` renvoie `NULL`, `return(valeur)` renvoie la valeur.
+
+::: {.piege}
+```{r}
+log_sur <- function(x) {
+  if (x <= 0) {
+    return(NULL)
+  }
+  log(x)
+}
+log_sur(-1)
+log_sur(exp(2))
+```
+:::

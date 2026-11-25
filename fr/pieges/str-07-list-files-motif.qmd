@@ -1,0 +1,39 @@
+---
+title: 'list.files(pattern = "*.csv") prend une expression régulière, pas un joker'
+ref: STR-07
+categories: [Chaînes]
+impact: silencieux
+extrait: 'grepl("*.csv", "notes_csv.txt")'
+reponse: 'TRUE'
+attendu: "le seul fichier `donnees.csv`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+dossier <- tempfile()
+dir.create(dossier)
+fichiers <- c("donnees.csv", "donnees.csv.bak", "notes_csv.txt", "xcsv.R")
+crees <- file.create(file.path(dossier, fichiers))
+list.files(dossier, pattern = "*.csv")
+```
+:::
+
+## Pourquoi
+
+L'argument `pattern` de `list.files()` est une expression régulière, comme dans `grepl()`, et non un joker du shell. Dans une expression régulière, `.` veut dire n'importe quel caractère et `*` répète ce qui le précède : un `*` en tête n'a rien à répéter et il est ignoré. `*.csv` veut donc dire « un caractère quelconque suivi de csv, n'importe où dans le nom » : `_csv` et `xcsv` conviennent, et rien n'attache le motif à la fin du nom.
+
+La ligne a l'air juste, et elle marche tant que le dossier ne contient que les fichiers attendus. Le jour où une sauvegarde ou un fichier de notes y arrive, le script le lit aussi.
+
+## Le remède
+
+Échapper le point et ancrer la fin du nom : `"\\.csv$"`. Pour garder la syntaxe des jokers, la traduire avec `glob2rx()`.
+
+::: {.piege}
+```{r}
+list.files(dossier, pattern = "\\.csv$")
+glob2rx("*.csv")
+list.files(dossier, pattern = glob2rx("*.csv"))
+```
+:::

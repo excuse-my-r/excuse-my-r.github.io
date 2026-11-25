@@ -1,0 +1,37 @@
+---
+title: "Un facteur utilisé comme indice sélectionne par ses codes, pas par ses libellés"
+ref: IDX-08
+categories: [Indexation]
+impact: silencieux
+extrait: 'names(c(a = 1, b = 2)[factor("b")])'
+reponse: '"a"'
+attendu: "les prix de la prune et de la pomme, `5` et `2`, soit 7 au total"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+prix <- c(pomme = 2, poire = 3, prune = 5)
+panier <- factor(c("prune", "pomme"))
+prix[panier]
+sum(prix[panier])
+```
+:::
+
+## Pourquoi
+
+Un facteur est un vecteur d'entiers qui porte ses libellés dans un attribut `levels`. `[` ne lit pas les libellés : il prend les codes entiers, comme pour n'importe quel indice entier. Les niveaux sont triés par ordre alphabétique, `pomme` puis `prune` : `prune` a le code 2, `pomme` le code 1, et R renvoie le deuxième et le premier prix. La page d'aide `?Extract` le dit clairement : indexer par un facteur revient à indexer par ses codes numériques.
+
+Aucun avertissement, alors que `switch()`, lui, prévient qu'il traite un facteur comme un entier. Les noms du résultat, `poire` et `pomme`, trahissent l'erreur, mais `sum()` les efface. Le piège apparaît dès qu'une colonne lue comme facteur, ou créée avec `factor()` pour fixer un ordre, sert de clé de recherche.
+
+## Le remède
+
+Convertir le facteur en texte avant de s'en servir comme indice.
+
+::: {.piege}
+```{r}
+prix[as.character(panier)]
+sum(prix[as.character(panier)])
+```
+:::

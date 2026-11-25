@@ -1,0 +1,37 @@
+---
+title: "A factor used as an index selects by its codes, not by its labels"
+ref: IDX-08
+categories: [Indexing]
+impact: silencieux
+extrait: 'names(c(a = 1, b = 2)[factor("b")])'
+reponse: '"a"'
+attendu: "the prices of the plum and the apple, `5` and `2`, so 7 in total"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+prices <- c(apple = 2, pear = 3, plum = 5)
+basket <- factor(c("plum", "apple"))
+prices[basket]
+sum(prices[basket])
+```
+:::
+
+## Why
+
+A factor is an integer vector that carries its labels in a `levels` attribute. `[` does not read the labels: it uses the integer codes, like any integer index. The levels are sorted alphabetically, `apple` then `plum`, so `plum` has code 2 and `apple` code 1, and R returns the second and the first price. The help page `?Extract` says it plainly: indexing by a factor is equivalent to indexing by its numeric codes.
+
+No warning, while `switch()` at least warns that it treats a factor as an integer. The names of the result, `pear` and `apple`, give the mix-up away, but `sum()` drops them. The pitfall shows up as soon as a column read as a factor, or built with `factor()` to control an order, serves as a lookup key.
+
+## The remedy
+
+Convert the factor to text before using it as an index.
+
+::: {.piege}
+```{r}
+prices[as.character(basket)]
+sum(prices[as.character(basket)])
+```
+:::

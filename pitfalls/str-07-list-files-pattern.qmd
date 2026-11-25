@@ -1,0 +1,39 @@
+---
+title: 'list.files(pattern = "*.csv") takes a regular expression, not a wildcard'
+ref: STR-07
+categories: [Strings]
+impact: silencieux
+extrait: 'grepl("*.csv", "notes_csv.txt")'
+reponse: 'TRUE'
+attendu: "only `data.csv`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+folder <- tempfile()
+dir.create(folder)
+files <- c("data.csv", "data.csv.bak", "notes_csv.txt", "xcsv.R")
+created <- file.create(file.path(folder, files))
+list.files(folder, pattern = "*.csv")
+```
+:::
+
+## Why
+
+The `pattern` argument of `list.files()` is a regular expression, as in `grepl()`, and not a shell wildcard. In a regular expression, `.` means any character and `*` repeats what comes before it: a leading `*` has nothing to repeat and is ignored. `*.csv` therefore means "any character followed by csv, anywhere in the name": `_csv` and `xcsv` fit, and nothing ties the pattern to the end of the name.
+
+The line looks right, and it works as long as the folder only holds the expected files. The day a backup or a notes file lands there, the script reads it too.
+
+## The remedy
+
+Escape the dot and anchor the end of the name: `"\\.csv$"`. To keep the wildcard syntax, translate it with `glob2rx()`.
+
+::: {.piege}
+```{r}
+list.files(folder, pattern = "\\.csv$")
+glob2rx("*.csv")
+list.files(folder, pattern = glob2rx("*.csv"))
+```
+:::

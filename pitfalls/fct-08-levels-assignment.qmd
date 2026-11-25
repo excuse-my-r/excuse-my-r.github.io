@@ -1,0 +1,40 @@
+---
+title: "Assigning levels() renames the values instead of reordering them"
+ref: FCT-08
+categories: [Factors]
+impact: silencieux
+extrait: 'f <- factor(c("no", "yes")); levels(f) <- c("yes", "no"); f'
+reponse: 'yes no'
+attendu: "`no yes yes`, with yes as the first level"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+answers <- factor(c("no", "yes", "yes"))
+table(answers)
+levels(answers) <- c("yes", "no")
+answers
+table(answers)
+```
+:::
+
+## Why
+
+A factor stores integer codes and, apart, the labels of those codes: the levels. `levels(x) <- value` replaces the labels and leaves the codes alone. Code 1, which meant `no`, now means `yes`: every value changes meaning, and the counts are swapped.
+
+The intention was to change the order of the levels, for a table or the legend of a plot. R cannot tell a reordering from a renaming: in both cases, it receives a new vector of labels of the same length.
+
+## The remedy
+
+Reorder with `factor()` and its `levels` argument, which matches the values by their labels. To rename, give a named list that says which old label becomes which new one.
+
+::: {.piege}
+```{r}
+answers <- factor(c("no", "yes", "yes"))
+factor(answers, levels = c("yes", "no"))
+levels(answers) <- list(Yes = "yes", No = "no")
+answers
+```
+:::

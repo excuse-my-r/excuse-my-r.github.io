@@ -1,0 +1,48 @@
+---
+title: "A default value is computed when it is first used, not when the function is called"
+ref: FUN-14
+categories: [Functions]
+impact: silencieux
+extrait: '(function(x, n = length(x)) { x <- x[-1]; n })(1:3)'
+reponse: '2'
+attendu: "`\"2 values kept out of 3 received\"`"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+describe <- function(x, n_received = length(x)) {
+  x <- x[!is.na(x)]
+  sprintf("%d values kept out of %d received", length(x), n_received)
+}
+describe(c(4, NA, 8))
+
+n <- 10
+first_n <- function(x, n = n) {
+  head(x, n = n)
+}
+first_n(letters)
+```
+:::
+
+## Why
+
+R evaluates arguments lazily. A default value is an expression, evaluated inside the function the first time the argument is used. Here, `n_received` is only used on the last line, after `x` has lost its `NA`: `length(x)` then gives 2.
+
+The same rule explains the error of `first_n()`. The default `n = n` is looked up inside the function, where `n` is the argument being computed, and not the `n` of the workspace. R reports a "recursive default argument reference".
+
+## The remedy
+
+Do not overwrite an argument that another default depends on, or evaluate the default at the start of the function with `force()`.
+
+::: {.piege}
+```{r}
+describe <- function(x, n_received = length(x)) {
+  force(n_received)
+  kept <- x[!is.na(x)]
+  sprintf("%d values kept out of %d received", length(kept), n_received)
+}
+describe(c(4, NA, 8))
+```
+:::

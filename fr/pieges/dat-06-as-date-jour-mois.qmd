@@ -1,0 +1,39 @@
+---
+title: "as.Date(\"01/02/2024\") renvoie une date de l'an 1"
+ref: DAT-06
+categories: [Dates]
+impact: silencieux
+extrait: 'format(as.Date("01/02/2024"), format = "%d/%m")'
+reponse: '"20/02"'
+attendu: "le 1er février 2024, ou une erreur"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+as.Date("01/02/2024")
+format(as.Date("01/02/2024"), format = "%d/%m")
+as.Date(c("2024-03-15", "15/03/2024"))
+as.Date(c("15/03/2024", "2024-03-15"))
+```
+:::
+
+## Pourquoi
+
+Sans `format`, `as.Date()` essaie deux formats, `"%Y-%m-%d"` puis `"%Y/%m/%d"`, sur le premier élément qui n'est pas `NA`. `01/02/2024` correspond au second : année 01, mois 02, et jour 20, les deux premiers chiffres de 2024. `strptime()` lit au plus deux chiffres pour le jour et ignore les caractères qui restent. Le résultat est le 20 février de l'an 1, une date valide, sans aucun avertissement. R affiche cette année `0001` sous Windows et macOS, et `1` sous Linux.
+
+Le format est choisi une seule fois, sur ce premier élément, puis appliqué à tout le vecteur. Une date écrite autrement devient `NA` sans un mot, comme `15/03/2024` à la troisième ligne. Et quand l'intruse arrive en premier, c'est elle qui impose son format à toutes les autres.
+
+## Le remède
+
+Toujours donner le format, puis vérifier qu'aucun `NA` n'est apparu.
+
+::: {.piege}
+```{r}
+as.Date("01/02/2024", format = "%d/%m/%Y")
+dates <- as.Date(c("15/03/2024", "2024-03-15"), format = "%d/%m/%Y")
+dates
+sum(is.na(dates))
+```
+:::

@@ -1,0 +1,35 @@
+---
+title: "In a formula, x^2 is not the square of x"
+ref: STA-01
+categories: [Statistics and models]
+impact: silencieux
+extrait: 'length(coef(lm(dist ~ speed + speed^2, data = cars)))'
+reponse: '2'
+attendu: "three coefficients: the intercept, speed and speed squared"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+fit <- lm(dist ~ speed + speed^2, data = cars)
+coef(fit)
+```
+:::
+
+## Why
+
+In a formula, operators describe the terms of the model, not arithmetic. `+` adds a term, `-` removes one, `:` is an interaction, and `^` crosses terms up to a degree: `(a + b)^2` means `a + b + a:b`. `speed^2` is therefore the interaction of `speed` with itself, that is `speed`, and the model has no squared term.
+
+R accepts the formula without a message, and the model fits: it is simply a straight line. The same reading applies to `y ~ x - 1`, which removes the intercept instead of subtracting 1.
+
+## The remedy
+
+Protect arithmetic with `I()`, as `?formula` suggests, or use `poly()` for a polynomial.
+
+::: {.piege}
+```{r}
+fit <- lm(dist ~ speed + I(speed^2), data = cars)
+coef(fit)
+```
+:::

@@ -1,0 +1,48 @@
+---
+title: "Une valeur par défaut est calculée à sa première utilisation, pas à l'appel de la fonction"
+ref: FUN-14
+categories: [Fonctions]
+impact: silencieux
+extrait: '(function(x, n = length(x)) { x <- x[-1]; n })(1:3)'
+reponse: '2'
+attendu: "`\"2 valeurs gardées sur 3 reçues\"`"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+decrire <- function(x, n_recues = length(x)) {
+  x <- x[!is.na(x)]
+  sprintf("%d valeurs gardées sur %d reçues", length(x), n_recues)
+}
+decrire(c(4, NA, 8))
+
+n <- 10
+premiers <- function(x, n = n) {
+  head(x, n = n)
+}
+premiers(letters)
+```
+:::
+
+## Pourquoi
+
+R évalue les arguments de façon paresseuse. Une valeur par défaut est une expression, évaluée dans la fonction la première fois que l'argument sert. Ici, `n_recues` ne sert qu'à la dernière ligne, après que `x` a perdu son `NA` : `length(x)` vaut alors 2.
+
+La même règle explique l'erreur de `premiers()`. La valeur par défaut `n = n` est cherchée dans la fonction, où `n` est l'argument en cours de calcul, et non le `n` de l'espace de travail. R signale une « recursive default argument reference ».
+
+## Le remède
+
+Ne pas écraser un argument dont dépend une autre valeur par défaut, ou évaluer la valeur par défaut dès le début de la fonction avec `force()`.
+
+::: {.piege}
+```{r}
+decrire <- function(x, n_recues = length(x)) {
+  force(n_recues)
+  gardees <- x[!is.na(x)]
+  sprintf("%d valeurs gardées sur %d reçues", length(gardees), n_recues)
+}
+decrire(c(4, NA, 8))
+```
+:::

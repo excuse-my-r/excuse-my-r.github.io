@@ -1,0 +1,40 @@
+---
+title: "read.csv() change les codes postaux en nombres, F en FALSE et NA en valeur manquante"
+ref: ERR-05
+categories: [Erreurs et fichiers]
+impact: silencieux
+extrait: 'read.csv(text = "code\n01000")$code'
+reponse: '1000'
+attendu: "les valeurs telles qu'écrites dans le fichier : `\"01000\"`, `\"F\"`, `\"NA\"` pour la Namibie"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+csv <- "code_postal,sexe,pays
+01000,F,FR
+06000,F,NA"
+patients <- read.csv(text = csv)
+patients
+vapply(patients, FUN = class, FUN.VALUE = character(1))
+```
+:::
+
+## Pourquoi
+
+`read.csv()` lit chaque colonne comme du texte, puis laisse `type.convert()` choisir un type pour chacune : logique si toutes les valeurs ressemblent à `T`, `F`, `TRUE` ou `FALSE`, nombre si toutes ressemblent à un nombre, texte sinon. Les codes postaux deviennent des entiers et perdent leur zéro initial. La colonne du sexe, qui ne contient que `F` pour féminin, devient `FALSE`. Et `"NA"`, le code ISO de la Namibie, figure dans `na.strings` par défaut : il devient une valeur manquante.
+
+La décision dépend du contenu de chaque fichier. Un seul `M` dans la colonne du sexe la fait redevenir du texte : le même script renvoie un type différent d'un fichier à l'autre.
+
+## Le remède
+
+Donner le type des colonnes avec `colClasses`, et les chaînes qui signifient vraiment « manquant » avec `na.strings`.
+
+::: {.piege}
+```{r}
+patients <- read.csv(text = csv, colClasses = "character", na.strings = "")
+patients
+vapply(patients, FUN = class, FUN.VALUE = character(1))
+```
+:::

@@ -1,0 +1,39 @@
+---
+title: 'as.Date("01/02/2024") returns a date in year 1'
+ref: DAT-06
+categories: [Dates]
+impact: silencieux
+extrait: 'format(as.Date("01/02/2024"), format = "%d/%m")'
+reponse: '"20/02"'
+attendu: "1 February 2024, or an error"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+as.Date("01/02/2024")
+format(as.Date("01/02/2024"), format = "%d/%m")
+as.Date(c("2024-03-15", "15/03/2024"))
+as.Date(c("15/03/2024", "2024-03-15"))
+```
+:::
+
+## Why
+
+Without `format`, `as.Date()` tries two formats, `"%Y-%m-%d"` then `"%Y/%m/%d"`, on the first element that is not `NA`. `01/02/2024` fits the second one: year 01, month 02, and day 20, the first two digits of 2024. `strptime()` reads at most two digits for the day and ignores the characters left over. The result is 20 February of year 1, a valid date, without any warning. R prints that year as `0001` on Windows and macOS, and as `1` on Linux.
+
+The format is chosen once, from that first element, then applied to the whole vector. A date written the other way becomes `NA` without a word, as `15/03/2024` in the third line. And when the odd one comes first, it sets the format for all the others.
+
+## The remedy
+
+Always give the format, then check that no `NA` appeared.
+
+::: {.piege}
+```{r}
+as.Date("01/02/2024", format = "%d/%m/%Y")
+dates <- as.Date(c("15/03/2024", "2024-03-15"), format = "%d/%m/%Y")
+dates
+sum(is.na(dates))
+```
+:::

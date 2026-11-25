@@ -1,0 +1,35 @@
+---
+title: "Dans une formule, x^2 n'est pas le carré de x"
+ref: STA-01
+categories: [Statistiques et modèles]
+impact: silencieux
+extrait: 'length(coef(lm(dist ~ speed + speed^2, data = cars)))'
+reponse: '2'
+attendu: "trois coefficients : l'ordonnée à l'origine, speed et speed au carré"
+versions: "Toutes"
+source: "Connaissance générale de R"
+---
+
+::: {.piege}
+```{r}
+ajustement <- lm(dist ~ speed + speed^2, data = cars)
+coef(ajustement)
+```
+:::
+
+## Pourquoi
+
+Dans une formule, les opérateurs décrivent les termes du modèle, pas un calcul. `+` ajoute un terme, `-` en retire un, `:` est une interaction, et `^` croise des termes jusqu'à un degré donné : `(a + b)^2` veut dire `a + b + a:b`. `speed^2` est donc l'interaction de `speed` avec lui-même, c'est-à-dire `speed`, et le modèle n'a pas de terme au carré.
+
+R accepte la formule sans un message, et le modèle s'ajuste : c'est simplement une droite. La même lecture s'applique à `y ~ x - 1`, qui retire l'ordonnée à l'origine au lieu de soustraire 1.
+
+## Le remède
+
+Protéger le calcul avec `I()`, comme le suggère `?formula`, ou utiliser `poly()` pour un polynôme.
+
+::: {.piege}
+```{r}
+ajustement <- lm(dist ~ speed + I(speed^2), data = cars)
+coef(ajustement)
+```
+:::

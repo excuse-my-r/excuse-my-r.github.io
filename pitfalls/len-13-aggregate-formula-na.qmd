@@ -1,0 +1,45 @@
+---
+title: "aggregate() with a formula drops every row that holds an NA"
+ref: LEN-13
+categories: [Empty and NA]
+impact: incoherent
+extrait: 'aggregate(y ~ g, data.frame(g = 1:2, y = c(1, NA)), mean)$g'
+reponse: '1'
+attendu: "one row per site, and the mean height of site A over its two patients"
+versions: "All"
+source: "General R knowledge"
+---
+
+::: {.piege}
+```{r}
+visits <- data.frame(
+  site = c("A", "A", "B", "C"),
+  weight = c(70, NA, 82, NA),
+  height = c(170, 180, 175, 160)
+)
+aggregate(cbind(weight, height) ~ site, data = visits, FUN = mean)
+aggregate(visits[c("weight", "height")], by = list(site = visits$site), FUN = mean)
+```
+:::
+
+## Why
+
+The formula method of `aggregate()` builds its data with `model.frame()`, whose `na.action` is `na.omit`: every row with an `NA` in any of the variables is removed before the computation. The patient of site A without a weight also disappears from the mean height, and site C, which has no weight at all, disappears from the result.
+
+The method without a formula keeps every row and passes the `NA` on to `mean()`, which returns `NA`. Same function, same data, two different answers, and the one from the formula looks complete.
+
+## The remedy
+
+With the formula, keep the rows with `na.action = na.pass`, and say explicitly how `FUN` handles the `NA`. A site without any value then gets `NaN`, the mean of nothing.
+
+::: {.piege}
+```{r}
+aggregate(
+  cbind(weight, height) ~ site,
+  data = visits,
+  FUN = mean,
+  na.rm = TRUE,
+  na.action = na.pass
+)
+```
+:::
