@@ -3,6 +3,7 @@ title: "sample() sur une seule valeur tire dans 1:valeur"
 ref: LEN-11
 categories: [Vides et NA]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'length(sample(c(12)))'
 reponse: '12'
 attendu: "`1`, il n'y a qu'une valeur à mélanger"

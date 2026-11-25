@@ -3,6 +3,7 @@ title: "merge() trie les lignes et renomme les colonnes en double"
 ref: DF-03
 categories: [Data frames et listes]
 impact: incoherent
+controle: [safer-r]
 attendu: "les commandes dans leur ordre d'origine, 3, 1, 2"
 versions: "Toutes"
 source: "Slack ThinkR (2020), The R Inferno"

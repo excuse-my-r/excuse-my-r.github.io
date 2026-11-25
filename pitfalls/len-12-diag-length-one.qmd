@@ -3,6 +3,7 @@ title: "diag() on a single value builds an identity matrix of that size"
 ref: LEN-12
 categories: [Empty and NA]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'dim(diag(c(4)))'
 reponse: '4 4'
 attendu: "`1 1`, a one-by-one matrix holding 4"

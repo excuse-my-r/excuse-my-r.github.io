@@ -3,6 +3,7 @@ title: "Sibling functions do not share the same default values"
 ref: FUN-11
 categories: [Functions]
 impact: incoherent
+controle: [safer-r]
 extrait: 'formals(list.dirs)$recursive'
 reponse: 'TRUE'
 attendu: "`FALSE`, as for `list.files()`"

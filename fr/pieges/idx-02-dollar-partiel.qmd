@@ -3,6 +3,7 @@ title: "$ complète les noms à votre place"
 ref: IDX-02
 categories: [Indexation]
 impact: silencieux
+controle: [strict]
 extrait: 'list(alpha = 0.05)$a'
 reponse: '0.05'
 attendu: "`NULL`, il n'y a pas d'élément nommé a"

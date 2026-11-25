@@ -3,6 +3,7 @@ title: "<<- creates a global variable when it finds nothing to modify"
 ref: FUN-08
 categories: [Functions]
 impact: silencieux
+controle: [safer-r]
 attendu: "a variable local to the function, or an error"
 versions: "All"
 source: "The R Inferno"

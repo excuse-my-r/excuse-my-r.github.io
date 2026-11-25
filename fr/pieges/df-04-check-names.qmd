@@ -3,6 +3,7 @@ title: "data.frame() modifie les noms de colonnes sans prévenir"
 ref: DF-04
 categories: [Data frames et listes]
 impact: incoherent
+controle: [safer-r]
 extrait: 'names(data.frame("2024" = 1))'
 reponse: '"X2024"'
 attendu: "`\"ma colonne\" \"2024\" \"a\" \"a\"`"

@@ -3,6 +3,7 @@ title: "Redefining an existing function masks it without warning"
 ref: FUN-05
 categories: [Functions]
 impact: silencieux
+controle: [safer-r, strict]
 attendu: "`2`, the mean"
 versions: "All"
 source: "safer-r, hadley/strict"

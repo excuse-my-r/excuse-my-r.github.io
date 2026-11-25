@@ -3,6 +3,7 @@ title: "max() of an empty vector is -Inf"
 ref: NUM-13
 categories: [Numbers]
 impact: cryptique
+controle: [safer-r]
 extrait: 'max(numeric(0))'
 reponse: '-Inf'
 attendu: "`NA`, or an error"

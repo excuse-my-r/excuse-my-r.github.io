@@ -3,6 +3,7 @@ title: "<<- crée une variable globale quand il ne trouve rien à modifier"
 ref: FUN-08
 categories: [Fonctions]
 impact: silencieux
+controle: [safer-r]
 attendu: "une variable locale à la fonction, ou une erreur"
 versions: "Toutes"
 source: "The R Inferno"

@@ -3,6 +3,7 @@ title: "Extracting a row or a column drops a dimension"
 ref: IDX-01
 categories: [Indexing]
 impact: silencieux
+controle: [strict]
 extrait: 'is.matrix(matrix(1:6, nrow = 2)[1, ])'
 reponse: 'FALSE'
 attendu: "a one-row matrix, and a one-column data frame"

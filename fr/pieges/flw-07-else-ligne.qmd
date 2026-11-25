@@ -3,6 +3,7 @@ title: "Un else en début de ligne est une erreur de syntaxe"
 ref: FLW-07
 categories: [Contrôle de flux]
 impact: cryptique
+controle: [safer-r]
 attendu: "`\"négatif\"`, comme dans n'importe quel autre langage"
 versions: "Toutes"
 source: "safer-r, The R Inferno"

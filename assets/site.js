@@ -44,6 +44,7 @@ const TEXTES = {
     categorie: "Category",
     toutes: "All",
     gravite: "Severity",
+    controle: "Controlled",
     effacer: "Clear filters",
     aucun: "No pitfall matches these filters.",
     compte: (n, total) => n === total ? `${n} pitfalls` : `${n} ${n > 1 ? "pitfalls" : "pitfall"} out of ${total}`,
@@ -76,6 +77,7 @@ const TEXTES = {
     categorie: "Catégorie",
     toutes: "Toutes",
     gravite: "Gravité",
+    controle: "Contrôlé",
     effacer: "Effacer les filtres",
     aucun: "Aucun piège ne correspond à ces filtres.",
     compte: (n, total) => n === total ? `${n} pièges` : `${n} ${n > 1 ? "pièges" : "piège"} sur ${total}`,
@@ -646,6 +648,8 @@ async function ajouterSuite() {
 // ------------------------------------------------------------------
 
 const IMPACTS = Object.entries(T.impacts);
+// Outils qui détectent ou empêchent le piège (champ controle des fiches)
+const CONTROLES = ["safer-r", "strict"];
 
 function normaliser(s) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -668,7 +672,8 @@ if (liste && chapo) {
 if (liste && zoneFiltres) {
   const lignes = [...liste.querySelectorAll(".catalogue-ligne")];
   const categories = [...new Set(lignes.map(l => l.dataset.categorie).filter(Boolean))];
-  const etatFiltre = { texte: "", categorie: null, impacts: new Set() };
+  const controlesLigne = l => (l.dataset.controle || "").split(" ").filter(Boolean);
+  const etatFiltre = { texte: "", categorie: null, impacts: new Set(), controles: new Set() };
 
   const recherche = el("div", { class: "recherche" });
   const champ = el("input", { type: "search", id: "recherche-piege", placeholder: T.exemple, autocomplete: "off" });
@@ -700,6 +705,16 @@ if (liste && zoneFiltres) {
       return b;
     });
 
+  const groupeControle = groupe(T.controle);
+  const boutonsControle = CONTROLES
+    .filter(outil => lignes.some(l => controlesLigne(l).includes(outil)))
+    .map(outil => {
+      const b = el("button", { type: "button", class: "puce", "aria-pressed": "false" }, outil);
+      b.dataset.valeur = outil;
+      groupeControle.append(b);
+      return b;
+    });
+
   const compteur = el("p", { class: "compteur", role: "status" });
   const vide = el("div", { class: "catalogue-vide", hidden: "" });
   const effacer = el("button", { type: "button", class: "bouton bouton-discret" }, T.effacer);
@@ -709,6 +724,9 @@ if (liste && zoneFiltres) {
   if (boutonsImpact.length > 1) {
     zoneFiltres.append(groupeImpact);
   }
+  if (boutonsControle.length) {
+    zoneFiltres.append(groupeControle);
+  }
   zoneFiltres.classList.add("filtres");
   liste.before(compteur);
   liste.after(vide);
@@ -717,9 +735,11 @@ if (liste && zoneFiltres) {
     const q = normaliser(etatFiltre.texte.trim());
     let n = 0;
     for (const l of lignes) {
-      const ok = (!q || normaliser(l.textContent).includes(q))
+      // La recherche porte sur le titre et l'extrait : « str » ne doit pas trouver l'étiquette strict
+      const ok = (!q || normaliser(l.querySelector(".catalogue-lien").textContent).includes(q))
         && (!etatFiltre.categorie || l.dataset.categorie === etatFiltre.categorie)
-        && (!etatFiltre.impacts.size || etatFiltre.impacts.has(l.dataset.impact));
+        && (!etatFiltre.impacts.size || etatFiltre.impacts.has(l.dataset.impact))
+        && (!etatFiltre.controles.size || controlesLigne(l).some(c => etatFiltre.controles.has(c)));
       l.hidden = !ok;
       if (ok) {
         n += 1;
@@ -734,6 +754,16 @@ if (liste && zoneFiltres) {
     toutes.setAttribute("aria-pressed", String(!etatFiltre.categorie));
     boutonsCat.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.valeur === etatFiltre.categorie)));
     boutonsImpact.forEach(b => b.setAttribute("aria-pressed", String(etatFiltre.impacts.has(b.dataset.valeur))));
+    boutonsControle.forEach(b => b.setAttribute("aria-pressed", String(etatFiltre.controles.has(b.dataset.valeur))));
+  }
+
+  function basculer(ensemble, valeur) {
+    if (ensemble.has(valeur)) {
+      ensemble.delete(valeur);
+    } else {
+      ensemble.add(valeur);
+    }
+    appliquer();
   }
 
   champ.addEventListener("input", () => { etatFiltre.texte = champ.value; appliquer(); });
@@ -742,19 +772,13 @@ if (liste && zoneFiltres) {
     etatFiltre.categorie = etatFiltre.categorie === b.dataset.valeur ? null : b.dataset.valeur;
     appliquer();
   }));
-  boutonsImpact.forEach(b => b.addEventListener("click", () => {
-    const v = b.dataset.valeur;
-    if (etatFiltre.impacts.has(v)) {
-      etatFiltre.impacts.delete(v);
-    } else {
-      etatFiltre.impacts.add(v);
-    }
-    appliquer();
-  }));
+  boutonsImpact.forEach(b => b.addEventListener("click", () => basculer(etatFiltre.impacts, b.dataset.valeur)));
+  boutonsControle.forEach(b => b.addEventListener("click", () => basculer(etatFiltre.controles, b.dataset.valeur)));
   effacer.addEventListener("click", () => {
     etatFiltre.texte = "";
     etatFiltre.categorie = null;
     etatFiltre.impacts.clear();
+    etatFiltre.controles.clear();
     champ.value = "";
     appliquer();
     champ.focus();

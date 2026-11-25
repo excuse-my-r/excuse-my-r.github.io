@@ -3,6 +3,7 @@ title: "sapply() does not guarantee the type of what it returns"
 ref: DF-01
 categories: [Data frames and lists]
 impact: silencieux
+controle: [strict]
 extrait: 'class(sapply(list(), length))'
 reponse: '"list"'
 attendu: "an integer vector, possibly empty"

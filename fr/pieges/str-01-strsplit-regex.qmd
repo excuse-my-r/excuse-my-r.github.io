@@ -3,6 +3,7 @@ title: "strsplit() lit le séparateur comme une expression régulière"
 ref: STR-01
 categories: [Chaînes]
 impact: silencieux
+controle: [safer-r]
 extrait: 'strsplit("a.b", ".")[[1]]'
 reponse: '"" "" ""'
 attendu: "`\"a\" \"b\"`"

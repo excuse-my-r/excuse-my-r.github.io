@@ -3,6 +3,7 @@ title: "sapply() ne garantit pas le type de ce qu'il renvoie"
 ref: DF-01
 categories: [Data frames et listes]
 impact: silencieux
+controle: [strict]
 extrait: 'class(sapply(list(), length))'
 reponse: '"list"'
 attendu: "un vecteur d'entiers, éventuellement vide"

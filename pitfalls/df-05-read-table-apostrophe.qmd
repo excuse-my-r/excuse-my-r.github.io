@@ -3,6 +3,7 @@ title: "read.table() takes apostrophes for quotes and # for a comment"
 ref: DF-05
 categories: [Data frames and lists]
 impact: silencieux
+controle: [safer-r]
 attendu: "a table of 4 rows"
 versions: "All"
 source: "The R Inferno"

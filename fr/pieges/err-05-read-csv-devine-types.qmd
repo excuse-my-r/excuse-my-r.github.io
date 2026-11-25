@@ -3,6 +3,7 @@ title: "read.csv() change les codes postaux en nombres, F en FALSE et NA en vale
 ref: ERR-05
 categories: [Erreurs et fichiers]
 impact: silencieux
+controle: [safer-r]
 extrait: 'read.csv(text = "code\n01000")$code'
 reponse: '1000'
 attendu: "les valeurs telles qu'écrites dans le fichier : `\"01000\"`, `\"F\"`, `\"NA\"` pour la Namibie"

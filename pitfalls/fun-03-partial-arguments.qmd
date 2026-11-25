@@ -3,6 +3,7 @@ title: "An abbreviated argument works until the day it becomes ambiguous"
 ref: FUN-03
 categories: [Functions]
 impact: incoherent
+controle: [safer-r, strict]
 extrait: 'seq(1, 10, len = 3)'
 reponse: ' 1.0  5.5 10.0'
 attendu: "an error, `len` is not an argument of `seq()`"

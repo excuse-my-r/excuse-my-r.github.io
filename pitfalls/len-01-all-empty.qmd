@@ -3,6 +3,7 @@ title: "all() of an empty vector is TRUE"
 ref: LEN-01
 categories: [Empty and NA]
 impact: silencieux
+controle: [safer-r]
 extrait: 'all(logical(0))'
 reponse: 'TRUE'
 attendu: "`FALSE`, since the vector holds no `TRUE`"

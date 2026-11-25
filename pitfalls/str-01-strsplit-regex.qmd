@@ -3,6 +3,7 @@ title: "strsplit() reads the separator as a regular expression"
 ref: STR-01
 categories: [Strings]
 impact: silencieux
+controle: [safer-r]
 extrait: 'strsplit("a.b", ".")[[1]]'
 reponse: '"" "" ""'
 attendu: "`\"a\" \"b\"`"

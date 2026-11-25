@@ -3,6 +3,7 @@ title: "read.table() prend les apostrophes pour des guillemets et # pour un comm
 ref: DF-05
 categories: [Data frames et listes]
 impact: silencieux
+controle: [safer-r]
 attendu: "un tableau de 4 lignes"
 versions: "Toutes"
 source: "The R Inferno"

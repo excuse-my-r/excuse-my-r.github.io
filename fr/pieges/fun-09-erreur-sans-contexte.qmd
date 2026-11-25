@@ -3,6 +3,7 @@ title: "Un message d'erreur ne dit pas d'où vient l'appel"
 ref: FUN-09
 categories: [Fonctions]
 impact: cryptique
+controle: [safer-r]
 attendu: "une erreur qui mentionne `fun2()` et la valeur reçue"
 versions: "Toutes"
 source: "safer-r"

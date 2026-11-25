@@ -3,6 +3,7 @@ title: "all() d'un vecteur vide vaut TRUE"
 ref: LEN-01
 categories: [Vides et NA]
 impact: silencieux
+controle: [safer-r]
 extrait: 'all(logical(0))'
 reponse: 'TRUE'
 attendu: "`FALSE`, puisque le vecteur ne contient aucun `TRUE`"

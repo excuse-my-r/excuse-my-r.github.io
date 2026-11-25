@@ -3,6 +3,7 @@ title: "A second on.exit() erases the first"
 ref: FUN-10
 categories: [Functions]
 impact: silencieux
+controle: [safer-r]
 attendu: "both cleanup actions run"
 versions: "All"
 source: "General R knowledge"

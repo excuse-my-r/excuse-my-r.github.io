@@ -3,6 +3,7 @@ title: "... avale les fautes de frappe"
 ref: FUN-01
 categories: [Fonctions]
 impact: silencieux
+controle: [safer-r]
 extrait: 'sum(1, 2, na.rn = TRUE)'
 reponse: '4'
 attendu: "`3`, ou une erreur sur l'argument mal orthographié"

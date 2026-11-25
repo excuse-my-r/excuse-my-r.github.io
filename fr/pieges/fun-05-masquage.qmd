@@ -3,6 +3,7 @@ title: "Redéfinir une fonction existante la masque sans avertissement"
 ref: FUN-05
 categories: [Fonctions]
 impact: silencieux
+controle: [safer-r, strict]
 attendu: "`2`, la moyenne"
 versions: "Toutes"
 source: "safer-r, hadley/strict"

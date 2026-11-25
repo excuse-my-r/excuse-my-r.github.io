@@ -3,6 +3,7 @@ title: "for (i in 1:length(x)) runs even when x is empty"
 ref: LEN-03
 categories: [Empty and NA]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: '1:length(c())'
 reponse: '1 0'
 attendu: "nothing, the loop should not run"

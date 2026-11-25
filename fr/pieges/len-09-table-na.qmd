@@ -3,6 +3,7 @@ title: "table() ne compte pas les NA"
 ref: LEN-09
 categories: [Vides et NA]
 impact: silencieux
+controle: [safer-r]
 extrait: 'sum(table(c("a", NA, "a")))'
 reponse: '2'
 attendu: "`3`, le nombre de valeurs"

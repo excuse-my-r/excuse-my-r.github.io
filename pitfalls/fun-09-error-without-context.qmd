@@ -3,6 +3,7 @@ title: "An error message does not say where the call came from"
 ref: FUN-09
 categories: [Functions]
 impact: cryptique
+controle: [safer-r]
 attendu: "an error that mentions `fun2()` and the value received"
 versions: "All"
 source: "safer-r"

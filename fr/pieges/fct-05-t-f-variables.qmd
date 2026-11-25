@@ -3,6 +3,7 @@ title: "T et F sont des variables qu'on peut écraser"
 ref: FCT-05
 categories: [Facteurs]
 impact: silencieux
+controle: [safer-r, strict]
 attendu: "`T` vaut toujours `TRUE`"
 versions: "Toutes"
 source: "safer-r, The R Inferno"

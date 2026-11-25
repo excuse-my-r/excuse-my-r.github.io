@@ -7,7 +7,7 @@ listing:
   contents: pitfalls
   template: assets/listing.ejs
   sort: "ref"
-  fields: [title, ref, categories, impact, extrait, reponse]
+  fields: [title, ref, categories, impact, controle, extrait, reponse]
   filter-ui: false
   sort-ui: false
   page-size: 500

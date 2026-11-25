@@ -3,6 +3,7 @@ title: "all() sur des NA retirés vaut TRUE"
 ref: LEN-02
 categories: [Vides et NA]
 impact: silencieux
+controle: [safer-r]
 extrait: 'all(c(NA, NA), na.rm = TRUE)'
 reponse: 'TRUE'
 attendu: "`NA`, puisqu'aucune valeur n'est connue"

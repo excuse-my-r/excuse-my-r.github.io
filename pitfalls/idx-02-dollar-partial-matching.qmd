@@ -3,6 +3,7 @@ title: "$ completes names for you"
 ref: IDX-02
 categories: [Indexing]
 impact: silencieux
+controle: [strict]
 extrait: 'list(alpha = 0.05)$a'
 reponse: '0.05'
 attendu: "`NULL`, there is no element named a"

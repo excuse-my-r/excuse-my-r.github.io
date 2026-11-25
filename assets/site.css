@@ -234,7 +234,7 @@ h1.accueil-titre {
 
 .catalogue-ligne {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 0.3rem 2rem;
   align-items: start;
   padding: 0.9rem 0.25rem 1rem;
@@ -281,6 +281,35 @@ h1.accueil-titre {
   color: var(--encre-douce);
   padding-top: 0.2rem;
 }
+
+/* Outils qui détectent ou évitent le piège : une case fixe par outil, pour que les
+   étiquettes restent alignées d'une ligne à l'autre, même sans étiquette */
+.controle {
+  display: grid;
+  grid-template-columns: 9ch 8ch;
+  gap: 0.35rem;
+  font: 500 0.75rem/1 var(--mono);
+}
+.controle-outil {
+  padding: 0.25rem 0;
+  text-align: center;
+  color: var(--encre-douce);
+  border: 1px solid var(--trait);
+  border-radius: 999px;
+}
+.controle-safer-r { grid-column: 1; }
+.controle-strict { grid-column: 2; }
+/* Lu par les lecteurs d'écran, comme le libellé de la gravité */
+.controle:not(:empty)::before {
+  content: "Controlled by";
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+:lang(fr) .controle:not(:empty)::before { content: "Contrôlé par"; }
 
 .catalogue-vide {
   padding: 2rem 0;
@@ -499,8 +528,12 @@ h1.accueil-titre {
 .piege-sortie.est-navigateur .piege-sortie-label { color: var(--bleu); }
 
 @media (max-width: 720px) {
-  .catalogue-ligne { grid-template-columns: 1fr; }
-  .catalogue-ligne .impact { padding-top: 0; }
+  /* Sous le titre, la gravité puis les outils, sur une même ligne */
+  .catalogue-ligne { grid-template-columns: auto minmax(0, 1fr); column-gap: 1rem; }
+  .catalogue-lien { grid-column: 1 / -1; }
+  .catalogue-ligne .impact { padding-top: 0; align-self: center; }
+  .controle { display: flex; }
+  .controle-outil { padding: 0.25rem 0.5rem; }
   .piege-raccourci { display: none; }
 }
 

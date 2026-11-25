@@ -3,6 +3,7 @@ title: "aggregate() avec une formule supprime toute ligne qui contient un NA"
 ref: LEN-13
 categories: [Vides et NA]
 impact: incoherent
+controle: [safer-r]
 extrait: 'aggregate(y ~ g, data.frame(g = 1:2, y = c(1, NA)), mean)$g'
 reponse: '1'
 attendu: "une ligne par site, et la taille moyenne du site A sur ses deux patients"

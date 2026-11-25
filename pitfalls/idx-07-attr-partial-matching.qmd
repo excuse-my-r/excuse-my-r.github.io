@@ -3,6 +3,7 @@ title: "attr() completes attribute names, until a second one starts the same way
 ref: IDX-07
 categories: [Indexing]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'attr(structure(1:3, unit = "cm"), "u")'
 reponse: '"cm"'
 attendu: "`NULL`, there is no attribute named u"

@@ -3,6 +3,7 @@ title: "stringsAsFactors changed its default value in R 4.0"
 ref: FCT-02
 categories: [Factors]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'class(data.frame(x = "a")$x)'
 reponse: '"character"'
 attendu: "the same result whatever the R version"

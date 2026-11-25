@@ -23,6 +23,7 @@ The `.github/workflows/publish.yml` workflow builds the site and publishes it to
 - A block that needs a package declares it: `::: {.piege packages="dplyr"}`.
 - A pitfall that cannot run in a browser (Shiny, renv, CI, OS) uses `::: {.piege .piege-statique}` with plain fenced code, shown without a console.
 - The home page catalogue is a Quarto listing (`assets/listing.ejs`), filtered in the browser.
+- The optional `controle` field lists the tools that catch or prevent the pitfall. [strict](https://hadley.github.io/strict/) is listed when it raises an error or a warning on the pitfall's own code, not on something else in the block. [safer-r](https://github.com/safer-r) is listed when its rules, its backbone or its {saferDev} checkers catch or avoid the pitfall, including when writing out every argument brings the default behind the trap into view. The field feeds the "Controlled" filter and column of the catalogue.
 - The interface language follows `<html lang>`: `lang: en` in `_quarto.yml`, `lang: fr` in `fr/_metadata.yml`, which also translates the page labels.
 - R 4.1.3 requires cross-origin isolation (COOP and COEP headers). On GitHub Pages, `coi-serviceworker.js` adds them; on Cloudflare, `_headers` does.
 
@@ -35,6 +36,7 @@ title: "What the pitfall does, in one sentence"
 ref: NUM-14
 categories: [Numbers]       # [Numérique] in the French page
 impact: silencieux          # silencieux, cryptique or incoherent (internal keys)
+controle: [strict]          # optional: safer-r and/or strict, the tools that catch or prevent the pitfall
 extrait: 'round(2.5)'       # one line shown in the catalogue
 reponse: '2'                # what R prints after [1]
 attendu: "`3`"              # what you would expect

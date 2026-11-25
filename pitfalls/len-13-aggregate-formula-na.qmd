@@ -3,6 +3,7 @@ title: "aggregate() with a formula drops every row that holds an NA"
 ref: LEN-13
 categories: [Empty and NA]
 impact: incoherent
+controle: [safer-r]
 extrait: 'aggregate(y ~ g, data.frame(g = 1:2, y = c(1, NA)), mean)$g'
 reponse: '1'
 attendu: "one row per site, and the mean height of site A over its two patients"

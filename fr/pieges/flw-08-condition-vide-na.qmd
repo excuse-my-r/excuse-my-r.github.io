@@ -3,6 +3,7 @@ title: "if s'arrête sur une condition vide ou NA"
 ref: FLW-08
 categories: [Contrôle de flux]
 impact: cryptique
+controle: [safer-r]
 extrait: 'if (NA) "oui"'
 attendu: "que la branche soit simplement sautée"
 versions: "Toutes"

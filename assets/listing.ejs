@@ -21,7 +21,8 @@ const categories = Object.keys(groupes).sort((a, b) => rang(a) - rang(b) || a.lo
     <h3 class="catalogue-groupe-titre"><%= c %></h3>
     <ul class="catalogue-liste" role="list">
     <% for (const item of groupes[c].sort((a, b) => String(a.ref).localeCompare(String(b.ref)))) { %>
-      <li class="catalogue-ligne" data-ref="<%= item.ref %>" data-impact="<%= item.impact %>" data-categorie="<%= c %>">
+      <% const controles = [].concat(item.controle || []); %>
+      <li class="catalogue-ligne" data-ref="<%= item.ref %>" data-impact="<%= item.impact %>" data-controle="<%= controles.join(" ") %>" data-categorie="<%= c %>">
         <a class="catalogue-lien" href="<%- item.path %>">
           <span class="catalogue-titre"><%= item.title %></span>
           <% if (item.extrait) { %>
@@ -29,6 +30,7 @@ const categories = Object.keys(groupes).sort((a, b) => rang(a) - rang(b) || a.lo
           <% } %>
         </a>
         <span class="impact impact-<%= item.impact %>"></span>
+        <span class="controle"><% for (const outil of controles) { %><span class="controle-outil controle-<%= outil %>"><%= outil %></span><% } %></span>
       </li>
     <% } %>
     </ul>

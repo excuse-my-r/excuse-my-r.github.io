@@ -3,6 +3,7 @@ title: "data.frame() changes column names without telling you"
 ref: DF-04
 categories: [Data frames and lists]
 impact: incoherent
+controle: [safer-r]
 extrait: 'names(data.frame("2024" = 1))'
 reponse: '"X2024"'
 attendu: "`\"my column\" \"2024\" \"a\" \"a\"`"

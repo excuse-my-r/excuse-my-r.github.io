@@ -3,6 +3,7 @@ title: "max() d'un vecteur vide vaut -Inf"
 ref: NUM-13
 categories: [Numérique]
 impact: cryptique
+controle: [safer-r]
 extrait: 'max(numeric(0))'
 reponse: '-Inf'
 attendu: "`NA`, ou une erreur"

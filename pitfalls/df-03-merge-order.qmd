@@ -3,6 +3,7 @@ title: "merge() sorts the rows and renames duplicated columns"
 ref: DF-03
 categories: [Data frames and lists]
 impact: incoherent
+controle: [safer-r]
 attendu: "the orders in their original order, 3, 1, 2"
 versions: "All"
 source: "Slack ThinkR (2020), The R Inferno"

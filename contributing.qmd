@@ -33,6 +33,7 @@ title: "What the pitfall does, in one sentence"
 ref: NUM-14
 categories: [Numbers]
 impact: silencieux          # silencieux (silently wrong), cryptique (obscure error) or incoherent (inconsistency)
+controle: [strict]          # optional: safer-r and/or strict, when the tool catches or prevents the pitfall
 extrait: 'round(2.5)'       # one line shown in the catalogue
 reponse: '2'                # what R prints after [1] for that line
 attendu: "`3`"              # what you would expect

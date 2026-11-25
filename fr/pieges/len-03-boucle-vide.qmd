@@ -3,6 +3,7 @@ title: "for (i in 1:length(x)) tourne même quand x est vide"
 ref: LEN-03
 categories: [Vides et NA]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: '1:length(c())'
 reponse: '1 0'
 attendu: "rien, la boucle ne devrait pas tourner"

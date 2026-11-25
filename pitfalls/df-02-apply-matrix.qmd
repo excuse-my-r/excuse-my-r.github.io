@@ -3,6 +3,7 @@ title: "apply() on a data.frame turns everything into text"
 ref: DF-02
 categories: [Data frames and lists]
 impact: silencieux
+controle: [strict]
 attendu: "`FALSE TRUE`: only the price of 12 is above 9"
 versions: "All"
 source: "The R Inferno"

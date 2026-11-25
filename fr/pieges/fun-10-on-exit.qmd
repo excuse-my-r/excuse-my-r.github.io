@@ -3,6 +3,7 @@ title: "Un second on.exit() efface le premier"
 ref: FUN-10
 categories: [Fonctions]
 impact: silencieux
+controle: [safer-r]
 attendu: "les deux actions de nettoyage exécutées"
 versions: "Toutes"
 source: "Connaissance générale de R"

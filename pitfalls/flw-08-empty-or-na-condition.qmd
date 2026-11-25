@@ -3,6 +3,7 @@ title: "if stops on an empty or NA condition"
 ref: FLW-08
 categories: [Control flow]
 impact: cryptique
+controle: [safer-r]
 extrait: 'if (NA) "yes"'
 attendu: "the branch to be simply skipped"
 versions: "All"

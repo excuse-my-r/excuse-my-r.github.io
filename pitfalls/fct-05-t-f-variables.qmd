@@ -3,6 +3,7 @@ title: "T and F are variables you can overwrite"
 ref: FCT-05
 categories: [Factors]
 impact: silencieux
+controle: [safer-r, strict]
 attendu: "`T` always equals `TRUE`"
 versions: "All"
 source: "safer-r, The R Inferno"

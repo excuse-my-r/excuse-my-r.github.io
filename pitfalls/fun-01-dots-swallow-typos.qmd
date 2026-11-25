@@ -3,6 +3,7 @@ title: "... swallows typos"
 ref: FUN-01
 categories: [Functions]
 impact: silencieux
+controle: [safer-r]
 extrait: 'sum(1, 2, na.rn = TRUE)'
 reponse: '4'
 attendu: "`3`, or an error about the misspelled argument"

@@ -3,6 +3,7 @@ title: "Un argument abrégé marche jusqu'au jour où il devient ambigu"
 ref: FUN-03
 categories: [Fonctions]
 impact: incoherent
+controle: [safer-r, strict]
 extrait: 'seq(1, 10, len = 3)'
 reponse: ' 1.0  5.5 10.0'
 attendu: "une erreur, `len` n'est pas un argument de `seq()`"

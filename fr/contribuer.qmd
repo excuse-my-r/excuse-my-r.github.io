@@ -33,6 +33,7 @@ title: "Ce que fait le piège, en une phrase"
 ref: NUM-14
 categories: [Numérique]
 impact: silencieux          # silencieux, cryptique ou incoherent
+controle: [strict]          # facultatif : safer-r et/ou strict, quand l'outil détecte ou évite le piège
 extrait: 'round(2.5)'       # une ligne affichée dans le catalogue
 reponse: '2'                # ce que R affiche après [1] pour cette ligne
 attendu: "`3`"              # ce qu'on attendrait

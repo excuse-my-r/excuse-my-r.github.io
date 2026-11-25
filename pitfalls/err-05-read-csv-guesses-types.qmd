@@ -3,6 +3,7 @@ title: "read.csv() turns postcodes into numbers, F into FALSE and NA into a miss
 ref: ERR-05
 categories: [Errors and files]
 impact: silencieux
+controle: [safer-r]
 extrait: 'read.csv(text = "zip\n01000")$zip'
 reponse: '1000'
 attendu: "the values as written in the file: `\"01000\"`, `\"F\"`, `\"NA\"` for Namibia"

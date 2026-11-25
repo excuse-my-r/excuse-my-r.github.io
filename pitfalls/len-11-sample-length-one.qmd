@@ -3,6 +3,7 @@ title: "sample() on a single value draws from 1:value"
 ref: LEN-11
 categories: [Empty and NA]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'length(sample(c(12)))'
 reponse: '12'
 attendu: "`1`, there is only one value to shuffle"

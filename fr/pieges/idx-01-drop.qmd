@@ -3,6 +3,7 @@ title: "Extraire une ligne ou une colonne fait perdre une dimension"
 ref: IDX-01
 categories: [Indexation]
 impact: silencieux
+controle: [strict]
 extrait: 'is.matrix(matrix(1:6, nrow = 2)[1, ])'
 reponse: 'FALSE'
 attendu: "une matrice d'une ligne, et un data frame d'une colonne"

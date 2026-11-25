@@ -3,6 +3,7 @@ title: "attr() complète les noms d'attributs, jusqu'à ce qu'un second commence
 ref: IDX-07
 categories: [Indexation]
 impact: silencieux
+controle: [safer-r, strict]
 extrait: 'attr(structure(1:3, unite = "cm"), "u")'
 reponse: '"cm"'
 attendu: "`NULL`, il n'y a pas d'attribut nommé u"

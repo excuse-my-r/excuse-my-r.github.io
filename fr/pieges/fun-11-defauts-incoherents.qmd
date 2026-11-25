@@ -3,6 +3,7 @@ title: "Des fonctions sœurs n'ont pas les mêmes valeurs par défaut"
 ref: FUN-11
 categories: [Fonctions]
 impact: incoherent
+controle: [safer-r]
 extrait: 'formals(list.dirs)$recursive'
 reponse: 'TRUE'
 attendu: "`FALSE`, comme pour `list.files()`"
