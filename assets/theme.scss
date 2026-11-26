@@ -1,0 +1,50 @@
+/*-- scss:defaults --*/
+// Aspect du thème Read the Docs (sphinx_rtd_theme), comme le site des protocoles :
+// Lato pour le texte, Roboto Slab pour les titres, page grise et liens bleus.
+// Les polices sont servies par le site (assets/fonts, déclarées dans assets/site.css).
+$web-font-path: false;
+$body-bg: #EDF0F2;
+$body-color: #404040;
+$link-color: #2472A4;
+$primary: #2980B9;
+$font-family-sans-serif: Lato, proxima-nova, "Helvetica Neue", Arial, sans-serif;
+$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", Courier, monospace;
+$headings-font-family: "Roboto Slab", ff-tisa-web-pro, Georgia, Arial, sans-serif;
+$headings-font-weight: 700;
+$footer-bg: #EDF0F2;
+$footer-fg: #6B7075;
+$code-color: #404040;
+$border-radius: 4px;
+
+/*-- scss:rules --*/
+:root {
+  --papier: #EDF0F2;
+  --surface: #FFFFFF;
+  --encre: #404040;
+  --encre-douce: #6B7075;
+  --trait: #E1E4E5;
+  --trait-leger: #EEF0F1;
+  --bleu: #2472A4;
+  --bleu-rtd: #2980B9;
+  --bleu-actif: #1F6391;
+  --sur-bleu: #FFFFFF;
+  --visite: #9B59B6;
+  --framboise: #C0392B;
+  --ambre: #9A5208;
+  --ardoise: #56637F;
+  --vert: #1E7B3A;
+  --code-fond: #F6F8FA;
+  --pastille: #EFF1F3;
+  --neutre: #F3F6F6;
+  --neutre-actif: #E5EBEB;
+  --sortie-fond: #F6F8FA;
+  --focus: #2980B9;
+  --menu-fond: #343131;
+  --menu-legende-fond: #262424;
+  --menu-legende: #55A5D9;
+  --menu-texte: #D9D9D9;
+  --menu-discret: #9B9B9B;
+  --menu-survol: #4E4A4A;
+  --menu-ouvert: #E3E3E3;
+  --menu-courant: #FCFCFC;
+}

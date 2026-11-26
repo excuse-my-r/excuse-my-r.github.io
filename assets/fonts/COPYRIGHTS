@@ -1,0 +1,15 @@
+The website bundles the fonts of this folder, used by assets/site.css. They keep
+their own copyright and license, listed below.
+
+
+lato-*.woff2
+    Lato font, version 2.015 (http://www.latofonts.com/).
+    Copyright (c) 2011-2015 by tyPoland Lukasz Dziedzic
+    (http://www.typoland.com/) with Reserved Font Name "Lato".
+    License: SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL).
+
+Roboto-Slab-*.woff2
+    Roboto Slab font, version 1.100263.
+    Font data copyright Google 2013.
+    License: Apache License, Version 2.0
+    (http://www.apache.org/licenses/LICENSE-2.0).

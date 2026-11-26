@@ -1,229 +1,597 @@
-/* Echelle typographique : quarte (1.333), base 17px */
+/* Aspect du thème Read the Docs (sphinx_rtd_theme), comme le site des protocoles :
+   menu sombre à gauche sous un bandeau bleu, page grise, contenu sur une carte blanche.
+   Couleurs dans assets/theme.scss. */
+
+/* ---------------------------------------------------------------- */
+/* Polices (assets/fonts, licences dans assets/fonts/COPYRIGHTS)     */
+/* ---------------------------------------------------------------- */
+
+@font-face { font-family: Lato; src: url(fonts/lato-normal.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Lato; src: url(fonts/lato-bold.woff2) format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: Lato; src: url(fonts/lato-normal-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: Lato; src: url(fonts/lato-bold-italic.woff2) format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "Roboto Slab"; src: url(fonts/Roboto-Slab-Regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Roboto Slab"; src: url(fonts/Roboto-Slab-Bold.woff2) format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
 :root {
-  --t-0: 0.8rem;
-  --t-1: 1rem;
-  --t-2: 1.333rem;
-  --t-3: 1.777rem;
-  --t-4: 2.369rem;
-  --t-5: 3.157rem;
-  --sans: "Bricolage Grotesque", system-ui, sans-serif;
-  --serif: "Source Serif 4", Georgia, serif;
-  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
-  --mesure: 66ch;
+  --sans: Lato, proxima-nova, "Helvetica Neue", Arial, sans-serif;
+  --titres: "Roboto Slab", ff-tisa-web-pro, Georgia, Arial, sans-serif;
+  --mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", Courier, monospace;
+  --largeur-menu: 300px;
+  --largeur-carte: 984px;
 }
 
-html { font-size: 17px; }
+html { font-size: 16px; scroll-padding-top: 16px; }
 
 body {
   background: var(--papier);
   color: var(--encre);
-  font-family: var(--serif);
-  line-height: 1.6;
-  font-optical-sizing: auto;
-}
-
-/* Colonne principale (page-layout: custom) */
-#quarto-content.page-layout-custom {
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 2.5rem 16px 5rem;
-}
-
-h1, h2, h3, .navbar, .nav-footer, button, input, label, dt {
   font-family: var(--sans);
+  line-height: 1.5;
 }
 
-h1, h2, h3 {
-  color: var(--encre);
-  letter-spacing: -0.01em;
-  line-height: 1.15;
-}
-
-h2 {
-  font-size: var(--t-3);
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--titres);
   font-weight: 700;
-  margin: 3rem 0 1rem;
-  border: 0;
-  padding: 0;
+  color: var(--encre);
+  letter-spacing: normal;
 }
 
-p, li, dd { max-width: var(--mesure); }
-
-a { color: var(--bleu); text-underline-offset: 0.18em; }
-a:hover { color: var(--bleu-actif); }
+/* Liens soulignés discrètement, pour ne pas les signaler par la seule couleur ;
+   le menu, le fil d'Ariane et le catalogue n'ont pas de soulignement */
+a {
+  color: var(--bleu);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(36, 114, 164, 0.35);
+}
+a:hover {
+  color: var(--bleu-actif);
+  text-decoration-color: currentColor;
+}
 
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
+#quarto-content:focus { outline: none; }
 
-code {
+/* Code dans le texte : pastille grise */
+:not(pre) > code {
   font-family: var(--mono);
-  font-size: 0.9em;
-  color: var(--encre);
-  background: var(--sortie-fond);
-  padding: 0.1em 0.35em;
+  font-size: 85%;
+  color: inherit;
+  background: var(--pastille);
+  border: 0;
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  overflow-wrap: break-word;
+}
+a > code { color: inherit; }
+
+/* Blocs de code ordinaires (page de contribution, fiches statiques) */
+div.sourceCode {
+  background: var(--code-fond);
+  border: 1px solid var(--trait);
   border-radius: 4px;
+  margin: 2px 0 22px;
+}
+div.sourceCode pre,
+pre.sourceCode {
+  margin: 0;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+}
+div.sourceCode pre code {
+  font: 400 13px/1.5 var(--mono);
+  background: transparent;
+  padding: 0;
 }
 
-/* Barre de navigation */
-.navbar {
+/* ---------------------------------------------------------------- */
+/* Mise en page : menu fixe à gauche, carte blanche au centre        */
+/* ---------------------------------------------------------------- */
+
+#quarto-content.page-layout-custom {
+  box-sizing: border-box;
+  max-width: var(--largeur-carte);
+  margin: 32px auto 0;
+  padding: 33px 44px 36px;
+  background: var(--surface);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Quarto décale chaque enfant de #quarto-content de 14px : les marges du site suffisent */
+#quarto-content.page-layout-custom > * { padding-top: 0; }
+
+@media (min-width: 992px) {
+  body { padding: 0 28px 0 calc(var(--largeur-menu) + 28px); }
+}
+
+/* :where() garde ces règles générales faibles : le menu et les classes du site priment */
+:where(#quarto-content) p,
+:where(#quarto-content) li { line-height: 1.65; }
+
+:where(#quarto-content) h2 {
+  font-size: 1.6em;
+  margin: 1.6em 0 0.8em;
+  padding-bottom: 0.25em;
   border-bottom: 1px solid var(--trait);
+}
+:where(#quarto-content) h3 { font-size: 1.3em; margin: 1.4em 0 0.6em; }
+
+:where(#quarto-content) table {
+  border-collapse: collapse;
+  border: 1px solid var(--trait);
+  font-size: 0.92rem;
+}
+:where(#quarto-content) th,
+:where(#quarto-content) td {
+  border: 1px solid var(--trait);
+  padding: 7px 12px;
+  vertical-align: top;
+}
+:where(#quarto-content) thead th { background: #F3F6F6; border-bottom: 2px solid var(--trait); }
+
+:where(#quarto-content) blockquote {
+  margin: 0 0 22px 24px;
+  padding-left: 14px;
+  border-left: 3px solid #E7EAEC;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* ---------------------------------------------------------------- */
+/* Menu de gauche                                                    */
+/* ---------------------------------------------------------------- */
+
+.rtd-cote {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1030;
+  width: var(--largeur-menu);
+  background: var(--menu-fond);
+  color: var(--menu-discret);
+  font-family: var(--sans);
+}
+
+.rtd-cote-defilement {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #5A5656 var(--menu-fond);
+}
+
+/* Bandeau bleu : titre, dépôt, langue, recherche */
+.rtd-cote-entete {
+  padding: 18px 15px 15px;
+  background: var(--bleu-rtd);
+  color: #FCFCFC;
+  text-align: center;
+}
+.rtd-cote-entete :focus-visible { outline-color: #FFFFFF; }
+
+.rtd-site {
+  display: block;
+  margin-bottom: 4px;
+  color: #FFFFFF;
+  font: 700 17px/1.35 var(--sans);
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+.rtd-site:hover { color: #FFFFFF; }
+.rtd-site .bi { margin-right: 2px; }
+
+.rtd-version {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 2px 0 13px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.rtd-version a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+.rtd-version a:hover { color: #FFFFFF; text-decoration: underline; text-decoration-color: currentColor; }
+
+/* Recherche plein texte de Quarto, en champ arrondi comme Read the Docs */
+.rtd-recherche { text-align: left; }
+.rtd-recherche .aa-Autocomplete,
+.rtd-recherche .aa-Form { width: 100%; }
+.rtd-recherche .aa-Form {
+  height: 34px;
+  margin: 0;
+  background: #FFFFFF;
+  border: 1px solid #2472A4;
+  border-radius: 50px;
   box-shadow: none;
 }
-.navbar-brand .navbar-title {
-  font-weight: 800;
-  font-size: 1.2rem;
-  letter-spacing: -0.02em;
+.rtd-recherche .aa-Form:focus-within {
+  border-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45);
 }
-.navbar .navbar-logo { max-height: 28px; }
+.rtd-recherche .aa-Autocomplete .aa-Form .aa-InputWrapper .aa-Input {
+  height: 32px;
+  font: 400 14px/1.2 var(--sans);
+  color: var(--encre);
+}
+.rtd-recherche .aa-Autocomplete .aa-Form .aa-InputWrapper .aa-Input::placeholder { color: #6B7075; opacity: 1; }
+.rtd-recherche .aa-InputWrapperPrefix,
+.rtd-recherche .aa-SubmitIcon,
+.rtd-recherche .aa-ClearIcon { color: #6B7075; }
+.rtd-recherche .aa-DetachedSearchButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  background: #FFFFFF;
+  border: 1px solid #2472A4;
+  border-radius: 50px;
+  color: #6B7075;
+  font: 400 14px/1 var(--sans);
+}
+.rtd-recherche .aa-DetachedSearchButtonIcon { color: #6B7075; }
+.rtd-recherche .aa-DetachedSearchButton .aa-DetachedSearchButtonPlaceholder {
+  display: block;
+  margin-left: 6px;
+}
 
-.nav-footer {
-  border-top: 1px solid var(--trait);
-  font-size: var(--t-0);
-  color: var(--encre-douce);
+/* Résultats de la recherche : panneau blanc, au-dessus du menu */
+#quarto-search-results .aa-Panel {
+  background-color: var(--surface);
+  border-color: var(--trait);
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
 }
+
+/* Liste des pages */
+.rtd-menu { padding-bottom: 2.5em; }
+
+.rtd-legende {
+  margin: 14px 0 0;
+  padding: 6px 20px 5px;
+  background: var(--menu-legende-fond);
+  color: var(--menu-legende);
+  font: 700 11px/1.4 var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.rtd-menu > .rtd-legende:first-child { margin-top: 0; }
+
+.rtd-liste,
+.rtd-sous,
+.rtd-toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rtd-liste a,
+.rtd-categorie {
+  display: flex;
+  gap: 0.5em;
+  width: 100%;
+  margin: 0;
+  padding: 0.45em 1.2em 0.45em 1.4em;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: var(--menu-texte);
+  font: 400 13.5px/1.35 var(--sans);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.rtd-liste a:hover,
+.rtd-categorie:hover {
+  background: var(--menu-survol);
+  color: var(--menu-texte);
+}
+
+/* Catégorie dépliable, avec le + et le − de Read the Docs */
+.rtd-categorie::before {
+  content: "+";
+  flex: 0 0 1em;
+  font-weight: 700;
+  text-align: center;
+  color: var(--menu-discret);
+}
+.rtd-categorie[aria-expanded="true"]::before { content: "\2212"; }
+.rtd-compte {
+  margin-left: auto;
+  padding-left: 0.6em;
+  color: var(--menu-discret);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Page ou catégorie en cours : surlignée en blanc */
+.rtd-l1.courant > a,
+.rtd-l1.courant > .rtd-categorie {
+  background: var(--menu-courant);
+  color: var(--encre);
+  font-weight: 700;
+  border-top: 1px solid #C9C9C9;
+  border-bottom: 1px solid #C9C9C9;
+}
+.rtd-l1.courant > .rtd-categorie::before,
+.rtd-l1.courant > .rtd-categorie .rtd-compte { color: #6F6F6F; }
+
+/* Fiches d'une catégorie dépliée, sur fond gris clair */
+.rtd-sous {
+  padding: 2px 0 6px;
+  background: var(--menu-ouvert);
+}
+.rtd-sous[hidden] { display: none; }
+.rtd-sous a {
+  gap: 0.6em;
+  padding: 0.4em 1em 0.4em 1.75em;
+  color: var(--encre);
+  font-size: 12.5px;
+}
+.rtd-sous a:hover { background: #D6D6D6; color: var(--encre); }
+.rtd-num {
+  flex: 0 0 4.6em;
+  padding-top: 0.1em;
+  color: #6F6F6F;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.rtd-l2.courant > a {
+  background: #C9C9C9;
+  font-weight: 700;
+}
+.rtd-l2.courant > a:hover { background: #C9C9C9; }
+
+/* Sections de la page en cours */
+.rtd-toc { padding: 0 0 4px; }
+.rtd-l1 > .rtd-toc { background: var(--menu-ouvert); padding: 2px 0 6px; }
+.rtd-toc a {
+  padding: 0.35em 1em 0.35em 2.2em;
+  color: var(--encre);
+  font-size: 12.5px;
+}
+.rtd-l2 > .rtd-toc { background: #C9C9C9; }
+.rtd-l2 > .rtd-toc a { padding-left: 7.4em; font-size: 12px; }
+.rtd-toc a:hover { background: #D6D6D6; color: var(--encre); }
+.rtd-l2 > .rtd-toc a:hover { background: #BEBEBE; }
+
+/* ---------------------------------------------------------------- */
+/* Petits écrans : barre bleue en haut, menu escamotable             */
+/* ---------------------------------------------------------------- */
+
+.rtd-haut { display: none; }
+.rtd-voile { display: none; }
+
+@media (max-width: 991.98px) {
+  html { scroll-padding-top: 62px; }
+
+  #quarto-content.page-layout-custom {
+    max-width: none;
+    margin: 0;
+    padding: 18px 16px 28px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .rtd-haut {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    margin: -18px -16px 18px;
+    padding: 0 10px;
+    background: var(--bleu-rtd);
+    color: #FFFFFF;
+  }
+  .rtd-menu-bouton {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: #FFFFFF;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .rtd-haut :focus-visible { outline-color: #FFFFFF; }
+  .rtd-haut-titre {
+    flex: 1;
+    margin-right: 50px;
+    color: #FFFFFF;
+    font: 700 17px/1 var(--sans);
+    text-align: center;
+    text-decoration: none;
+  }
+  .rtd-haut-titre:hover { color: #FFFFFF; }
+
+  .rtd-cote {
+    width: min(var(--largeur-menu), 85vw);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+  body.rtd-menu-ouvert .rtd-cote {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.2s ease;
+  }
+  body.rtd-menu-ouvert { overflow: hidden; }
+  .rtd-voile:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1029;
+    background: rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Fil d'Ariane                                                      */
+/* ---------------------------------------------------------------- */
+
+.rtd-fil {
+  margin: 0 0 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--trait);
+  font: 400 14px/1.5 var(--sans);
+}
+.rtd-fil-liste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rtd-fil-liste li + li::before {
+  content: "\00BB";
+  padding: 0 6px 0 7px;
+  color: #9A9A9A;
+}
+.rtd-fil-liste li[aria-current] { color: var(--encre-douce); }
+.rtd-fil-liste a { text-decoration: none; }
+.rtd-fil-liste a:hover { text-decoration: underline; }
+.rtd-fil-accueil a { color: var(--bleu-rtd); }
+.rtd-fil-liste li.rtd-fil-source {
+  margin-left: auto;
+  padding-left: 16px;
+  font-size: 13px;
+}
+.rtd-fil-liste li.rtd-fil-source::before { content: none; }
+.rtd-fil-source a { color: var(--encre-douce); }
+.rtd-fil-source a:hover { color: var(--bleu); }
+.rtd-fil-source .bi { margin-right: 0.3em; }
 
 /* ---------------------------------------------------------------- */
 /* Accueil                                                           */
 /* ---------------------------------------------------------------- */
 
-.accueil {
-  padding: 1rem 0 2.5rem;
-}
-
 h1.accueil-titre {
-  font-size: clamp(var(--t-3), 4.2vw, var(--t-5));
-  font-weight: 750;
-  max-width: 22ch;
-  margin: 1.5rem 0 1rem;
-  letter-spacing: -0.025em;
+  font-size: 2.1em;
+  line-height: 1.2;
+  margin: 0 0 0.45em;
 }
 
 .accueil-chapo, .accueil-chapo p {
-  font-size: var(--t-2);
-  line-height: 1.5;
-  color: var(--encre-douce);
-  max-width: 62ch;
+  font-size: 16px;
+  color: #555555;
   margin: 0;
 }
 
-/* La console du hero : l'element memorable du site */
-.piege.piege-hero .cell {
-  background: transparent;
-  border: 0;
-}
-.piege.piege-hero div.sourceCode pre code,
-.piege-hero .piege-editeur {
-  font-size: clamp(1.5rem, 5.4vw, 3.6rem);
-}
-.piege.piege-hero div.sourceCode pre,
-.piege-hero .piege-editeur {
-  padding: 0;
-}
-.piege-hero div.sourceCode pre code::before {
-  content: "> ";
-  color: var(--encre-douce);
-}
-.piege.piege-hero .piege-sortie {
-  background: transparent;
-  border: 0;
-  padding: 0.25rem 0 0;
-}
-.piege.piege-hero .piege-sortie pre,
-.piege.piege-hero .piege-sortie pre code {
-  font-size: clamp(1.5rem, 5.4vw, 3.6rem);
-  color: var(--framboise);
-  font-weight: 600;
-  padding: 0;
-}
-.piege-hero .piege-sortie-label { order: 2; margin-top: 0.75rem; }
-.piege.piege-hero .piege-barre {
-  order: 3;
-  border: 0;
-  padding: 0;
-  margin-top: 1.25rem;
-  background: transparent;
-}
+.bouton.bouton-hasard { margin-top: 18px; }
+
+.catalogue-section > h2 { margin-top: 1.4em; }
 
 /* ---------------------------------------------------------------- */
 /* Catalogue                                                         */
 /* ---------------------------------------------------------------- */
 
-.catalogue-section h2 { margin-top: 1rem; }
-
 .filtres {
   display: grid;
-  gap: 1rem;
-  margin: 0 0 1.5rem;
+  gap: 12px;
+  margin: 6px 0 22px;
 }
 
 .recherche {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  max-width: 28rem;
+  gap: 6px;
+  max-width: 520px;
 }
-.recherche label {
-  font-size: var(--t-0);
+.recherche label,
+.puces-titre {
   color: var(--encre-douce);
+  font: 700 11.5px/1.3 var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .recherche input {
-  font: 500 var(--t-1)/1.4 var(--sans);
+  font: 400 15px/1.4 var(--sans);
   color: var(--encre);
   background: var(--surface);
-  border: 1px solid var(--trait);
-  border-radius: 8px;
-  padding: 0.6rem 0.8rem;
+  border: 1px solid #CCD3D8;
+  border-radius: 50px;
+  padding: 8px 16px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.recherche input::placeholder { color: var(--encre-douce); opacity: 0.8; }
+.recherche input:focus {
+  border-color: var(--bleu-rtd);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
+}
+.recherche input::placeholder { color: #8A8F94; opacity: 1; }
 
+/* Le titre du groupe à gauche, les puces qui passent à la ligne restent alignées après lui */
 .puces {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 6px;
   align-items: center;
+  padding-left: 7.5rem;
 }
 .puces-titre {
-  font: 500 var(--t-0)/1 var(--sans);
-  color: var(--encre-douce);
-  margin-right: 0.35rem;
-  min-width: 5.5rem;
+  position: absolute;
+  left: 0;
+  top: 9px;
 }
 
 .puce {
-  font: 500 0.88rem/1 var(--sans);
+  font: 400 14px/1 var(--sans);
   color: var(--encre);
-  background: transparent;
-  border: 1px solid var(--trait);
-  border-radius: 999px;
-  padding: 0.45rem 0.8rem;
+  background: var(--neutre);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50px;
+  padding: 6px 12px 7px;
   cursor: pointer;
 }
-.puce:hover { border-color: var(--encre-douce); }
+.puce:hover { background: var(--neutre-actif); }
 .puce[aria-pressed="true"] {
-  background: var(--encre);
-  border-color: var(--encre);
-  color: var(--papier);
+  background: var(--bleu);
+  border-color: var(--bleu);
+  color: var(--sur-bleu);
 }
 
 .compteur {
-  font: 500 var(--t-0)/1.4 var(--sans);
+  margin: 0 0 4px;
   color: var(--encre-douce);
-  margin: 0 0 0.5rem;
+  font: 400 14px/1.4 var(--sans);
 }
 
 .catalogue { margin: 0; }
-
-.catalogue-groupe { margin: 0 0 2.25rem; }
 .catalogue-groupe[hidden] { display: none; }
 
 .catalogue-groupe-titre {
-  font: 700 var(--t-2)/1.2 var(--sans);
-  margin: 0 0 0.35rem;
-  padding: 0 0 0.6rem;
-  border-bottom: 2px solid var(--encre);
+  margin: 1.4em 0 0;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--trait);
+  font: 700 1.25em/1.3 var(--titres);
+}
+.catalogue-compte {
+  margin-left: 0.2em;
+  color: #9A9FA4;
+  font-weight: 400;
+  font-size: 0.75em;
 }
 
 .catalogue-liste {
@@ -234,32 +602,40 @@ h1.accueil-titre {
 
 .catalogue-ligne {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 0.3rem 2rem;
+  grid-template-columns: 4.6em minmax(0, 1fr) auto auto;
+  gap: 3px 18px;
   align-items: start;
-  padding: 0.9rem 0.25rem 1rem;
-  border-bottom: 1px solid var(--trait);
-  max-width: none;
+  padding: 8px 10px 9px;
+  border-bottom: 1px solid var(--trait-leger);
 }
+.catalogue-ligne:hover { background: #F6F9FB; }
 .catalogue-ligne[hidden] { display: none; }
+
+.catalogue-ref {
+  padding-top: 1px;
+  color: var(--encre-douce);
+  font: 400 14px/1.45 var(--sans);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 
 .catalogue-lien {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  text-decoration: none;
-  color: var(--encre);
+  gap: 3px;
   min-width: 0;
+  color: var(--bleu);
+  text-decoration: none;
 }
-.catalogue-lien:hover .catalogue-titre { color: var(--bleu); text-decoration: underline; text-underline-offset: 0.18em; }
+.catalogue-lien:visited { color: var(--visite); }
+.catalogue-lien:hover { color: var(--bleu-actif); }
+.catalogue-lien:hover .catalogue-titre { text-decoration: underline; text-underline-offset: 0.15em; }
 
-.catalogue-titre {
-  font: 600 1.12rem/1.35 var(--sans);
-}
+.catalogue-titre { font: 700 15px/1.45 var(--sans); }
 
 .catalogue-extrait {
-  font: 400 0.88rem/1.45 var(--mono);
   color: var(--encre-douce);
+  font: 400 12.5px/1.45 var(--mono);
   overflow-wrap: anywhere;
 }
 .catalogue .catalogue-extrait code {
@@ -271,31 +647,31 @@ h1.accueil-titre {
   padding: 0;
 }
 .catalogue-reponse {
-  color: var(--framboise);
-  font-weight: 600;
   margin-left: 0.6rem;
+  color: var(--framboise);
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.catalogue-ligne .impact {
-  color: var(--encre-douce);
-  padding-top: 0.2rem;
-}
+.catalogue-ligne .impact { padding-top: 2px; }
 
 /* Outils qui détectent ou évitent le piège : une case fixe par outil, pour que les
    étiquettes restent alignées d'une ligne à l'autre, même sans étiquette */
 .controle {
   display: grid;
   grid-template-columns: 9ch 8ch;
-  gap: 0.35rem;
-  font: 500 0.75rem/1 var(--mono);
+  gap: 6px;
+  padding-top: 2px;
+  font: 700 11.5px/1 var(--sans);
+  letter-spacing: 0.02em;
 }
 .controle-outil {
-  padding: 0.25rem 0;
+  padding: 4px 0;
   text-align: center;
-  color: var(--encre-douce);
-  border: 1px solid var(--trait);
-  border-radius: 999px;
+  color: var(--vert);
+  background: #EAF5EE;
+  border: 1px solid #CFE6D7;
+  border-radius: 3px;
 }
 .controle-safer-r { grid-column: 1; }
 .controle-strict { grid-column: 2; }
@@ -311,24 +687,21 @@ h1.accueil-titre {
 }
 :lang(fr) .controle:not(:empty)::before { content: "Contrôlé par"; }
 
-.catalogue-vide {
-  padding: 2rem 0;
-  font-family: var(--sans);
-}
-.catalogue-vide p { margin: 0 0 0.75rem; }
+.catalogue-vide { padding: 24px 0; }
+.catalogue-vide p { margin: 0 0 12px; color: var(--encre-douce); font-style: italic; }
 
-/* Gravite : le libelle reste visible, la couleur et la forme le doublent */
+/* Gravité : le libellé reste visible, la couleur et la forme le doublent */
 .impact {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font: 500 0.88rem/1.2 var(--sans);
+  font: 400 14px/1.3 var(--sans);
   white-space: nowrap;
 }
 .impact::before {
   content: "";
-  width: 0.62rem;
-  height: 0.62rem;
+  width: 0.6rem;
+  height: 0.6rem;
   flex: none;
 }
 .impact-silencieux { color: var(--framboise); }
@@ -345,99 +718,105 @@ h1.accueil-titre {
 :lang(fr) .impact-incoherent::after { content: "Incohérence"; }
 
 /* ---------------------------------------------------------------- */
-/* Fiche                                                             */
+/* Fiche et pages                                                    */
 /* ---------------------------------------------------------------- */
 
 .fiche-entete,
-.page-entete {
-  margin-bottom: 2rem;
-}
-
-.fil {
-  font: 500 0.9rem/1.4 var(--sans);
-  color: var(--encre-douce);
-  margin: 0 0 1rem;
-}
+.page-entete { margin-bottom: 28px; }
 
 .fiche-entete h1.title,
 .page-entete h1.title {
-  font-size: clamp(var(--t-3), 3.6vw, var(--t-4));
-  font-weight: 750;
-  letter-spacing: -0.02em;
-  max-width: 24ch;
-  margin: 0 0 1.25rem;
+  font-size: 2.1em;
+  line-height: 1.2;
+  margin: 0 0 0.35em;
 }
 
 .page-entete .subtitle {
-  font-size: var(--t-2);
+  font-size: 1.15rem;
   color: var(--encre-douce);
 }
 
+/* Ligne d'informations sous le titre, séparées par des points. Chaque élément commence
+   par son point ; la liste déborde à gauche de la largeur d'un point, coupée par clip-path,
+   pour qu'aucune ligne ne commence par un point */
 .fiche-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 2.25rem;
-  margin: 0 0 1.75rem;
-}
-.fiche-meta div { display: flex; flex-direction: column; gap: 0.15rem; }
-.fiche-meta dt {
-  font-size: var(--t-0);
-  font-weight: 500;
+  gap: 4px 0;
+  margin: 0 0 24px -1.8em;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--trait);
+  clip-path: inset(0 0 0 1.8em);
   color: var(--encre-douce);
+  font-size: 14px;
+  line-height: 1.5;
 }
-.fiche-meta dd {
-  margin: 0;
-  font: 500 0.95rem/1.35 var(--sans);
+.fiche-meta > div { display: flex; align-items: baseline; gap: 0.4em; }
+.fiche-meta > div::before {
+  content: "\00B7";
+  flex: 0 0 1.8em;
+  margin-right: -0.4em;
+  text-align: center;
+  color: #B5B5B5;
 }
+.fiche-meta dt { font-weight: 400; }
+.fiche-meta dd { margin: 0; color: var(--encre); }
+.fiche-meta .impact { font-size: 14px; }
 
+/* « On s'attend à » : encadré « note » de Read the Docs */
 .attendu {
-  font: 500 var(--t-2)/1.4 var(--sans);
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: baseline;
+  margin: 0 0 24px;
+  padding: 12px;
+  background: #E7F2FA;
+  line-height: 1.6;
 }
-.attendu-label { color: var(--encre-douce); }
-.attendu code { font-size: 0.95em; }
-
-#quarto-content section > p,
-#quarto-content section > ul,
-#quarto-content section > ol {
-  font-size: 1.06rem;
-  line-height: 1.68;
+.attendu-label {
+  display: block;
+  margin: -12px -12px 12px;
+  padding: 6px 12px;
+  background: var(--bleu);
+  color: #FFFFFF;
+  font-weight: 700;
 }
+.attendu-label::before {
+  content: "\F431";
+  font-family: bootstrap-icons;
+  font-weight: 400;
+  margin-right: 0.45em;
+  vertical-align: -0.1em;
+}
+.attendu code { background: rgba(255, 255, 255, 0.75); }
 
 /* ---------------------------------------------------------------- */
-/* Bloc executable                                                   */
+/* Bloc exécutable                                                   */
 /* ---------------------------------------------------------------- */
 
-.piege { margin: 1.25rem 0 1.75rem; }
+.piege { margin: 4px 0 26px; }
 
 .piege .cell {
   display: flex;
   flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--trait);
-  border-radius: 10px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .piege div.sourceCode {
   margin: 0;
-  background: transparent;
+  background: var(--code-fond);
   border: 0;
   border-radius: 0;
 }
 .piege div.sourceCode pre {
   margin: 0;
-  padding: 1rem 1.1rem;
+  padding: 12px 14px;
   background: transparent;
   border: 0;
 }
 .piege div.sourceCode pre code,
 .piege-editeur {
-  font: 400 0.95rem/1.55 var(--mono);
+  font: 400 13.5px/1.55 var(--mono);
   background: transparent;
   padding: 0;
 }
@@ -446,7 +825,7 @@ h1.accueil-titre {
   display: block;
   width: 100%;
   margin: 0;
-  padding: 1rem 1.1rem;
+  padding: 12px 14px;
   color: var(--encre);
   background: var(--surface);
   border: 0;
@@ -458,51 +837,75 @@ h1.accueil-titre {
 .piege-barre {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
+  gap: 8px 10px;
   align-items: center;
-  padding: 0.65rem 1.1rem;
+  padding: 9px 12px;
+  background: #FCFCFC;
   border-top: 1px solid var(--trait);
 }
 
+/* Boutons de Read the Docs : en relief, bleu ou gris clair */
 .bouton {
-  font: 600 0.9rem/1 var(--sans);
-  border-radius: 7px;
-  padding: 0.6rem 0.95rem;
+  display: inline-block;
+  font: 400 15px/1.2 var(--sans);
+  white-space: nowrap;
+  border-radius: 2px;
+  padding: 6px 12px 8px;
   cursor: pointer;
-  border: 1px solid var(--bleu);
-  background: var(--bleu);
   color: var(--sur-bleu);
+  background: var(--bleu);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px -1px rgba(255, 255, 255, 0.5), inset 0 -2px 0 0 rgba(0, 0, 0, 0.1);
+  transition: background-color 0.1s linear;
 }
-.bouton:hover { background: var(--bleu-actif); border-color: var(--bleu-actif); }
+.bouton:hover { background: var(--bleu-actif); color: var(--sur-bleu); }
+.bouton:active {
+  padding: 8px 12px 6px;
+  box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.05), inset 0 2px 0 0 rgba(0, 0, 0, 0.1);
+}
 .bouton:disabled { opacity: 0.55; cursor: progress; }
 .bouton-discret {
-  background: transparent;
+  background: var(--neutre);
   color: var(--encre);
-  border-color: var(--trait);
 }
-.bouton-discret:hover { background: transparent; border-color: var(--encre-douce); color: var(--encre); }
+.bouton-discret:hover { background: var(--neutre-actif); color: var(--encre); }
 
 .piege-etat {
-  font: 400 0.85rem/1.4 var(--sans);
+  font: 400 13.5px/1.4 var(--sans);
   color: var(--encre-douce);
 }
 .piege-raccourci {
-  font: 400 0.8rem/1.4 var(--sans);
-  color: var(--encre-douce);
   margin-left: auto;
+  font: 400 12.5px/1.4 var(--sans);
+  color: var(--encre-douce);
 }
+
+/* Choix de la version de R */
+.choix-version {
+  height: 34px;
+  padding: 4px 8px;
+  font: 400 15px/1.2 var(--sans);
+  color: var(--encre);
+  background-color: var(--surface);
+  border: 1px solid #CCCCCC;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px #DDDDDD;
+  cursor: pointer;
+}
+.choix-version:hover { border-color: #B3B3B3; }
+.choix-version:disabled { opacity: 0.55; cursor: progress; }
 
 .piege-sortie {
   display: flex;
   flex-direction: column;
   background: var(--sortie-fond);
   border-top: 1px solid var(--trait);
-  padding: 0.75rem 1.1rem 0.9rem;
+  padding: 10px 14px 12px;
 }
 .piege-sortie-label {
-  font: 500 var(--t-0)/1.3 var(--sans);
+  font: 400 13px/1.3 var(--sans);
   color: var(--encre-douce);
-  margin-bottom: 0.4rem;
+  margin-bottom: 6px;
 }
 .piege-sortie .cell-output { margin: 0; }
 .piege-sortie pre {
@@ -514,7 +917,7 @@ h1.accueil-titre {
   word-break: break-word;
 }
 .piege-sortie pre code {
-  font: 400 0.92rem/1.5 var(--mono);
+  font: 400 13px/1.5 var(--mono);
   background: transparent;
   padding: 0;
   color: var(--encre);
@@ -524,90 +927,58 @@ h1.accueil-titre {
 .piege-sortie .cell-output-stderr pre code,
 .piege-sortie .ligne-avertissement { color: var(--ambre); }
 .piege-sortie .vide { color: var(--encre-douce); font-style: italic; }
-
 .piege-sortie.est-navigateur .piege-sortie-label { color: var(--bleu); }
 
-@media (max-width: 720px) {
-  /* Sous le titre, la gravité puis les outils, sur une même ligne */
-  .catalogue-ligne { grid-template-columns: auto minmax(0, 1fr); column-gap: 1rem; }
-  .catalogue-lien { grid-column: 1 / -1; }
-  .catalogue-ligne .impact { padding-top: 0; align-self: center; }
-  .controle { display: flex; }
-  .controle-outil { padding: 0.25rem 0.5rem; }
-  .piege-raccourci { display: none; }
+/* Code montré sans console : le piège dépend d'un environnement que le navigateur n'a pas */
+.piege.piege-statique div.sourceCode {
+  background: var(--code-fond);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
-}
-
-.visually-hidden {
-  position: absolute !important;
-  width: 1px; height: 1px;
-  overflow: hidden; clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-/* Dans le hero, seule la reponse de R porte la couleur */
+/* Variante « hero » des blocs (class piege-hero) : grand code, seule la réponse en couleur */
+.piege.piege-hero .cell { background: transparent; border: 0; }
+.piege.piege-hero div.sourceCode { background: transparent; }
+.piege.piege-hero div.sourceCode pre,
+.piege-hero .piege-editeur { padding: 0; }
+.piege.piege-hero div.sourceCode pre code,
+.piege-hero .piege-editeur { font-size: clamp(1.5rem, 5.4vw, 3.2rem); }
 .piege.piege-hero div.sourceCode pre code,
 .piege.piege-hero div.sourceCode pre code span {
   color: var(--encre);
   font-style: normal;
 }
-
-
-/* Fiche suivante */
-.suite {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem 2rem;
-  margin-top: 4rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--encre);
-  font-family: var(--sans);
+.piege-hero div.sourceCode pre code::before {
+  content: "> ";
+  color: var(--encre-douce);
 }
-.suite-lien {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  text-decoration: none;
-  color: var(--encre);
-  max-width: 36rem;
+.piege.piege-hero .piege-sortie {
+  background: transparent;
+  border: 0;
+  padding: 0.25rem 0 0;
 }
-.suite-label { font-size: var(--t-0); color: var(--encre-douce); }
-.suite-titre { font-size: var(--t-2); font-weight: 700; line-height: 1.25; }
-.suite-lien:hover .suite-titre { color: var(--bleu); text-decoration: underline; text-underline-offset: 0.18em; }
-.suite-retour { font-size: 0.95rem; }
-.suite-liens { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
-
-/* Appel à découvrir un piège au hasard, sous le chapô de l'accueil */
-.bouton.bouton-hasard {
-  margin-top: 1.75rem;
-  font-size: 1rem;
-  padding: 0.7rem 1.2rem;
+.piege.piege-hero .piege-sortie pre,
+.piege.piege-hero .piege-sortie pre code {
+  font-size: clamp(1.5rem, 5.4vw, 3.2rem);
+  color: var(--framboise);
+  font-weight: 600;
+  padding: 0;
 }
-
-/* Choix de la version de R */
-.choix-version {
-  font: 600 0.9rem/1 var(--sans);
-  color: var(--encre);
-  background-color: var(--surface);
-  border: 1px solid var(--trait);
-  border-radius: 7px;
-  padding: 0.55rem 0.6rem;
-  cursor: pointer;
+.piege-hero .piege-sortie-label { order: 2; margin-top: 0.75rem; }
+.piege.piege-hero .piege-barre {
+  order: 3;
+  margin-top: 1.25rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
-.choix-version:hover { border-color: var(--encre-douce); }
-.choix-version:disabled { opacity: 0.55; cursor: progress; }
 .piege-hero .choix-version { background-color: transparent; }
 
 /* Fenêtre « R Console » de Rgui, Windows classique : saisie en rouge,
    réponses en bleu marine, Courier New, comme les réglages par défaut de Rconsole */
 .piege .piege-sortie.rgui {
   display: block;
-  margin: 0 1.1rem 1.1rem;
+  margin: 0 12px 12px;
   padding: 3px;
   background: #D4D0C8;
   border: 0;
@@ -737,38 +1108,149 @@ h1.accueil-titre {
     inset -2px -2px #808080;
 }
 
-@media (max-width: 720px) {
-  .piege .piege-sortie.rgui { margin: 0 0.5rem 0.5rem; }
+/* ---------------------------------------------------------------- */
+/* Fiches voisines : boutons « Précédent » et « Suivant »            */
+/* ---------------------------------------------------------------- */
+
+.suite {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--trait);
+}
+.suite-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+.suite-bouton {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: calc(50% - 6px);
+  padding: 8px 14px 10px;
+  color: var(--encre);
+  background: var(--neutre);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px -1px rgba(255, 255, 255, 0.5), inset 0 -2px 0 0 rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: background-color 0.1s linear;
+}
+.suite-bouton:hover { background: var(--neutre-actif); color: var(--encre); }
+.suite-suivant { margin-left: auto; text-align: right; }
+.suite-label {
+  color: var(--encre-douce);
+  font-size: 13px;
+}
+.suite-label .bi { color: var(--bleu-rtd); }
+.suite-titre { font-weight: 700; font-size: 15px; line-height: 1.35; }
+.suite-liens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 16px;
+  font-size: 14px;
 }
 
-/* Code montré sans console : le piège dépend d'un environnement que le navigateur n'a pas */
-.piege.piege-statique div.sourceCode {
-  background: var(--surface);
-  border: 1px solid var(--trait);
-  border-radius: 10px;
+/* ---------------------------------------------------------------- */
+/* Choix de la langue, dans le bandeau du menu                       */
+/* ---------------------------------------------------------------- */
+
+.choix-langue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  text-decoration: none;
+}
+.choix-langue .drapeau svg {
+  display: block;
+  width: 1.4em;
+  height: 0.95em;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 
 /* Textes globaux (pied de page) écrits dans les deux langues */
 :lang(fr) .seulement-en,
 :lang(en) .seulement-fr { display: none; }
 
-/* Choix de la langue dans la barre de navigation */
-.choix-langue {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font: 600 0.85rem/1 var(--sans);
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--trait);
-  border-radius: 6px;
-  color: inherit;
-  text-decoration: none;
+/* ---------------------------------------------------------------- */
+/* Pied de page                                                      */
+/* ---------------------------------------------------------------- */
+
+.footer {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
 }
-.choix-langue:hover { border-color: currentColor; }
-.choix-langue .drapeau svg {
-  display: block;
-  width: 1.35em;
-  height: 0.9em;
-  border-radius: 2px;
-  box-shadow: 0 0 0 1px var(--trait);
+.nav-footer {
+  box-sizing: border-box;
+  max-width: var(--largeur-carte);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 16px 0 28px;
+  background: transparent;
+  border: 0;
+  color: var(--encre-douce);
+  font: 400 13px/1.5 var(--sans);
+}
+.nav-footer p { margin: 0; }
+.nav-footer a {
+  color: var(--encre-douce);
+  text-decoration: underline;
+  text-decoration-color: #C3C3C3;
+}
+.nav-footer a:hover { color: var(--bleu); }
+
+@media (max-width: 991.98px) {
+  .nav-footer { padding: 16px; }
+}
+
+/* ---------------------------------------------------------------- */
+/* Petits écrans, impression, mouvement réduit                       */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  h1.accueil-titre,
+  .fiche-entete h1.title,
+  .page-entete h1.title { font-size: 1.7em; }
+  :where(#quarto-content) h2 { font-size: 1.4em; }
+  .rtd-fil-liste li.rtd-fil-source { display: none; }
+
+  /* Référence et titre, puis la gravité et les outils sur une même ligne */
+  .catalogue-ligne {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
+    padding: 8px 4px 9px;
+  }
+  .catalogue-ref,
+  .catalogue-lien { grid-column: 1 / -1; }
+  .catalogue-ligne .impact { padding-top: 2px; align-self: center; }
+  .puces { padding-left: 0; }
+  .puces-titre { position: static; flex: 0 0 100%; }
+  .controle { display: flex; }
+  .controle-outil { padding: 4px 8px; }
+  .piege-raccourci { display: none; }
+  .piege .piege-sortie.rgui { margin: 0 6px 6px; }
+  .suite-bouton { max-width: none; flex: 1 1 100%; }
+  .suite-suivant { text-align: left; }
+}
+
+@media print {
+  body { padding: 0; background: #FFFFFF; }
+  .rtd-cote, .rtd-haut, .rtd-voile, .rtd-fil-source, .piege-barre, .suite { display: none !important; }
+  #quarto-content.page-layout-custom { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

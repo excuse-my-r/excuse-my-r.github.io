@@ -18,11 +18,12 @@ const categories = Object.keys(groupes).sort((a, b) => rang(a) - rang(b) || a.lo
 <div class="catalogue">
 <% for (const c of categories) { %>
   <section class="catalogue-groupe" data-categorie="<%= c %>">
-    <h3 class="catalogue-groupe-titre"><%= c %></h3>
+    <h3 class="catalogue-groupe-titre"><%= c %> <span class="catalogue-compte"><%= groupes[c].length %></span></h3>
     <ul class="catalogue-liste" role="list">
     <% for (const item of groupes[c].sort((a, b) => String(a.ref).localeCompare(String(b.ref)))) { %>
       <% const controles = [].concat(item.controle || []); %>
       <li class="catalogue-ligne" data-ref="<%= item.ref %>" data-impact="<%= item.impact %>" data-controle="<%= controles.join(" ") %>" data-categorie="<%= c %>">
+        <span class="catalogue-ref"><%= item.ref %></span>
         <a class="catalogue-lien" href="<%- item.path %>">
           <span class="catalogue-titre"><%= item.title %></span>
           <% if (item.extrait) { %>

@@ -1,6 +1,13 @@
 $if(ref)$
 <header id="title-block-header" class="fiche-entete" data-ref="$ref$">
-  <p class="fil"><a href="../index.html#catalogue">$libelles.catalogue$</a><span aria-hidden="true"> / </span>$for(categories)$$categories$$sep$, $endfor$</p>
+  <nav class="rtd-fil" aria-label="$libelles.fil$">
+    <ol class="rtd-fil-liste">
+      <li class="rtd-fil-accueil"><a href="../index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i><span class="visually-hidden">$libelles.accueil$</span></a></li>
+      <li><a href="../index.html#catalogue">$libelles.catalogue$</a></li>
+      <li>$for(categories)$$categories$$sep$, $endfor$</li>
+      <li aria-current="page">$ref$</li>
+    </ol>
+  </nav>
   <h1 class="title">$title$</h1>
   <dl class="fiche-meta">
     <div><dt>$libelles.gravite$</dt><dd><span class="impact impact-$impact$"></span></dd></div>
@@ -11,8 +18,19 @@ $if(ref)$
   $if(attendu)$<p class="attendu"><span class="attendu-label">$libelles.attendu$</span> $attendu$</p>$endif$
 </header>
 $elseif(accueil)$
+<nav class="rtd-fil" aria-label="$libelles.fil$">
+  <ol class="rtd-fil-liste">
+    <li class="rtd-fil-accueil"><a href="./index.html" aria-current="page"><i class="bi bi-house-door-fill" aria-hidden="true"></i><span class="visually-hidden">$libelles.accueil$</span></a></li>
+  </ol>
+</nav>
 $else$
 <header id="title-block-header" class="page-entete">
+  <nav class="rtd-fil" aria-label="$libelles.fil$">
+    <ol class="rtd-fil-liste">
+      <li class="rtd-fil-accueil"><a href="./index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i><span class="visually-hidden">$libelles.accueil$</span></a></li>
+      <li aria-current="page">$title$</li>
+    </ol>
+  </nav>
   <h1 class="title">$title$</h1>
   $if(subtitle)$<p class="subtitle">$subtitle$</p>$endif$
 </header>

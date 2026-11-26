@@ -6,3 +6,7 @@ libelles:
   versions: "Versions concernées"
   source: "Repéré par"
   attendu: "On s'attend à"
+  accueil: "Accueil"
+  fil: "Fil d'Ariane"
+language:
+  search-text-placeholder: "Rechercher dans le site"

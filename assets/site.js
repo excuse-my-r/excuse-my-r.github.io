@@ -34,6 +34,7 @@ const TEXTES = {
     echec: m => `R could not start in this browser (${m}).`,
     prochaine: v => `R ${v} will load on the next run.`,
     voisines: "Neighbouring pages",
+    precedent: "Previous pitfall",
     suivant: "Next pitfall",
     toutCatalogue: "The whole catalogue",
     hasard: "Discover an oddity",
@@ -49,7 +50,12 @@ const TEXTES = {
     aucun: "No pitfall matches these filters.",
     compte: (n, total) => n === total ? `${n} pitfalls` : `${n} ${n > 1 ? "pitfalls" : "pitfall"} out of ${total}`,
     autreLangue: "Français",
-    autreLangueTitre: "Lire en français"
+    autreLangueTitre: "Lire en français",
+    navigation: "Site menu",
+    menuCatalogue: "Catalogue",
+    contribuer: "How to contribute",
+    categories: "Categories",
+    source: "Source on GitHub"
   },
   fr: {
     verifier: "Exécuter le code",
@@ -67,6 +73,7 @@ const TEXTES = {
     echec: m => `R n'a pas pu démarrer dans ce navigateur (${m}).`,
     prochaine: v => `R ${v} sera chargé à la prochaine exécution.`,
     voisines: "Fiches voisines",
+    precedent: "Piège précédent",
     suivant: "Piège suivant",
     toutCatalogue: "Tout le catalogue",
     hasard: "Découvrir une bizarrerie",
@@ -82,7 +89,12 @@ const TEXTES = {
     aucun: "Aucun piège ne correspond à ces filtres.",
     compte: (n, total) => n === total ? `${n} pièges` : `${n} ${n > 1 ? "pièges" : "piège"} sur ${total}`,
     autreLangue: "English",
-    autreLangueTitre: "Read in English"
+    autreLangueTitre: "Read in English",
+    navigation: "Menu du site",
+    menuCatalogue: "Catalogue",
+    contribuer: "Comment contribuer",
+    categories: "Catégories",
+    source: "Source sur GitHub"
   }
 };
 const T = TEXTES[LANGUE];
@@ -604,7 +616,25 @@ function preparerBloc(bloc, index) {
 const blocsPage = [];
 document.querySelectorAll(".piege:not(.piege-statique)").forEach(preparerBloc);
 
-// Sur une fiche, le premier bloc est le piege lui-meme : sa reponse est marquee
+// ------------------------------------------------------------------
+// Catalogue de l'accueil : source du menu de gauche et des fiches voisines
+// ------------------------------------------------------------------
+
+// Certains hébergeurs servent les pages sans l'extension .html, et l'accueil sans index.html
+function cheminNormalise(adresse) {
+  return new URL(adresse, location.href).pathname
+    .replace(/\.html$/, "")
+    .replace(/\/index$/, "/")
+    .replace(/\/+$/, "") || "/";
+}
+const ICI = cheminNormalise(location.href);
+
+// Lu une seule fois par page : déjà là sur l'accueil, chargé ailleurs
+const adresseAccueil = new URL(RACINE_LANGUE + "index.html", location.href);
+const accueilPret = document.querySelector(".catalogue")
+  ? Promise.resolve(document)
+  : fetch(adresseAccueil).then(r => r.text()).then(html => new DOMParser().parseFromString(html, "text/html"));
+
 const enteteFiche = document.querySelector(".fiche-entete");
 if (enteteFiche) {
   ajouterSuite();
@@ -613,30 +643,37 @@ if (enteteFiche) {
 async function ajouterSuite() {
   try {
     // L'ordre de lecture est celui du catalogue de l'accueil
-    const adresseAccueil = new URL(RACINE_LANGUE + "index.html", location.href);
-    const html = await fetch(adresseAccueil).then(r => r.text());
-    const accueil = new DOMParser().parseFromString(html, "text/html");
+    const accueil = await accueilPret;
     const fiches = [...accueil.querySelectorAll(".catalogue-lien")].map(a => ({
       adresse: new URL(a.getAttribute("href"), adresseAccueil).href,
       titre: a.querySelector(".catalogue-titre")?.textContent ?? ""
     }));
-    // Certains hébergeurs servent les pages sans l'extension .html
-    const sansExtension = adresse => new URL(adresse).pathname.replace(/\.html$/, "");
-    const ici = sansExtension(location.href);
-    const position = fiches.findIndex(f => sansExtension(f.adresse) === ici);
-    if (position === -1) {
+    const position = fiches.findIndex(f => cheminNormalise(f.adresse) === ICI);
+    if (position === -1 || fiches.length < 2) {
       return;
     }
+    const precedent = fiches[(position - 1 + fiches.length) % fiches.length];
     const suivant = fiches[(position + 1) % fiches.length];
     const nav = el("nav", { class: "suite", "aria-label": T.voisines });
-    const lien = el("a", { class: "suite-lien", href: suivant.adresse });
-    lien.append(el("span", { class: "suite-label" }, T.suivant), el("span", { class: "suite-titre" }, suivant.titre));
-    const retour = el("a", { class: "suite-retour", href: RACINE_LANGUE + "index.html#catalogue" }, T.toutCatalogue);
+
+    // Boutons « Précédent » et « Suivant » de Read the Docs, avec le titre de la fiche
+    const versPrecedent = el("a", { class: "suite-bouton suite-precedent", href: precedent.adresse, rel: "prev" });
+    const labelPrecedent = el("span", { class: "suite-label" });
+    labelPrecedent.append(el("i", { class: "bi bi-arrow-left-circle-fill", "aria-hidden": "true" }), " ", T.precedent);
+    versPrecedent.append(labelPrecedent, el("span", { class: "suite-titre" }, precedent.titre));
+    const versSuivant = el("a", { class: "suite-bouton suite-suivant", href: suivant.adresse, rel: "next" });
+    const labelSuivant = el("span", { class: "suite-label" });
+    labelSuivant.append(T.suivant, " ", el("i", { class: "bi bi-arrow-right-circle-fill", "aria-hidden": "true" }));
+    versSuivant.append(labelSuivant, el("span", { class: "suite-titre" }, suivant.titre));
+    const boutons = el("div", { class: "suite-boutons" });
+    boutons.append(versPrecedent, versSuivant);
+
     const autres = fiches.filter((f, i) => i !== position);
-    const hasard = el("a", { class: "suite-retour", href: autres[Math.floor(Math.random() * autres.length)].adresse }, T.autreHasard);
+    const hasard = el("a", { href: autres[Math.floor(Math.random() * autres.length)].adresse }, T.autreHasard);
+    const retour = el("a", { href: RACINE_LANGUE + "index.html#catalogue" }, T.toutCatalogue);
     const liens = el("div", { class: "suite-liens" });
     liens.append(hasard, retour);
-    nav.append(lien, liens);
+    nav.append(boutons, liens);
     document.getElementById("quarto-content").append(nav);
   } catch {
     // Sans accès à l'accueil, la fiche reste lisible sans navigation.
@@ -735,8 +772,8 @@ if (liste && zoneFiltres) {
     const q = normaliser(etatFiltre.texte.trim());
     let n = 0;
     for (const l of lignes) {
-      // La recherche porte sur le titre et l'extrait : « str » ne doit pas trouver l'étiquette strict
-      const ok = (!q || normaliser(l.querySelector(".catalogue-lien").textContent).includes(q))
+      // La recherche porte sur la référence, le titre et l'extrait : « str » ne doit pas trouver l'étiquette strict
+      const ok = (!q || normaliser(`${l.dataset.ref} ${l.querySelector(".catalogue-lien").textContent}`).includes(q))
         && (!etatFiltre.categorie || l.dataset.categorie === etatFiltre.categorie)
         && (!etatFiltre.impacts.size || etatFiltre.impacts.has(l.dataset.impact))
         && (!etatFiltre.controles.size || controlesLigne(l).some(c => etatFiltre.controles.has(c)));
@@ -788,24 +825,188 @@ if (liste && zoneFiltres) {
 }
 
 // ------------------------------------------------------------------
-// Choix de la langue
+// Menu de gauche, à la Read the Docs (cadre dans assets/before-body.html)
 // ------------------------------------------------------------------
 
-// Le logo ramène à l'accueil de la langue courante
-document.querySelectorAll(".navbar-brand").forEach(a => { a.href = RACINE_LANGUE + "index.html"; });
+const cote = document.getElementById("rtd-cote");
+cote?.setAttribute("aria-label", T.navigation);
 
-// L'onglet « Comment contribuer » existe dans chaque langue
-if (LANGUE === "fr") {
-  document.querySelectorAll('.navbar a.nav-link[href$="contributing.html"]').forEach(a => {
-    a.href = RACINE_LANGUE + "contribuer.html";
-    const texte = a.querySelector(".menu-text") ?? a;
-    texte.textContent = "Comment contribuer";
-    if (location.pathname.endsWith("/contribuer.html") || location.pathname.endsWith("/contribuer")) {
-      a.classList.add("active");
-      a.setAttribute("aria-current", "page");
+// Le titre ramène à l'accueil de la langue courante
+document.querySelectorAll(".rtd-accueil").forEach(a => { a.href = RACINE_LANGUE + "index.html"; });
+
+// Petits écrans : le bouton de la barre bleue ouvre et ferme le menu
+const boutonMenu = document.querySelector(".rtd-menu-bouton");
+const voile = document.querySelector(".rtd-voile");
+
+function ouvrirMenu(ouvert) {
+  document.body.classList.toggle("rtd-menu-ouvert", ouvert);
+  boutonMenu?.setAttribute("aria-expanded", String(ouvert));
+  if (voile) {
+    voile.hidden = !ouvert;
+  }
+}
+
+function fermerMenu(rendreFocus) {
+  if (!document.body.classList.contains("rtd-menu-ouvert")) {
+    return;
+  }
+  ouvrirMenu(false);
+  if (rendreFocus) {
+    boutonMenu?.focus();
+  }
+}
+
+boutonMenu?.addEventListener("click", () => {
+  const ouvert = !document.body.classList.contains("rtd-menu-ouvert");
+  ouvrirMenu(ouvert);
+  if (ouvert) {
+    cote?.querySelector(".rtd-site")?.focus();
+  }
+});
+voile?.addEventListener("click", () => fermerMenu(true));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    fermerMenu(true);
+  }
+});
+
+// Titres de niveau 2 de la page en cours, sous son entrée du menu
+function sectionsDeLaPage() {
+  const liste = el("ul", { class: "rtd-toc" });
+  document.querySelectorAll("#quarto-content section.level2[id] > h2").forEach(h => {
+    const li = el("li", { class: "rtd-l3" });
+    li.append(el("a", { href: "#" + h.parentElement.id }, h.textContent.trim()));
+    liste.append(li);
+  });
+  return liste.children.length ? liste : null;
+}
+
+function marquerCourant(li, a) {
+  li.classList.add("courant");
+  a.setAttribute("aria-current", "page");
+}
+
+// Pages du site, puis les catégories du catalogue, dépliées sur la fiche en cours
+async function construireMenu() {
+  const menu = document.getElementById("rtd-menu");
+  if (!menu) {
+    return;
+  }
+  // Un clic sur une entrée referme le menu des petits écrans
+  menu.addEventListener("click", e => {
+    if (e.target.closest("a")) {
+      fermerMenu(false);
     }
   });
+
+  const pages = el("ul", { class: "rtd-liste" });
+  const pagesSite = [
+    { texte: T.menuCatalogue, href: RACINE_LANGUE + "index.html#catalogue", accueil: true },
+    { texte: T.contribuer, href: RACINE_LANGUE + (LANGUE === "fr" ? "contribuer.html" : "contributing.html") }
+  ];
+  for (const page of pagesSite) {
+    const li = el("li", { class: "rtd-l1" });
+    const a = el("a", { href: page.href }, page.texte);
+    li.append(a);
+    if (cheminNormalise(page.href) === ICI) {
+      marquerCourant(li, a);
+      const sections = page.accueil ? null : sectionsDeLaPage();
+      if (sections) {
+        li.append(sections);
+      }
+    }
+    pages.append(li);
+  }
+  menu.replaceChildren(pages);
+
+  let accueil;
+  try {
+    accueil = await accueilPret;
+  } catch {
+    // Sans le catalogue, le menu garde les pages du site
+    return;
+  }
+
+  const liste = el("ul", { class: "rtd-liste" });
+  accueil.querySelectorAll(".catalogue-groupe").forEach((groupe, i) => {
+    const lignes = [...groupe.querySelectorAll(".catalogue-ligne")];
+    const li = el("li", { class: "rtd-l1" });
+    const id = `rtd-categorie-${i + 1}`;
+    const bouton = el("button", { type: "button", class: "rtd-categorie", "aria-expanded": "false", "aria-controls": id });
+    bouton.append(el("span", { class: "rtd-libelle" }, groupe.dataset.categorie), el("span", { class: "rtd-compte" }, String(lignes.length)));
+    const sous = el("ul", { class: "rtd-sous", id, hidden: "" });
+    for (const ligne of lignes) {
+      const source = ligne.querySelector(".catalogue-lien");
+      const adresse = new URL(source.getAttribute("href"), adresseAccueil).href;
+      const item = el("li", { class: "rtd-l2" });
+      const a = el("a", { href: adresse });
+      a.append(el("span", { class: "rtd-num" }, ligne.dataset.ref), el("span", { class: "rtd-libelle" }, source.querySelector(".catalogue-titre")?.textContent ?? ""));
+      item.append(a);
+      if (cheminNormalise(adresse) === ICI) {
+        marquerCourant(item, a);
+        li.classList.add("courant");
+        const sections = sectionsDeLaPage();
+        if (sections) {
+          item.append(sections);
+        }
+      }
+      sous.append(item);
+    }
+    const deplier = ouvert => {
+      bouton.setAttribute("aria-expanded", String(ouvert));
+      sous.hidden = !ouvert;
+    };
+    bouton.addEventListener("click", () => deplier(sous.hidden));
+    deplier(li.classList.contains("courant"));
+    li.append(bouton, sous);
+    liste.append(li);
+  });
+  if (liste.children.length) {
+    menu.append(el("p", { class: "rtd-legende", role: "heading", "aria-level": "2" }, T.categories), liste);
+  }
+
+  // La fiche en cours reste visible dans le menu, avec sa catégorie si la place le permet
+  const courant = menu.querySelector(".rtd-l2.courant") ?? menu.querySelector(".rtd-l1.courant");
+  const defilement = cote?.querySelector(".rtd-cote-defilement");
+  if (courant && defilement) {
+    const hauteur = defilement.clientHeight;
+    const bas = courant.offsetTop + courant.offsetHeight;
+    const categorie = courant.closest(".rtd-l1").offsetTop;
+    if (bas > hauteur - 20) {
+      defilement.scrollTop = bas - categorie <= hauteur - 40
+        ? categorie - 8
+        : courant.offsetTop - hauteur / 3;
+    }
+  }
 }
+
+construireMenu();
+
+// Lien vers la source de la page sur GitHub, à droite du fil d'Ariane
+function ajouterLienSource() {
+  const fil = document.querySelector(".rtd-fil-liste");
+  const depot = document.querySelector(".rtd-depot")?.href;
+  if (!fil || !depot) {
+    return;
+  }
+  const racine = new URL(offset, location.href).pathname;
+  let chemin = location.pathname.startsWith(racine) ? location.pathname.slice(racine.length) : "";
+  if (chemin === "" || chemin.endsWith("/")) {
+    chemin += "index";
+  }
+  chemin = chemin.replace(/\.html$/, "") + ".qmd";
+  const li = el("li", { class: "rtd-fil-source" });
+  const a = el("a", { href: `${depot.replace(/\/$/, "")}/blob/main/${chemin}` });
+  a.append(el("i", { class: "bi bi-github", "aria-hidden": "true" }), T.source);
+  li.append(a);
+  fil.append(li);
+}
+
+ajouterLienSource();
+
+// ------------------------------------------------------------------
+// Choix de la langue
+// ------------------------------------------------------------------
 
 ajouterChoixLangue();
 
@@ -822,11 +1023,11 @@ async function ajouterChoixLangue() {
   const autre = LANGUE === "fr" ? offset : offset + "fr/";
   const lien = el("a", { class: "choix-langue", href: autre + "index.html", lang: LANGUE === "fr" ? "en" : "fr", hreflang: LANGUE === "fr" ? "en" : "fr", title: T.autreLangueTitre }, T.autreLangue);
   lien.prepend(drapeau(LANGUE === "fr" ? "en" : "fr"));
-  const zone = document.querySelector(".navbar .quarto-navbar-tools") ?? document.querySelector(".navbar-nav.ms-auto") ?? document.querySelector(".navbar .container-fluid");
+  const zone = document.querySelector(".rtd-version");
   if (!zone) {
     return;
   }
-  zone.prepend(lien);
+  zone.append(lien);
   try {
     localStorage.setItem("excuse-my-r.langue", LANGUE);
   } catch {
